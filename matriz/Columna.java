@@ -2,6 +2,8 @@ package matriz;
 
 import java.util.List;
 
+import celda.Celda;
+
 public class Columna {
     List<Celda> celdas;
     Etiqueta etiqueta;
