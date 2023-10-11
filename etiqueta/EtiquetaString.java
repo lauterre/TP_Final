@@ -14,6 +14,4 @@ public class EtiquetaString extends Etiqueta {
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
-
-    
 }
