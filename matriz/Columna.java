@@ -14,16 +14,17 @@ public class Columna {
         this.celdas = celdas;
     }
 
-    public Celda get(int indiceFila) {
+    public Celda obtenerValor(Integer indiceFila) {
         // Asegúrate de que el índice de fila sea válido
         if (indiceFila >= 0 && indiceFila < celdas.size()) {
             return celdas.get(indiceFila);
         } else {
             throw new IllegalArgumentException("Índice de fila fuera de rango");
         }
+    }
 
 
-    public void set(int indiceFila, Celda valor) {
+    public void fijarValor(int indiceFila, Celda valor) {
         // Asegúrate de que el índice de fila sea válido
         if (indiceFila >= 0 && indiceFila < celdas.size()) {
             celdas.set(indiceFila, valor);
@@ -34,5 +35,4 @@ public class Columna {
         
     }
 
-}
 }
