@@ -19,7 +19,7 @@ public class Columna {
     public Celda obtenerValor(Integer indiceFila) {
         // Asegúrate de que el índice de fila sea válido
         if (indiceFila >= 0 && indiceFila < celdas.size()) {
-            return celdas.get(indiceFila);
+            return celdas.get(indiceFila); //celdas.get(indiceFila).getValor()
         } else {
             throw new IllegalArgumentException("Índice de fila fuera de rango");
         }
