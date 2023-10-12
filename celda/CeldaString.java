@@ -1,6 +1,6 @@
 package celda;
 
-public class CeldaString extends Celda implements Comparable<CeldaString>{
+public class CeldaString extends Celda{
     private String valor;
 
     public CeldaString(String valor) {
@@ -15,14 +15,15 @@ public class CeldaString extends Celda implements Comparable<CeldaString>{
         this.valor = valor;
     }
     
-    public int compareTo(CeldaString otraCelda) {
+    public int compareTo(Celda otraCelda) {
+        CeldaString otraCeldaString = (CeldaString) otraCelda;
         if (this.isNA()) {
             return 1;
         } else if (otraCelda.isNA()) {
             return -1;
         }
 
-        return this.valor.compareTo(otraCelda.getValor());
+        return this.valor.compareTo(otraCeldaString.getValor());
     }
 
     @Override

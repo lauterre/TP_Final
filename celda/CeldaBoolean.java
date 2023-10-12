@@ -1,6 +1,6 @@
 package celda;
 
-public class CeldaBoolean extends Celda implements Comparable<CeldaBoolean> {
+public class CeldaBoolean extends Celda {
     private Boolean valor;
 
     public CeldaBoolean(Boolean valor) {
@@ -13,7 +13,8 @@ public class CeldaBoolean extends Celda implements Comparable<CeldaBoolean> {
     }
 
     @Override
-    public int compareTo(CeldaBoolean otraCelda) {
+    public int compareTo(Celda otraCelda) {
+        CeldaBoolean otraCeldaBoolean = (CeldaBoolean) otraCelda;
         if (this.isNA()) {
             return -1;
         } else if (otraCelda.isNA()) {
@@ -21,7 +22,7 @@ public class CeldaBoolean extends Celda implements Comparable<CeldaBoolean> {
         }
 
         int valorThis = this.valor ? 1 : 0;
-        int valorOtraCelda = otraCelda.getValor() ? 1 : 0;
+        int valorOtraCelda = otraCeldaBoolean.getValor() ? 1 : 0;
         if (valorThis > valorOtraCelda) {
             return 1;
         } else if (valorThis < valorOtraCelda) {
