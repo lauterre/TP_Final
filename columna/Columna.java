@@ -9,7 +9,7 @@ public abstract class Columna {
     public abstract void fijarValor(Integer indiceFila, Celda valor);
 
     public abstract Celda obtenerValor(Integer indiceFila); //no deberia devolver el valor de la celda?
-    // podria ser obtenerCelda()
+    // public abstract Object obtenerValor(Integer indiceFila);
     public abstract String tipoDato();
     
 }

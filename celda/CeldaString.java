@@ -15,6 +15,7 @@ public class CeldaString extends Celda{
         this.valor = valor;
     }
     
+    @Override
     public int compareTo(Celda otraCelda) {
         CeldaString otraCeldaString = (CeldaString) otraCelda;
         if (this.isNA()) {

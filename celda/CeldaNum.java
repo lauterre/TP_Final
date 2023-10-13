@@ -7,15 +7,16 @@ public class CeldaNum extends Celda{
         this.valor = valor;
     }
 
+    @Override
     public int compareTo(Celda otraCelda) {
-        CeldaNum otrCeldaNum = (CeldaNum) otraCelda;
+        CeldaNum otraCeldaNum = (CeldaNum) otraCelda;
         if (this.isNA()) {
             return -1;
         } else if (otraCelda.isNA()) {
             return 1;
         }
         
-        double diferencia = this.valor.doubleValue() - otrCeldaNum.valor.doubleValue();
+        double diferencia = this.valor.doubleValue() - otraCeldaNum.valor.doubleValue();
         if (diferencia < 0) {
             return -1;
         } else if (diferencia > 0) {

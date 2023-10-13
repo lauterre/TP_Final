@@ -1,10 +1,13 @@
 package columna;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import celda.Celda;
 import celda.CeldaString;
 import etiqueta.Etiqueta;
+import etiqueta.EtiquetaString;
 
 public class ColumnaString extends Columna{
     private Etiqueta etiqueta;
@@ -17,7 +20,11 @@ public class ColumnaString extends Columna{
 
     @Override
     public void ordenar(String orden){
-        //TO DO
+        Collections.sort(celdas);
+
+        if ("descendente".equals(orden)) {
+            Collections.reverse(celdas);
+        }
     }
 
     @Override
@@ -61,5 +68,41 @@ public class ColumnaString extends Columna{
         this.celdas = celdas;
     }
 
-    
+    //para probar cosas:
+    public String toString() {
+        String inicial = "";
+        for (CeldaString celda : celdas) {
+            inicial += celda.getValor();
+            inicial += ", ";
+        }
+        return inicial;
+    }
+
+    public static void main(String[] args) {
+        CeldaString celda1 = new CeldaString("c");
+        CeldaString celda2 = new CeldaString("a");
+        CeldaString celda3 = new CeldaString("d");
+        CeldaString celda4 = new CeldaString("b");
+
+        List<CeldaString> listaCeldas = new ArrayList<>();
+        listaCeldas.add(celda1);
+        listaCeldas.add(celda2);
+        listaCeldas.add(celda3);
+        listaCeldas.add(celda4);
+
+        EtiquetaString etiqueta = new EtiquetaString("columna");
+
+        ColumnaString col = new ColumnaString(etiqueta, listaCeldas);
+
+        System.out.println("original: " + col);
+
+        col.ordenar("descendente");
+
+        System.out.println("desc: "+ col);
+
+        col.ordenar(null);
+
+        System.out.println("asc: " + col);
+
+    }
 }

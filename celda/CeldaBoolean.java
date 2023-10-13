@@ -7,6 +7,15 @@ public class CeldaBoolean extends Celda {
         this.valor = valor;
     }
 
+    // no se esto:
+    public CeldaBoolean(Integer valor) {
+        if (valor == 0) {
+            this.valor = false;
+        } else {
+            this.valor = true;
+        }
+    }
+
     @Override
     public boolean isNA() {
         return valor == null;
