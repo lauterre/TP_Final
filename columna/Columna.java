@@ -11,5 +11,7 @@ public abstract class Columna {
     public abstract Celda obtenerValor(Integer indiceFila); //no deberia devolver el valor de la celda?
     // public abstract Object obtenerValor(Integer indiceFila);
     public abstract String tipoDato();
+
+    public abstract int size();
     
 }

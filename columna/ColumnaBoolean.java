@@ -52,6 +52,11 @@ public class ColumnaBoolean extends Columna {
         return "Booleana".toString();
     }
 
+    @Override
+    public int size() {
+        return celdas.size();
+    }
+
     public Etiqueta getEtiqueta() {
         return etiqueta;
     }

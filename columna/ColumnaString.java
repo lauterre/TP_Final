@@ -52,6 +52,11 @@ public class ColumnaString extends Columna{
         return "String".toString();
     }
 
+    @Override
+    public int size() {
+        return celdas.size();
+    }
+
     public Etiqueta getEtiqueta() {
         return etiqueta;
     }

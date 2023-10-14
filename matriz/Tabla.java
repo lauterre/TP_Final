@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import celda.Celda;
+import columna.Columna;
+import etiqueta.Etiqueta;
 
 public class Tabla {
     List<Columna> columnas;
