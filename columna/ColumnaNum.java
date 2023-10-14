@@ -86,7 +86,7 @@ public class ColumnaNum extends Columna {
     public static void main(String[] args) {
         CeldaNum celda1 = new CeldaNum(3);
         CeldaNum celda2 = new CeldaNum(1);
-        CeldaNum celda3 = new CeldaNum(4);
+        CeldaNum celda3 = new CeldaNum(null);
         CeldaNum celda4 = new CeldaNum(2);
 
         List<CeldaNum> listaCeldas = new ArrayList<>();

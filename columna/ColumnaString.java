@@ -87,13 +87,17 @@ public class ColumnaString extends Columna{
         CeldaString celda1 = new CeldaString("c");
         CeldaString celda2 = new CeldaString("a");
         CeldaString celda3 = new CeldaString("d");
-        CeldaString celda4 = new CeldaString("b");
+        CeldaString celda4 = new CeldaString("NA");
+        CeldaString celda5 = new CeldaString(null);
+        CeldaString celda6 = new CeldaString("na");
 
         List<CeldaString> listaCeldas = new ArrayList<>();
         listaCeldas.add(celda1);
         listaCeldas.add(celda2);
         listaCeldas.add(celda3);
         listaCeldas.add(celda4);
+        listaCeldas.add(celda5);
+        listaCeldas.add(celda6);
 
         EtiquetaString etiqueta = new EtiquetaString("columna");
 

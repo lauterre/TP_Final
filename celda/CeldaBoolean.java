@@ -9,7 +9,9 @@ public class CeldaBoolean extends Celda {
 
     // no se esto:
     public CeldaBoolean(Integer valor) {
-        if (valor == 0) {
+        if (valor == null) {
+            this.valor = null;
+        }else if (valor == 0) {
             this.valor = false;
         } else {
             this.valor = true;
