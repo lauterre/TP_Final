@@ -87,6 +87,11 @@ public class Tabla {
         return columnaPedida;
     }
 
+    public void ordenar(Etiqueta etiquetaColumna, String orden) {
+        Columna columna = columnas.get(colLabels.get(etiquetaColumna));
+        columna.ordenar(orden);
+    }
+
 
 
     @Override

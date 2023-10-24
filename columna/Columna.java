@@ -9,11 +9,11 @@ public abstract class Columna {
 
     public abstract void ordenar(String orden);
 
-    public void ordenarCeldasAscendente(List<? extends Celda> celdas) {
+    protected void ordenarCeldasAscendente(List<? extends Celda> celdas) {
             quicksort(celdas, 0, celdas.size() - 1);
     }
 
-    public void ordenarCeldasDescendente(List<? extends Celda> celdas) {
+    protected void ordenarCeldasDescendente(List<? extends Celda> celdas) {
         //TODO
     }
 
