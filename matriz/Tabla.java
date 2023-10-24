@@ -15,7 +15,7 @@ public class Tabla {
     Map <Etiqueta, Integer> rowLabels;
 
     public Tabla(int cantidadColumnas){
-        // TO DO : Exceptions
+        // TODO : Exceptions
         columnas = new ArrayList<>(null);
         colLabels = new HashMap<>(cantidadColumnas, cantidadColumnas);
         rowLabels = new HashMap<>(cantidadColumnas, cantidadColumnas);
@@ -27,8 +27,6 @@ public class Tabla {
             throw new IllegalArgumentException("La longitud de etiquetas no coincide.");
         setEtiquetasColumnas(etiquetas);
     }
-
-
 
     public void setEtiquetasFilas(Etiqueta[] etiquetas) {
         rowLabels.clear();
@@ -43,7 +41,6 @@ public class Tabla {
             colLabels.put(etiquetas[j], j);
         }
     }
-
 
     public String obtenerEtiquetasColumnas(){
         String etiquetasColumnas = "";
@@ -87,12 +84,12 @@ public class Tabla {
         return columnaPedida;
     }
 
+    //hay que modificar Etiqueta, nunca la usamos. En el metodo anterior deberiamos haberla usado.
+
     public void ordenar(Etiqueta etiquetaColumna, String orden) {
         Columna columna = columnas.get(colLabels.get(etiquetaColumna));
         columna.ordenar(orden);
     }
-
-
 
     @Override
     public String toString() {
