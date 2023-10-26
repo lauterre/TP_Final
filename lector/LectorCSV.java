@@ -29,7 +29,6 @@ public class LectorCSV {
             throw new ArchivoNoEncontradoException();
         }
     }
-
     public static List<Columna> parserColumnas(List<String> lineas) throws CSVParserException {
         int cantidadColumnas = lineas.get(0).split(",").length;
         List<List<String>> columnas = new ArrayList<>();
@@ -48,10 +47,9 @@ public class LectorCSV {
                 columnas.get(i).add(campos[i]);
             }
         }
-
-        //return columnas
         
         List<Columna> cols = new ArrayList<>();
+        //TODO: encabezados
         for (List<String> columna : columnas) {
             if (esNum(columna.get(1))) {
                 List<CeldaNum> colNum = new ArrayList<>();

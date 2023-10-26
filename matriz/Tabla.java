@@ -38,12 +38,16 @@ public class Tabla {
         this.rowLabels = new HashMap<>(cantidadColumnas, cantidadColumnas);
     }
 
-    public Tabla(String ruta) throws ArchivoNoEncontradoException, CSVParserException {
-        this(LectorCSV.parserColumnas(LectorCSV.leer(ruta)));
+    public Tabla(List<Columna> columnas, Etiqueta[] etiquetas) {
+        int cantidadColumnas = columnas.size();
+
+        this.columnas = columnas;
+        this.colLabels = new HashMap<>(cantidadColumnas, cantidadColumnas);
+        this.rowLabels = new HashMap<>(cantidadColumnas, cantidadColumnas);
     }
 
-    public Tabla(String ruta, boolean headers) {
-        //TODO
+    public Tabla(String ruta, boolean encabezados) throws ArchivoNoEncontradoException, CSVParserException {
+        this(LectorCSV.parserColumnas(LectorCSV.leer(ruta)));
     }
 
     public void setEtiquetasFilas(Etiqueta[] etiquetas) {
