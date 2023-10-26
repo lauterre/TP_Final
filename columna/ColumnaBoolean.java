@@ -18,6 +18,10 @@ public class ColumnaBoolean extends Columna {
         this.celdas = celdas;
     }
 
+    public ColumnaBoolean(List<CeldaBoolean> celdas) {
+        this.celdas = celdas;
+    }
+
     @Override
     public void ordenar(String orden){
         Collections.sort(celdas);

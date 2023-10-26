@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import lector.LectorCSV;
+import lector.exceptions.ArchivoNoEncontradoException;
+import lector.exceptions.CSVParserException;
 import celda.Celda;
 import columna.Columna;
 import etiqueta.Etiqueta;
@@ -28,10 +30,20 @@ public class Tabla {
         setEtiquetasColumnas(etiquetas);
     }
 
+    public Tabla(List<Columna> columnas) {
+        int cantidadColumnas = columnas.size();
+
+        this.columnas = columnas;
+        this.colLabels = new HashMap<>(cantidadColumnas, cantidadColumnas);
+        this.rowLabels = new HashMap<>(cantidadColumnas, cantidadColumnas);
+    }
+
+    public Tabla(String ruta) throws ArchivoNoEncontradoException, CSVParserException {
+        this(LectorCSV.parserColumnas(LectorCSV.leer(ruta)));
+    }
+
     public Tabla(String ruta, boolean headers) {
-        // lector itera sobre los caracteres de la 2da fila, o 1ra dependiendo de headers,
-        // y va instanciando columnas de acuedo al tipo de dato encontrado
-        // las agrega a una lista
+        //TODO
     }
 
     public void setEtiquetasFilas(Etiqueta[] etiquetas) {
