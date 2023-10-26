@@ -1,4 +1,4 @@
-package celdaGenerica;
+package NoUsar.celdaGenerica;
 
 public class CeldaString extends Celda<String> {
 

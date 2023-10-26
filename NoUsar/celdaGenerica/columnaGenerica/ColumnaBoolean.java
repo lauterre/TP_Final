@@ -1,29 +1,28 @@
-package columnaGenerica;
+package NoUsar.celdaGenerica.columnaGenerica;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import celdaGenerica.CeldaString;
+import NoUsar.celdaGenerica.CeldaBoolean;
 import etiqueta.Etiqueta;
 import etiqueta.EtiquetaString;
 
-public class ColumnaString extends Columna<CeldaString> {
-
-    public ColumnaString(Etiqueta etiqueta, List<CeldaString> celdas) {
+public class ColumnaBoolean extends Columna<CeldaBoolean> {
+    
+    public ColumnaBoolean(Etiqueta etiqueta, List<CeldaBoolean> celdas) {
         this.etiqueta = etiqueta;
         this.celdas = celdas;
     }
 
     @Override
     public String tipoDato() {
-        return "String".toString();
+        return "Booleana".toString();
     }
 
     //para probar cosas:
-    @Override
     public String toString() {
         String inicial = "";
-        for (CeldaString celda : celdas) {
+        for (CeldaBoolean celda : celdas) {
             inicial += celda.getValor();
             inicial += ", ";
         }
@@ -31,14 +30,14 @@ public class ColumnaString extends Columna<CeldaString> {
     }
 
     public static void main(String[] args) {
-        CeldaString celda1 = new CeldaString("c");
-        CeldaString celda2 = new CeldaString("a");
-        CeldaString celda3 = new CeldaString("d");
-        CeldaString celda4 = new CeldaString("NA");
-        CeldaString celda5 = new CeldaString(null);
-        CeldaString celda6 = new CeldaString("na");
+        CeldaBoolean celda1 = new CeldaBoolean(true);
+        CeldaBoolean celda2 = new CeldaBoolean(false);
+        CeldaBoolean celda3 = new CeldaBoolean(1);
+        CeldaBoolean celda4 = new CeldaBoolean(0);
+        CeldaBoolean celda5 = new CeldaBoolean((Integer) null);
+        CeldaBoolean celda6 = new CeldaBoolean((Boolean) null);
 
-        List<CeldaString> listaCeldas = new ArrayList<>();
+        List<CeldaBoolean> listaCeldas = new ArrayList<>();
         listaCeldas.add(celda1);
         listaCeldas.add(celda2);
         listaCeldas.add(celda3);
@@ -48,7 +47,7 @@ public class ColumnaString extends Columna<CeldaString> {
 
         EtiquetaString etiqueta = new EtiquetaString("columna");
 
-        ColumnaString col = new ColumnaString(etiqueta, listaCeldas);
+        ColumnaBoolean col = new ColumnaBoolean(etiqueta, listaCeldas);
 
         System.out.println("original: " + col);
 

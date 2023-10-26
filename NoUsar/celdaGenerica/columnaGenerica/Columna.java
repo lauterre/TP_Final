@@ -1,9 +1,9 @@
-package columnaGenerica;
+package NoUsar.celdaGenerica.columnaGenerica;
 
 import java.util.Collections;
 import java.util.List;
 
-import celdaGenerica.Celda;
+import NoUsar.celdaGenerica.Celda;
 import etiqueta.Etiqueta;
 
 public abstract class Columna<T extends Celda> {

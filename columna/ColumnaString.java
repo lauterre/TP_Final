@@ -1,6 +1,7 @@
 package columna;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import celda.Celda;
@@ -18,13 +19,11 @@ public class ColumnaString extends Columna{
     }
 
     @Override
-    public void ordenar(String orden) {
-        if (orden.equalsIgnoreCase("Ascendente") || orden == null) {
-            ordenarCeldasAscendente(celdas);
-        } else if (orden.equalsIgnoreCase("Descendente")) {
-            ordenarCeldasDescendente(celdas);
-        } else {
-            //TODO: throws exception
+    public void ordenar(String orden){
+        Collections.sort(celdas);
+
+        if ("descendente".equals(orden)) {
+            Collections.reverse(celdas);
         }
     }
 

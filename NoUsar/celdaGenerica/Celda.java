@@ -1,4 +1,4 @@
-package celdaGenerica;
+package NoUsar.celdaGenerica;
 
 public abstract class Celda<T> implements Comparable<Celda<T>>{
 

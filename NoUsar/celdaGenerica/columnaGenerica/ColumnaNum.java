@@ -1,9 +1,9 @@
-package columnaGenerica;
+package NoUsar.celdaGenerica.columnaGenerica;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import celdaGenerica.CeldaNum;
+import NoUsar.celdaGenerica.CeldaNum;
 import etiqueta.Etiqueta;
 import etiqueta.EtiquetaString;
 
@@ -13,6 +13,10 @@ public class ColumnaNum extends Columna<CeldaNum> {
     
     public ColumnaNum(Etiqueta etiqueta, List<CeldaNum> celdas) {
         this.etiqueta = etiqueta;
+        this.celdas = celdas;
+    }
+
+    public ColumnaNum(List<CeldaNum> celdas) {
         this.celdas = celdas;
     }
 

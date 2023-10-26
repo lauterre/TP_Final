@@ -16,7 +16,7 @@ public class Tabla {
 
     public Tabla(int cantidadColumnas){
         // TODO : Exceptions
-        columnas = new ArrayList<>(null);
+        columnas = new ArrayList<>();
         colLabels = new HashMap<>(cantidadColumnas, cantidadColumnas);
         rowLabels = new HashMap<>(cantidadColumnas, cantidadColumnas);
     }
@@ -26,6 +26,12 @@ public class Tabla {
         if (cantidadColumnas != etiquetas.length)
             throw new IllegalArgumentException("La longitud de etiquetas no coincide.");
         setEtiquetasColumnas(etiquetas);
+    }
+
+    public Tabla(String ruta, boolean headers) {
+        // lector itera sobre los caracteres de la 2da fila, o 1ra dependiendo de headers,
+        // y va instanciando columnas de acuedo al tipo de dato encontrado
+        // las agrega a una lista
     }
 
     public void setEtiquetasFilas(Etiqueta[] etiquetas) {
@@ -83,8 +89,6 @@ public class Tabla {
         Columna columnaPedida = columnas.get(colLabels.get(etiquetaColumna));
         return columnaPedida;
     }
-
-    //hay que modificar Etiqueta, nunca la usamos. En el metodo anterior deberiamos haberla usado.
 
     public void ordenar(Etiqueta etiquetaColumna, String orden) {
         Columna columna = columnas.get(colLabels.get(etiquetaColumna));

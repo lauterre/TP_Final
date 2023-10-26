@@ -18,6 +18,10 @@ public class ColumnaNum extends Columna {
         this.celdas = celdas;
     }
 
+    public ColumnaNum(List<CeldaNum> celdas) {
+        this.celdas = celdas;
+    }
+
     @Override
     public void ordenar(String orden){
         Collections.sort(celdas);

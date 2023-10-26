@@ -1,4 +1,4 @@
-package celdaGenerica;
+package NoUsar.celdaGenerica;
 
 public class CeldaNum extends Celda<Number> {
     
