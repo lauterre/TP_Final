@@ -47,7 +47,7 @@ public class Tabla {
     }
 
     public Tabla(String ruta, boolean encabezados) throws ArchivoNoEncontradoException, CSVParserException {
-        this(LectorCSV.parserColumnas(LectorCSV.leer(ruta)));
+        this(LectorCSV.parserColumnas(LectorCSV.leer(ruta), encabezados));
     }
 
     public void setEtiquetasFilas(Etiqueta[] etiquetas) {
