@@ -39,11 +39,6 @@ public class Tabla {
         setEtiquetasColumnas(etiquetas);
     }
 
-    // public Tabla(String ruta, boolean tieneEncabezados) throws ArchivoNoEncontradoException, CSVParserException {
-    //     this(parserLineas(leer(ruta)));
-
-    // }
-
     public Tabla(Object[][] matriz) {
         //TODO
     }
