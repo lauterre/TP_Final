@@ -94,4 +94,25 @@ public class LectorCSV {
         //TODO: tambien con 0 y 1
         return cadena.equalsIgnoreCase("true") || cadena.equalsIgnoreCase("false");
     }
+
+
+
+    public static String[][] parserLineas(List<String> lineas) throws CSVParserException {
+        int filas = lineas.size();
+        String[][] matriz = null;
+        for(int i=0; i < lineas.size(); i++) {
+            String linea = lineas.get(i);
+            String[] campos = linea.split(",");
+            if (matriz == null) {
+                matriz = new String[filas][campos.length];
+            }
+            if (matriz[0].length != campos.length) {
+                throw new CSVParserException();            
+            }
+            for(int j=0; j < campos.length; j++) {
+                matriz[i][j] = campos[j];
+            }
+        }
+        return matriz;
+    }
 }
