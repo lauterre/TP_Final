@@ -6,17 +6,9 @@ import java.util.List;
 
 import celda.Celda;
 import celda.CeldaString;
-import etiqueta.Etiqueta;
-import etiqueta.EtiquetaString;
 
 public class ColumnaString extends Columna{
-    private Etiqueta etiqueta;
     private List<CeldaString> celdas;
-
-    public ColumnaString(Etiqueta etiqueta, List<CeldaString> celdas) {
-        this.etiqueta = etiqueta;
-        this.celdas = celdas;
-    }
 
     public ColumnaString(List<CeldaString> celdas) {
         this.celdas = celdas;
@@ -61,14 +53,6 @@ public class ColumnaString extends Columna{
         return celdas.size();
     }
 
-    public Etiqueta getEtiqueta() {
-        return etiqueta;
-    }
-
-    public void setEtiqueta(Etiqueta etiqueta) {
-        this.etiqueta = etiqueta;
-    }
-
     public List<CeldaString> getCeldas() {
         return celdas;
     }
@@ -103,9 +87,7 @@ public class ColumnaString extends Columna{
         listaCeldas.add(celda5);
         listaCeldas.add(celda6);
 
-        EtiquetaString etiqueta = new EtiquetaString("columna");
-
-        ColumnaString col = new ColumnaString(etiqueta, listaCeldas);
+        ColumnaString col = new ColumnaString(listaCeldas);
 
         System.out.println("original: " + col);
 

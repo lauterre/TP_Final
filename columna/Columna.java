@@ -1,9 +1,6 @@
 package columna;
 
-import java.util.List;
-
 import celda.Celda;
-import etiqueta.Etiqueta;
 
 public abstract class Columna {
 

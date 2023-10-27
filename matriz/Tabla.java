@@ -19,7 +19,7 @@ public class Tabla {
     public Tabla(int cantidadColumnas){
         // TODO : Exceptions
         columnas = new ArrayList<>();
-        colLabels = new HashMap<>(cantidadColumnas, cantidadColumnas);
+        colLabels = new HashMap<>(cantidadColumnas, cantidadColumnas); //new HashMap<>();
         rowLabels = new HashMap<>(cantidadColumnas, cantidadColumnas);
     }
 
