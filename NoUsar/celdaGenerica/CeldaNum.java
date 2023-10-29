@@ -1,22 +1,20 @@
-package celda;
+package NoUsar.celdaGenerica;
 
-public class CeldaNum extends Celda{
-    private Number valor;
-
+public class CeldaNum extends Celda<Number> {
+    
     public CeldaNum(Number valor) {
         this.valor = valor;
     }
 
     @Override
-    public int compareTo(Celda otraCelda) {
-        CeldaNum otraCeldaNum = (CeldaNum) otraCelda;
+    public int compareTo(Celda<Number> otraCelda) {
         if (this.isNA()) {
             return -1;
         } else if (otraCelda.isNA()) {
             return 1;
         }
         
-        double diferencia = this.valor.doubleValue() - otraCeldaNum.valor.doubleValue();
+        double diferencia = this.valor.doubleValue() - otraCelda.valor.doubleValue();
         if (diferencia < 0) {
             return -1;
         } else if (diferencia > 0) {
@@ -24,15 +22,6 @@ public class CeldaNum extends Celda{
         } else {
             return 0;
         }
-    }
-
-    @Override
-    public Number getValor() {
-        return valor;
-    }
-
-    public void setValor(Number valor) {
-        this.valor = valor;
     }
 
     @Override

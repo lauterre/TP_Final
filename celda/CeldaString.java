@@ -7,6 +7,7 @@ public class CeldaString extends Celda{
         this.valor = valor;
     }
 
+    @Override
     public String getValor() {
         return valor;
     }
@@ -32,5 +33,10 @@ public class CeldaString extends Celda{
         if (this.valor == null || this.valor.equalsIgnoreCase("NA")) {
             return true;
         } else return false;
+    }
+
+    @Override
+    public String toString() {
+        return this.valor;
     }
 }
