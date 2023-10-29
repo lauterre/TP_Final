@@ -13,11 +13,16 @@ import celda.CeldaString;
 import columna.Columna;
 import columna.ColumnaNum;
 import columna.ColumnaString;
+import etiqueta.Etiqueta;
+import etiqueta.EtiquetaString;
 import lector.exceptions.ArchivoNoEncontradoException;
 import lector.exceptions.CSVParserException;
 
 public class LectorCSV {
-    public static List<String> leer(String ruta) throws ArchivoNoEncontradoException {
+
+    Etiqueta[] encabezados;
+
+    public List<String> leer(String ruta) throws ArchivoNoEncontradoException {
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(ruta))) {
             String linea;
             List<String> lineas = new ArrayList<>();
@@ -31,19 +36,26 @@ public class LectorCSV {
     }
 
 
-    public static List<Columna> parserColumnas(List<String> lineas, boolean encabezados) throws CSVParserException {
+    public List<Columna> parserColumnas(List<String> lineas, boolean tieneEncabezados) throws CSVParserException {
         int cantidadColumnas = lineas.get(0).split(",").length;
         List<List<String>> columnas = new ArrayList<>();
 
         for (int i = 0; i < cantidadColumnas; i++) {
             columnas.add(new ArrayList<>());
         }
-        //TODO: encabezados, quizas poner este metodo en tabla
-        for (String linea : lineas) { //no hacer for each
-            String[] campos = linea.split(","); //if i=0 this.encabezados = campos[0]
-            if (campos.length != cantidadColumnas) {
-                throw new CSVParserException();
-            }
+
+        for (int l = 0; l < lineas.size(); l++) {
+                String[] campos = lineas.get(l).split(",");
+                if (l == 0) {
+                    this.encabezados = new Etiqueta[campos.length];
+                    for (int campo = 0; campo < campos.length; campo++){
+                        EtiquetaString etiqueta = new EtiquetaString(campos[campo]);
+                        encabezados[campo] = etiqueta;
+                    }
+                }
+                if (campos.length != cantidadColumnas) {
+                    throw new CSVParserException();
+                }
 
             for (int i = 0; i < cantidadColumnas; i++) {
                 columnas.get(i).add(campos[i]);
@@ -52,7 +64,7 @@ public class LectorCSV {
         
         List<Columna> cols = new ArrayList<>();
         for (List<String> columna : columnas) {
-            if (encabezados) {
+            if (tieneEncabezados) {
                 columna.remove(0);}
             if (esNum(columna.get(1))) {
                 List<CeldaNum> colNum = new ArrayList<>();
@@ -95,24 +107,28 @@ public class LectorCSV {
         return cadena.equalsIgnoreCase("true") || cadena.equalsIgnoreCase("false");
     }
 
-
-
-    public static String[][] parserLineas(List<String> lineas) throws CSVParserException {
-        int filas = lineas.size();
-        String[][] matriz = null;
-        for(int i=0; i < lineas.size(); i++) {
-            String linea = lineas.get(i);
-            String[] campos = linea.split(",");
-            if (matriz == null) {
-                matriz = new String[filas][campos.length];
-            }
-            if (matriz[0].length != campos.length) {
-                throw new CSVParserException();            
-            }
-            for(int j=0; j < campos.length; j++) {
-                matriz[i][j] = campos[j];
-            }
-        }
-        return matriz;
+    public Etiqueta[] getEncabezados() {
+        return this.encabezados;
     }
+
+
+
+    // public static String[][] parserLineas(List<String> lineas) throws CSVParserException {
+    //     int filas = lineas.size();
+    //     String[][] matriz = null;
+    //     for(int i=0; i < lineas.size(); i++) {
+    //         String linea = lineas.get(i);
+    //         String[] campos = linea.split(",");
+    //         if (matriz == null) {
+    //             matriz = new String[filas][campos.length];
+    //         }
+    //         if (matriz[0].length != campos.length) {
+    //             throw new CSVParserException();            
+    //         }
+    //         for(int j=0; j < campos.length; j++) {
+    //             matriz[i][j] = campos[j];
+    //         }
+    //     }
+    //     return matriz;
+    // }
 }
