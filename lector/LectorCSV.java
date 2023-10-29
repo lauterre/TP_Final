@@ -14,13 +14,14 @@ import columna.Columna;
 import columna.ColumnaNum;
 import columna.ColumnaString;
 import etiqueta.Etiqueta;
+import etiqueta.EtiquetaNum;
 import etiqueta.EtiquetaString;
 import lector.exceptions.ArchivoNoEncontradoException;
 import lector.exceptions.CSVParserException;
 
 public class LectorCSV {
 
-    Etiqueta[] encabezados;
+    private Etiqueta[] encabezados;
 
     public List<String> leer(String ruta) throws ArchivoNoEncontradoException {
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(ruta))) {
@@ -45,17 +46,22 @@ public class LectorCSV {
         }
 
         for (int l = 0; l < lineas.size(); l++) {
-                String[] campos = lineas.get(l).split(",");
-                if (l == 0) {
-                    this.encabezados = new Etiqueta[campos.length];
-                    for (int campo = 0; campo < campos.length; campo++){
+            String[] campos = lineas.get(l).split(",");
+            if (l == 0) {
+                this.encabezados = new Etiqueta[campos.length];
+                for (int campo = 0; campo < campos.length; campo++){
+                    if (tieneEncabezados) {
                         EtiquetaString etiqueta = new EtiquetaString(campos[campo]);
+                        encabezados[campo] = etiqueta;
+                    } else {
+                        EtiquetaNum etiqueta = new EtiquetaNum(campo);
                         encabezados[campo] = etiqueta;
                     }
                 }
-                if (campos.length != cantidadColumnas) {
-                    throw new CSVParserException();
-                }
+            }
+            if (campos.length != cantidadColumnas) {
+                throw new CSVParserException();
+            }
 
             for (int i = 0; i < cantidadColumnas; i++) {
                 columnas.get(i).add(campos[i]);
