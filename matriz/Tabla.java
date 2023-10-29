@@ -71,7 +71,7 @@ public class Tabla {
                 Etiqueta etiqueta = new EtiquetaString(matriz[0][i].toString());
                 this.colLabels.put(etiqueta, i - inicioColumna);
             } else {
-                Etiqueta etiqueta = new EtiquetaNum((int) matriz[0][i]);
+                Etiqueta etiqueta = new EtiquetaNum(i - inicioColumna);
                 this.colLabels.put(etiqueta, i - inicioColumna);
             }
         }
@@ -81,7 +81,7 @@ public class Tabla {
             if (tieneEncabezadosFilas) {
                 etiqueta = new EtiquetaString(matriz[i][0].toString());
             } else {
-                etiqueta = new EtiquetaNum((int) matriz[i][0]);
+                etiqueta = new EtiquetaNum(i - inicioFila);
             }
             this.rowLabels.put(etiqueta, i - inicioFila);
         }
@@ -217,4 +217,23 @@ public class Tabla {
         return out;
     }
 
+    public static void main(String[] args) {
+        String[][] matriz = new String[3][3];
+
+        matriz[0][0] = "Nombre";
+        matriz[0][1] = "Apellido";
+        matriz[0][2] = "Edad";
+        matriz[1][0] = "Martín";
+        matriz[1][1] = "Gutiérrez";
+        matriz[1][2] = "23";
+        matriz[2][0] = "Juan";
+        matriz[2][1] = "Moreno";
+        matriz[2][2] = "34";
+
+        Tabla tabla = new Tabla(matriz, true, true);
+
+        System.out.println(tabla.toString());
+        System.out.println(tabla.colLabels.keySet());
+        System.out.println(tabla.colLabels.values());
+    }
 }

@@ -34,4 +34,9 @@ public class CeldaString extends Celda{
             return true;
         } else return false;
     }
+
+    @Override
+    public String toString() {
+        return this.valor;
+    }
 }
