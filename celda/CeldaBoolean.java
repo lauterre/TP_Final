@@ -41,6 +41,7 @@ public class CeldaBoolean extends Celda {
         } else return 0;
     }
 
+    @Override
     public Boolean getValor() {
         return valor;
     }

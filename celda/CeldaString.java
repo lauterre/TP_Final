@@ -7,6 +7,7 @@ public class CeldaString extends Celda{
         this.valor = valor;
     }
 
+    @Override
     public String getValor() {
         return valor;
     }

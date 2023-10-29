@@ -60,6 +60,7 @@ public class Tabla {
                 } else if (matriz[j][i] instanceof String) {
                     celda = new CeldaString((String) matriz[j][i]);
                 } else {
+                    //TODO: excepcion propia
                     throw new IllegalArgumentException("Tipo de datos no compatible en la matriz");
                 }
                 celdas.add(celda);
@@ -67,29 +68,43 @@ public class Tabla {
             Columna columna = crearColumna(celdas);
             this.columnas.add(columna);
             if (tieneEncabezadosColumnas) {
-                Etiqueta etiqueta = matriz[0][i] instanceof String
-                        ? new EtiquetaString((String) matriz[0][i])
-                        : new EtiquetaNum((int) matriz[0][i]);
+                Etiqueta etiqueta = new EtiquetaString(matriz[0][i].toString());
+                this.colLabels.put(etiqueta, i - inicioColumna);
+            } else {
+                Etiqueta etiqueta = new EtiquetaNum((int) matriz[0][i]);
                 this.colLabels.put(etiqueta, i - inicioColumna);
             }
         }
 
         for (int i = inicioFila; i < matriz.length; i++) {
-            Etiqueta etiqueta = matriz[i][0] instanceof String
-                    ? new EtiquetaString((String) matriz[i][0])
-                    : new EtiquetaNum((int) matriz[i][0]);
+            Etiqueta etiqueta;
+            if (tieneEncabezadosFilas) {
+                etiqueta = new EtiquetaString(matriz[i][0].toString());
+            } else {
+                etiqueta = new EtiquetaNum((int) matriz[i][0]);
+            }
             this.rowLabels.put(etiqueta, i - inicioFila);
         }
     }
 
-    //TODO etiquetas de filas
-    public Tabla(String rutaArchivo, boolean tieneEncabezados) {
+    public Tabla(String rutaArchivo, boolean tieneEncabezadosColumnas, boolean tieneEncabezadosFilas) {
         LectorCSV lector = new LectorCSV();
         try {
             List<String> lineas = lector.leer(rutaArchivo);
-            List<Columna> cols = lector.parserColumnas(lineas, tieneEncabezados);
+            List<Columna> cols = lector.parserColumnas(lineas, tieneEncabezadosColumnas);
             this.columnas = cols;
-            if (tieneEncabezados) setEtiquetasColumnas(lector.getEncabezados());
+            if (tieneEncabezadosColumnas) setEtiquetasColumnas(lector.getEncabezados());
+            Etiqueta[] etiquetasFilas = new Etiqueta[this.columnas.get(0).size()];
+            for (int i = 0; i < this.columnas.get(0).size(); i ++) {
+                if (tieneEncabezadosFilas) {
+                    EtiquetaString etiqueta = new EtiquetaString(this.columnas.get(0).obtenerValor(i).getValor().toString());
+                    etiquetasFilas[i] = etiqueta;
+                    this.columnas.remove(0);
+                } else {
+                    EtiquetaNum etiqueta = new EtiquetaNum(i);
+                    etiquetasFilas[i] = etiqueta;
+                }
+            }
             
         } catch (ArchivoNoEncontradoException | CSVParserException e) {
             // TODO Auto-generated catch block

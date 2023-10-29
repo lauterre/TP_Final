@@ -26,6 +26,7 @@ public class CeldaNum extends Celda{
         }
     }
 
+    @Override
     public Number getValor() {
         return valor;
     }
