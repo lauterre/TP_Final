@@ -1,7 +1,7 @@
 package matriz;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,12 +24,14 @@ public class Tabla {
     List<Columna> columnas;
     Map <Etiqueta, Integer> colLabels;
     Map <Etiqueta, Integer> rowLabels;
+    boolean tieneEtiquetaCol = false;
+    boolean tieneEtiquetaFila = false;
 
     public Tabla(int cantidadColumnas){
         // TODO : Exceptions
         columnas = new ArrayList<>();
-        colLabels = new HashMap<>();
-        rowLabels = new HashMap<>();
+        colLabels = new LinkedHashMap<>();
+        rowLabels = new LinkedHashMap<>();
     }
 
     public Tabla(int cantidadColumnas, Etiqueta[] etiquetas) {
@@ -39,55 +41,60 @@ public class Tabla {
         setEtiquetasColumnas(etiquetas);
     }
 
-    // toda del chatgpt
     public Tabla(Object[][] matriz, boolean tieneEncabezadosColumnas, boolean tieneEncabezadosFilas) {
+        this.tieneEtiquetaCol = tieneEncabezadosColumnas;
+        this.tieneEtiquetaFila = tieneEncabezadosFilas;
         int cantidadColumnas = matriz[0].length;
         this.columnas = new ArrayList<>();
-        this.colLabels = new HashMap<>();
-        this.rowLabels = new HashMap<>();
+        colLabels = new LinkedHashMap<>();
+        rowLabels = new LinkedHashMap<>();
 
         int inicioFila = tieneEncabezadosFilas ? 1 : 0;
         int inicioColumna = tieneEncabezadosColumnas ? 1 : 0;
 
-        for (int i = inicioColumna; i < cantidadColumnas; i++) {
+        for (int i = inicioFila; i < cantidadColumnas; i++) {
             List<Celda> celdas = new ArrayList<>();
-            for (int j = inicioFila; j < matriz.length; j++) {
-                Celda celda;
-                if (matriz[j][i] instanceof Boolean) {
-                    celda = new CeldaBoolean((Boolean) matriz[j][i]);
-                } else if (matriz[j][i] instanceof Number) {
-                    celda = new CeldaNum((Number) matriz[j][i]);
-                } else if (matriz[j][i] instanceof String) {
-                    celda = new CeldaString((String) matriz[j][i]);
-                } else {
-                    //TODO: excepcion propia
-                    throw new IllegalArgumentException("Tipo de datos no compatible en la matriz");
-                }
+            for (int j = inicioColumna; j < matriz.length; j++) {
+                Celda celda = crearCelda(matriz[j][i]);
                 celdas.add(celda);
             }
             Columna columna = crearColumna(celdas);
             this.columnas.add(columna);
             if (tieneEncabezadosColumnas) {
                 Etiqueta etiqueta = new EtiquetaString(matriz[0][i].toString());
-                this.colLabels.put(etiqueta, i - inicioColumna);
+                this.colLabels.put(etiqueta, i - inicioFila);
             } else {
-                Etiqueta etiqueta = new EtiquetaNum(i - inicioColumna);
-                this.colLabels.put(etiqueta, i - inicioColumna);
+                Etiqueta etiqueta = new EtiquetaNum(i - inicioFila);
+                this.colLabels.put(etiqueta, i - inicioFila);
             }
         }
 
-        for (int i = inicioFila; i < matriz.length; i++) {
+        for (int i = inicioColumna; i < matriz.length; i++) {
             Etiqueta etiqueta;
             if (tieneEncabezadosFilas) {
-                etiqueta = new EtiquetaString(matriz[i][0].toString());
+                etiqueta = new EtiquetaString(matriz[i][0].toString()); 
             } else {
-                etiqueta = new EtiquetaNum(i - inicioFila);
+                etiqueta = new EtiquetaNum(i - inicioColumna);
             }
-            this.rowLabels.put(etiqueta, i - inicioFila);
+            this.rowLabels.put(etiqueta, i - inicioColumna);
         }
     }
 
+    public Tabla(int[][] matriz, boolean tieneEncabezadosColumnas, boolean tieneEncabezadosFilas) {
+        this(convertirMatrizANumber(matriz),tieneEncabezadosColumnas, tieneEncabezadosFilas);
+    }
+
+    public Tabla(float[][] matriz, boolean tieneEncabezadosColumnas, boolean tieneEncabezadosFilas) {
+        this(convertirMatrizANumber(matriz),tieneEncabezadosColumnas, tieneEncabezadosFilas);
+    }
+
+    public Tabla(double[][] matriz, boolean tieneEncabezadosColumnas, boolean tieneEncabezadosFilas) {
+        this(convertirMatrizANumber(matriz),tieneEncabezadosColumnas, tieneEncabezadosFilas);
+    }
+
     public Tabla(String rutaArchivo, boolean tieneEncabezadosColumnas, boolean tieneEncabezadosFilas) {
+        this.tieneEtiquetaCol = tieneEncabezadosColumnas;
+        this.tieneEtiquetaFila = tieneEncabezadosFilas;
         LectorCSV lector = new LectorCSV();
         try {
             List<String> lineas = lector.leer(rutaArchivo);
@@ -172,6 +179,27 @@ public class Tabla {
         Columna columna = columnas.get(colLabels.get(etiquetaColumna));
         columna.ordenar(orden);
     }
+//tener que pasarle una instancia de etiqueta es incomodo para trabajar, no es mejor que reciba un string o un int? (en los demás métodos también)
+    public void eliminarColumna(Etiqueta etiqueta) {
+        Columna columna = obtenerColumna(etiqueta);
+        this.columnas.remove(columna);
+        this.colLabels.remove(etiqueta);
+    }
+
+    private Celda crearCelda(Object valor) {
+        Celda celda;
+        if (valor instanceof Boolean) {
+            celda = new CeldaBoolean((Boolean) valor);
+        } else if (valor instanceof Number) {
+            celda = new CeldaNum((Number) valor);
+        } else if (valor instanceof String) {
+            celda = new CeldaString((String) valor);
+        } else {
+            //TODO: excepcion propia
+            throw new IllegalArgumentException("Tipo de datos no compatible en la matriz");
+        }
+        return celda;
+    }
 
     private Columna crearColumna(List<Celda> celdas) {
         // Identificar el tipo de columna
@@ -198,16 +226,60 @@ public class Tabla {
         }
     }
 
+    private static Number[][] convertirMatrizANumber(int[][] matriz) {
+        int cantidadFilas = matriz.length;
+        int cantidadColumnas = matriz[0].length;
+        Number[][] matrizNumber = new Number[cantidadFilas][cantidadColumnas];
+        for (int i = 0; i < cantidadFilas; i++) {
+            for (int j = 0; j < cantidadColumnas; j++) {
+                matrizNumber[i][j] = (Number) matriz[i][j];
+            }
+        }
+        return matrizNumber;
+    }
+
+    private static Number[][] convertirMatrizANumber(float[][] matriz) {
+        int cantidadFilas = matriz.length;
+        int cantidadColumnas = matriz[0].length;
+        Number[][] matrizNumber = new Number[cantidadFilas][cantidadColumnas];
+        for (int i = 0; i < cantidadFilas; i++) {
+            for (int j = 0; j < cantidadColumnas; j++) {
+                matrizNumber[i][j] = (Number) matriz[i][j];
+            }
+        }
+        return matrizNumber;
+    }
+
+    private static Number[][] convertirMatrizANumber(double[][] matriz) {
+        int cantidadFilas = matriz.length;
+        int cantidadColumnas = matriz[0].length;
+        Number[][] matrizNumber = new Number[cantidadFilas][cantidadColumnas];
+        for (int i = 0; i < cantidadFilas; i++) {
+            for (int j = 0; j < cantidadColumnas; j++) {
+                matrizNumber[i][j] = (Number) matriz[i][j];
+            }
+        }
+        return matrizNumber;
+    }
+
+    //TODO: esto hay que mejorarlo
     @Override
     public String toString() {
-        String out = "  | ";
+        String out;
+        if (tieneEtiquetaFila) {
+            out = "      | ";
+        } else {
+            out = "";
+        }
         String sep = " | ";
-        for(Etiqueta label : colLabels.keySet()) {
-            out += label + sep;
+        if (tieneEtiquetaCol){
+            for(Etiqueta label : colLabels.keySet()) {
+                out += label + sep;
+            }
         }
         out += "\n";
         for(Etiqueta fila : rowLabels.keySet()) {
-            out += fila + sep;
+            if (tieneEtiquetaFila) out += fila + sep;
             for(Etiqueta columna : colLabels.keySet()) {
                 out += obtenerCelda(fila, columna);
                 out += sep;
@@ -224,16 +296,33 @@ public class Tabla {
         matriz[0][1] = "Apellido";
         matriz[0][2] = "Edad";
         matriz[1][0] = "Martín";
-        matriz[1][1] = "Gutiérrez";
+        matriz[1][1] = "Gutierrez";
         matriz[1][2] = "23";
-        matriz[2][0] = "Juan";
+        matriz[2][0] = "Javier";
         matriz[2][1] = "Moreno";
         matriz[2][2] = "34";
 
-        Tabla tabla = new Tabla(matriz, true, true);
+        
+        // matriz[0][0] = 0;
+        // matriz[0][1] = 1;
+        // matriz[0][2] = 2;
+        // matriz[1][0] = 3;
+        // matriz[1][1] = 4;
+        // matriz[1][2] = 5;
+        // matriz[2][0] = 6;
+        // matriz[2][1] = 7;
+        // matriz[2][2] = 8;
+
+        Tabla tabla = new Tabla(matriz, true, false);
 
         System.out.println(tabla.toString());
+        System.out.println("etiquetas de columna");
         System.out.println(tabla.colLabels.keySet());
         System.out.println(tabla.colLabels.values());
+
+        
+        System.out.println("etiquetas de fila");
+        System.out.println(tabla.rowLabels.keySet());
+        System.out.println(tabla.rowLabels.values());
     }
 }
