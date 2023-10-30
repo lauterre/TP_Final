@@ -43,4 +43,9 @@ public class CeldaNum extends Celda{
             return false;
         }
     }
+
+    @Override
+    public String toString() {
+        return valor.toString();
+    }
 }
