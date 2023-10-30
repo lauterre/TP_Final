@@ -179,6 +179,12 @@ public class Tabla {
         Columna columna = columnas.get(colLabels.get(etiquetaColumna));
         columna.ordenar(orden);
     }
+//tener que pasarle una instancia de etiqueta es incomodo para trabajar, no es mejor que reciba un string o un int? (en los demás métodos también)
+    public void eliminarColumna(Etiqueta etiqueta) {
+        Columna columna = obtenerColumna(etiqueta);
+        this.columnas.remove(columna);
+        this.colLabels.remove(etiqueta);
+    }
 
     private Celda crearCelda(Object valor) {
         Celda celda;
