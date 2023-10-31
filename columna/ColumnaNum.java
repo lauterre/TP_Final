@@ -60,6 +60,12 @@ public class ColumnaNum extends Columna {
     public void setCeldas(List<CeldaNum> celdas) {
         this.celdas = celdas;
     }
+    
+    @Override
+    public void agregarCelda(Celda celda) {
+        //TODO: excepcion ClassCast
+        this.celdas.add((CeldaNum) celda);
+    }
 
     //para probar cosas:
     public String toString() {

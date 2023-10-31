@@ -31,6 +31,12 @@ public class CeldaNum extends Celda{
         return valor;
     }
 
+    @Override
+    public CeldaNum copia(){
+        valor = this.getValor();
+        return new CeldaNum(valor);
+    }
+
     public void setValor(Number valor) {
         this.valor = valor;
     }

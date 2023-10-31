@@ -1,4 +1,5 @@
 package columna;
+import java.util.List;
 
 import celda.Celda;
 
@@ -13,5 +14,6 @@ public abstract class Columna {
     public abstract String tipoDato();
 
     public abstract int size();
-    
+
+    public abstract void agregarCelda(Celda celda);     
 }

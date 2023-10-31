@@ -51,6 +51,12 @@ public class CeldaBoolean extends Celda {
     }
 
     @Override
+    public CeldaBoolean copia(){
+    valor = this.getValor();
+    return new CeldaBoolean(valor);
+    }
+
+    @Override
     public String toString() {
         if (!(valor==null)){
             return valor.toString();

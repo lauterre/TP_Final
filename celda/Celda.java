@@ -8,4 +8,6 @@ public abstract class Celda implements Comparable<Celda>{
 
     @Override
     public abstract int compareTo(Celda o);
+
+    public abstract Celda copia();
 }

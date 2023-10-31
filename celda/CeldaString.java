@@ -29,6 +29,12 @@ public class CeldaString extends Celda{
     }
 
     @Override
+    public CeldaString copia(){
+        valor = this.getValor();
+        return new CeldaString(valor);
+    }
+
+    @Override
     public boolean isNA() {
         if (this.valor == null || this.valor.equalsIgnoreCase("NA")) {
             return true;

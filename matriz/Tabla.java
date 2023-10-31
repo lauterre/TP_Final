@@ -1,9 +1,13 @@
 package matriz;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
+
+import javax.naming.LinkRef;
 
 import Exceptions.EtiquetaInvalidaException;
 import lector.LectorCSV;
@@ -40,6 +44,28 @@ public class Tabla {
         if (cantidadColumnas != etiquetas.length)
             throw new IllegalArgumentException("La longitud de etiquetas no coincide.");
         setEtiquetasColumnas(etiquetas);
+    }
+
+    public Tabla (Tabla m){
+        columnas = m.columnas;
+        colLabels = new LinkedHashMap<Etiqueta, Integer>();
+        colLabels.putAll(m.colLabels);
+        rowLabels = new LinkedHashMap<Etiqueta, Integer>();
+        rowLabels.putAll(m.rowLabels);
+    }
+
+    public Tabla copia(Tabla origen){
+        Tabla nueva = new Tabla(this);
+        nueva.columnas = new ArrayList<>();
+        for (Columna columna : columnas){
+            if (columna instanceof ColumnaNum){ //TODO: demas clases
+                ColumnaNum columnaNum = (ColumnaNum) columna;
+                Columna columnaNueva = new ColumnaNum(new ArrayList<CeldaNum>());
+                for (CeldaNum celda : columnaNum.getCeldas()){
+                    columnaNueva.agregarCelda(celda.copia());
+                }
+            }
+        }
     }
 
     public Tabla(Object[][] matriz, boolean tieneEncabezadosColumnas, boolean tieneEncabezadosFilas) {
@@ -113,7 +139,6 @@ public class Tabla {
                     etiquetasFilas[i] = etiqueta;
                 }
             }
-            
         } catch (ArchivoNoEncontradoException | CSVParserException e) {
             // TODO Auto-generated catch block
         }
@@ -197,6 +222,15 @@ public class Tabla {
         }
     }
 
+    private void generarRowLabelsOrdenado(List<Etiqueta> orden){
+        for (Etiqueta etiqueta : orden){
+            Integer indice = rowLabels.get(etiqueta);
+            rowLabels.remove(etiqueta);
+            rowLabels.put(etiqueta, indice);
+        }
+    }
+
+
     public void ordenar(Etiqueta etiquetaColumna, String orden) {
         Columna columna = columnas.get(colLabels.get(etiquetaColumna));
         columna.ordenar(orden);
@@ -250,7 +284,7 @@ public class Tabla {
     }
 
     private Etiqueta getEtiquetaFila(String valor) throws EtiquetaInvalidaException {
-        for (Etiqueta etiqueta : this.colLabels.keySet()) {
+        for (Etiqueta etiqueta : this.rowLabels.keySet()) {
             if(etiqueta.getNombre().equals(valor)) {
                 return etiqueta;
             }
@@ -259,7 +293,7 @@ public class Tabla {
     }
 
     private Etiqueta getEtiquetaFila(Integer valor) throws EtiquetaInvalidaException {
-        for (Etiqueta etiqueta : this.colLabels.keySet()) {
+        for (Etiqueta etiqueta : this.rowLabels.keySet()) {
             if(etiqueta.getNombre().equals(valor)) {
                 return etiqueta;
             }
@@ -368,6 +402,36 @@ public class Tabla {
             out += "\n";
         }
         return out;
+    }
+
+
+
+    
+
+    public Tabla filtrar ( Etiqueta col, char operador, Celda valor){
+        Map<Character, Predicate<Celda>> operadores = new HashMap<>();
+        operadores.put('<', e -> e.compareTo(valor) < 0);
+        operadores.put('>', e -> e.compareTo(valor) > 0);
+        operadores.put('=', e -> e.compareTo(valor) == 0);
+        operadores.put('!', e -> e.compareTo(valor) != 0);
+
+        Predicate<Celda> condicion = operadores.get(operador);
+        List<Etiqueta> salida = new ArrayList<>();
+        
+        if (condicion != null){
+            for(Etiqueta rowLabel : rowLabels.keySet()){
+                Celda valorAComparar = obtenerCelda(rowLabel, col);
+                if (condicion.test(valorAComparar)){
+                    salida.add(rowLabel);
+                }                
+            }
+        }else{
+            throw new IllegalArgumentException();
+        }
+        Tabla nueva = new Tabla(this);
+        nueva.generarRowLabelsOrdenado(salida);
+        return nueva; 
+
     }
 
     public static void main(String[] args) {

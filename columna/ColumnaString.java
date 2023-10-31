@@ -61,6 +61,12 @@ public class ColumnaString extends Columna{
         this.celdas = celdas;
     }
 
+    @Override
+    public void agregarCelda(Celda celda) {
+        //TODO: excepcion ClassCast
+        this.celdas.add((CeldaString) celda);
+    }
+
     //para probar cosas:
     public String toString() {
         String inicial = "";
