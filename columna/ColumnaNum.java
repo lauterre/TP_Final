@@ -64,8 +64,8 @@ public class ColumnaNum extends Columna {
     //para probar cosas:
     public String toString() {
         String inicial = "";
-        for (CeldaNum celdaNum : celdas) {
-            inicial += celdaNum.getValor();
+        for (CeldaNum celda : celdas) {
+            inicial += celda;
             inicial += ", ";
         }
         return inicial;
