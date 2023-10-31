@@ -7,7 +7,7 @@ public class EtiquetaNum extends Etiqueta {
         this.nombre = nombre;
     }
 
-    public int getNombre() {
+    public Integer getNombre() {
         return nombre;
     }
 

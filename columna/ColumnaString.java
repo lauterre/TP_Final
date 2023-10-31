@@ -65,7 +65,7 @@ public class ColumnaString extends Columna{
     public String toString() {
         String inicial = "";
         for (CeldaString celda : celdas) {
-            inicial += celda.getValor();
+            inicial += celda;
             inicial += ", ";
         }
         return inicial;

@@ -52,6 +52,10 @@ public class CeldaBoolean extends Celda {
 
     @Override
     public String toString() {
-        return this.valor.toString();
+        if (!(valor==null)){
+            return valor.toString();
+        } else {
+            return null; //return "NA".toString()
+        }
     }
 }

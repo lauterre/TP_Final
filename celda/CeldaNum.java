@@ -46,6 +46,10 @@ public class CeldaNum extends Celda{
 
     @Override
     public String toString() {
-        return valor.toString();
+        if (!(valor==null)){
+            return valor.toString();
+        } else {
+            return null; //return "NA".toString()
+        }
     }
 }

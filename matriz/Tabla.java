@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import Exceptions.EtiquetaInvalidaException;
 import lector.LectorCSV;
 import lector.exceptions.ArchivoNoEncontradoException;
 import lector.exceptions.CSVParserException;
@@ -133,6 +134,7 @@ public class Tabla {
         }
     }
 
+    // sería mejor que devuelva un iterable
     public String obtenerEtiquetasColumnas(){
         String etiquetasColumnas = "";
         for (Etiqueta etiqueta : colLabels.keySet()){
@@ -170,20 +172,99 @@ public class Tabla {
         return cantidadColumnas;
     }
 
-    public Columna obtenerColumna(Etiqueta etiquetaColumna){
-        Columna columnaPedida = columnas.get(colLabels.get(etiquetaColumna));
-        return columnaPedida;
+    public Columna obtenerColumna(String etiquetaColumnaNombre){
+        try {
+            Etiqueta etiquetaColumna = getEtiquetaColumna(etiquetaColumnaNombre);
+            Columna columnaPedida = columnas.get(colLabels.get(etiquetaColumna));
+            return columnaPedida;
+        } catch (EtiquetaInvalidaException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    //en caso de que la etiqueta sea numerica
+    public Columna obtenerColumna(Integer etiquetaColumnaNombre){
+        try {
+            Etiqueta etiquetaColumna = getEtiquetaColumna(etiquetaColumnaNombre);
+            Columna columnaPedida = columnas.get(colLabels.get(etiquetaColumna));
+            return columnaPedida;
+        } catch (EtiquetaInvalidaException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public void ordenar(Etiqueta etiquetaColumna, String orden) {
         Columna columna = columnas.get(colLabels.get(etiquetaColumna));
         columna.ordenar(orden);
     }
+
+    //TODO: parece que ningun metodo funciona por lo de abajo, :)
 //tener que pasarle una instancia de etiqueta es incomodo para trabajar, no es mejor que reciba un string o un int? (en los demás métodos también)
-    public void eliminarColumna(Etiqueta etiqueta) {
-        Columna columna = obtenerColumna(etiqueta);
-        this.columnas.remove(columna);
-        this.colLabels.remove(etiqueta);
+    public void eliminarColumna(String etiquetaNombre) {
+        try {
+            Etiqueta etiqueta = getEtiquetaColumna(etiquetaNombre);
+            Columna columna = obtenerColumna(etiquetaNombre);
+            this.columnas.remove(columna);
+            this.colLabels.remove(etiqueta);
+        } catch (EtiquetaInvalidaException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    //en caso de que la etiqueta sea numerica
+    public void eliminarColumna(Integer etiquetaNombre) {
+        try {
+            Etiqueta etiqueta = getEtiquetaColumna(etiquetaNombre);
+            Columna columna = obtenerColumna(etiquetaNombre);
+            this.columnas.remove(columna);
+            this.colLabels.remove(etiqueta);
+        } catch (EtiquetaInvalidaException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    //TODO: metodos que usen el indice de la etiqueta, eliminarColumnaPorIndice(int indice), etc.
+
+    private Etiqueta getEtiquetaColumna(String valor) throws EtiquetaInvalidaException {
+        for (Etiqueta etiqueta : this.colLabels.keySet()) {
+            if(etiqueta.getNombre().equals(valor)) {
+                return etiqueta;
+            }
+        }
+        throw new EtiquetaInvalidaException();
+    }
+
+    private Etiqueta getEtiquetaColumna(Integer valor) throws EtiquetaInvalidaException {
+        for (Etiqueta etiqueta : this.colLabels.keySet()) {
+            if(etiqueta.getNombre().equals(valor)) {
+                return etiqueta;
+            }
+        }
+        throw new EtiquetaInvalidaException();
+    }
+
+    private Etiqueta getEtiquetaFila(String valor) throws EtiquetaInvalidaException {
+        for (Etiqueta etiqueta : this.colLabels.keySet()) {
+            if(etiqueta.getNombre().equals(valor)) {
+                return etiqueta;
+            }
+        }
+        throw new EtiquetaInvalidaException();
+    }
+
+    private Etiqueta getEtiquetaFila(Integer valor) throws EtiquetaInvalidaException {
+        for (Etiqueta etiqueta : this.colLabels.keySet()) {
+            if(etiqueta.getNombre().equals(valor)) {
+                return etiqueta;
+            }
+        }
+        throw new EtiquetaInvalidaException();
     }
 
     private Celda crearCelda(Object valor) {
@@ -324,5 +405,20 @@ public class Tabla {
         System.out.println("etiquetas de fila");
         System.out.println(tabla.rowLabels.keySet());
         System.out.println(tabla.rowLabels.values());
+
+        System.out.println("Borro la columna edad");
+        tabla.eliminarColumna("Edad");
+        System.out.println(tabla.toString());
+
+        System.out.println("etiquetas de columna");
+        System.out.println(tabla.colLabels.keySet());
+        System.out.println(tabla.colLabels.values());
+
+        
+        System.out.println("etiquetas de fila");
+        System.out.println(tabla.rowLabels.keySet());
+        System.out.println(tabla.rowLabels.values());
+
+        System.out.println("columna Apellido: " + tabla.obtenerColumna("Apellido"));
     }
 }
