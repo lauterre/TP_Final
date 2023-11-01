@@ -159,7 +159,23 @@ public class Tabla {
         }
     }
 
-    // sería mejor que devuelva un iterable
+    public List<Etiqueta> getEtiquetasColumnas() {
+        List<Etiqueta> etiquetasColumnas = new ArrayList<>();
+        for (Etiqueta etiqueta : colLabels.keySet()) {
+            etiquetasColumnas.add(etiqueta);
+        }
+        return etiquetasColumnas;
+    }
+
+    public List<Etiqueta> getEtiquetasFilas() {
+        List<Etiqueta> etiquetasFilas = new ArrayList<>();
+        for (Etiqueta etiqueta : rowLabels.keySet()) {
+            etiquetasFilas.add(etiqueta);
+        }
+        return etiquetasFilas;
+    }
+
+    // sería mejor que devuelva un iterable --> Lo incluí en los métodos anteriores, dejé estos por las dudas
     public String obtenerEtiquetasColumnas(){
         String etiquetasColumnas = "";
         for (Etiqueta etiqueta : colLabels.keySet()){
@@ -222,6 +238,16 @@ public class Tabla {
         }
     }
 
+    public List<Celda> obtenerFila(Etiqueta etiqueta) {
+        List<Celda> filaPedida = new ArrayList<>();
+        
+        for (Etiqueta etiquetaColumna : colLabels.keySet()) {
+            filaPedida.add(obtenerCelda(etiqueta, etiquetaColumna));
+        }
+
+        return filaPedida;
+    }
+
     private void generarRowLabelsOrdenado(List<Etiqueta> orden){
         for (Etiqueta etiqueta : orden){
             Integer indice = rowLabels.get(etiqueta);
@@ -264,6 +290,22 @@ public class Tabla {
     }
 
     //TODO: metodos que usen el indice de la etiqueta, eliminarColumnaPorIndice(int indice), etc.
+
+    public void eliminarFila(Etiqueta etiqueta) {
+        int index = rowLabels.get(etiqueta);
+        for (Columna columna : columnas) {
+            columna.eliminarCelda(index);
+        }
+        this.rowLabels.remove(etiqueta);
+    }
+
+    public Tabla filtrarColumnas(List<Etiqueta> etiquetas) {
+        Tabla copiaTabla = copia(this);
+        for (Etiqueta etiqueta : etiquetas) {
+            copiaTabla.eliminarColumna((String) etiqueta.getNombre());
+        }
+        return copiaTabla;
+    }
 
     private Etiqueta getEtiquetaColumna(String valor) throws EtiquetaInvalidaException {
         for (Etiqueta etiqueta : this.colLabels.keySet()) {
@@ -404,9 +446,110 @@ public class Tabla {
         return out;
     }
 
+    public Tabla concatenarTabla(Tabla otraTabla) {
+        List<Etiqueta> etiquetasDistintas = new ArrayList<>();
+        int numeroFilasActuales = obtenerCantidadFilas();
+        int numeroFilasNuevas = otraTabla.obtenerCantidadFilas();
 
+        List<Etiqueta> etiquetasActuales = this.getEtiquetasColumnas();
+        List<Etiqueta> etiquetasOtraTabla = otraTabla.getEtiquetasColumnas();
+        for (Etiqueta etiqueta : etiquetasOtraTabla) {
+            if (!(etiquetasActuales.contains(etiqueta))) {
+                etiquetasDistintas.add(etiqueta);
+            }
+        }
+        Tabla otraTablaFiltrada = otraTabla.filtrarColumnas(etiquetasDistintas);
 
-    
+        int numeroFilasTotales = numeroFilasActuales + numeroFilasNuevas;
+
+        Etiqueta[] etiquetasNuevaTabla = new Etiqueta[obtenerCantidadColumnas()];
+        for (int i=0; i < etiquetasActuales.size(); i++) {
+            etiquetasNuevaTabla[i] = etiquetasActuales.get(i);
+        }
+
+        Tabla nuevaTabla = new Tabla(obtenerCantidadColumnas(), etiquetasNuevaTabla);
+        nuevaTabla.colLabels = this.colLabels;
+        nuevaTabla.tieneEtiquetaCol = this.tieneEtiquetaCol;
+        if (this.tieneEtiquetaFila | otraTabla.tieneEtiquetaFila) {
+            nuevaTabla.tieneEtiquetaFila = true;
+            List<Etiqueta> etiquetasNuevas = otraTabla.getEtiquetasFilas();
+            for (int i=0; i < otraTabla.obtenerCantidadFilas(); i++) {
+                nuevaTabla.rowLabels.put(etiquetasNuevas.get(i), numeroFilasActuales-1+i);
+            }
+        } else {
+            for (int i=0; i < numeroFilasTotales; i++) {
+                Etiqueta etiqueta = new EtiquetaNum(i);
+                nuevaTabla.rowLabels = new LinkedHashMap<>();
+                nuevaTabla.rowLabels.put(etiqueta, i);
+            }
+        }
+        for (Etiqueta etiquetaColumna : nuevaTabla.getEtiquetasColumnas()) {
+            Columna columnaActual = nuevaTabla.obtenerColumna((String) etiquetaColumna.getNombre());
+            String tipoDato = columnaActual.tipoDato();
+            Columna nuevaColumna;
+            
+            if (!etiquetasOtraTabla.contains(etiquetaColumna)) {
+                if (tipoDato == "String") {
+                    List<CeldaString> nuevaLista = new ArrayList<>();
+                    for (int i=0; i<numeroFilasNuevas;i++){
+                        nuevaLista.add(null);
+                    }
+                    nuevaColumna = new ColumnaString(nuevaLista);
+                } else if (tipoDato == "Numerica") {
+                    List<CeldaNum> nuevaLista = new ArrayList<>();
+                    for (int i=0; i<numeroFilasNuevas;i++){
+                        nuevaLista.add(null);
+                    }
+                    nuevaColumna = new ColumnaNum(nuevaLista);
+                } else {
+                    List<CeldaBoolean> nuevaLista = new ArrayList<>();
+                    for (int i=0; i<numeroFilasNuevas;i++){
+                        nuevaLista.add(null);
+                    }
+                    nuevaColumna = new ColumnaBoolean(nuevaLista);
+                }
+            } else {
+                Columna nuevosValores = otraTabla.obtenerColumna((String) etiquetaColumna.getNombre());
+
+                if (tipoDato == "String") {
+                    List<CeldaString> nuevaLista = new ArrayList<>();
+                    for (Object celdaVieja : columnaActual.getCeldas()) {
+                        CeldaString celdaVieja2 = (CeldaString) celdaVieja;
+                        nuevaLista.add(celdaVieja2);
+                    }
+                    for (Object celdaNueva : nuevosValores.getCeldas()) {
+                        CeldaString celdaNueva2 = (CeldaString) celdaNueva;
+                        nuevaLista.add(celdaNueva2);
+                    }
+                    nuevaColumna = new ColumnaString(nuevaLista);
+                } else if (tipoDato == "Numerica") {
+                    List<CeldaNum> nuevaLista = new ArrayList<>();
+                    for (Object celdaVieja : columnaActual.getCeldas()) {
+                        CeldaNum celdaVieja2 = (CeldaNum) celdaVieja;
+                        nuevaLista.add(celdaVieja2);
+                    }
+                    for (Object celdaNueva : nuevosValores.getCeldas()) {
+                        CeldaNum celdaNueva2 = (CeldaNum) celdaNueva;
+                        nuevaLista.add(celdaNueva2);
+                    }
+                    nuevaColumna = new ColumnaNum(nuevaLista);
+                } else {
+                    List<CeldaBoolean> nuevaLista = new ArrayList<>();
+                    for (Object celdaVieja : columnaActual.getCeldas()) {
+                        CeldaBoolean celdaVieja2 = (CeldaBoolean) celdaVieja;
+                        nuevaLista.add(celdaVieja2);
+                    }
+                    for (Object celdaNueva : nuevosValores.getCeldas()) {
+                        CeldaBoolean celdaNueva2 = (CeldaBoolean) celdaNueva;
+                        nuevaLista.add(celdaNueva2);
+                    }
+                    nuevaColumna = new ColumnaBoolean(nuevaLista);
+                }   
+            }
+            nuevaTabla.columnas.add(nuevaColumna);
+        } 
+        return nuevaTabla;
+    }    
 
     public Tabla filtrar ( Etiqueta col, char operador, Celda valor){
         Map<Character, Predicate<Celda>> operadores = new HashMap<>();

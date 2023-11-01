@@ -7,7 +7,7 @@ import java.util.List;
 import celda.Celda;
 import celda.CeldaBoolean;
 
-public class ColumnaBoolean extends Columna {
+public class ColumnaBoolean extends Columna<CeldaBoolean> {
     private List<CeldaBoolean> celdas;
 
     public ColumnaBoolean(List<CeldaBoolean> celdas) {

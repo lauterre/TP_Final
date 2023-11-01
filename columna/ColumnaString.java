@@ -7,7 +7,7 @@ import java.util.List;
 import celda.Celda;
 import celda.CeldaString;
 
-public class ColumnaString extends Columna{
+public class ColumnaString extends Columna<CeldaString> {
     private List<CeldaString> celdas;
 
     public ColumnaString(List<CeldaString> celdas) {

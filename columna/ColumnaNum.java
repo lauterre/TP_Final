@@ -7,7 +7,7 @@ import java.util.List;
 import celda.Celda;
 import celda.CeldaNum;
 
-public class ColumnaNum extends Columna {
+public class ColumnaNum extends Columna<CeldaNum> {
     private List<CeldaNum> celdas;
 
     public ColumnaNum(List<CeldaNum> celdas) {
