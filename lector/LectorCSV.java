@@ -36,7 +36,6 @@ public class LectorCSV {
         }
     }
 
-
     public List<Columna> parserColumnas(List<String> lineas, boolean tieneEncabezados) throws CSVParserException {
         int cantidadColumnas = lineas.get(0).split(",").length;
         List<List<String>> columnas = new ArrayList<>();
@@ -49,7 +48,7 @@ public class LectorCSV {
             String[] campos = lineas.get(l).split(",");
             if (l == 0) {
                 this.encabezados = new Etiqueta[campos.length];
-                for (int campo = 0; campo < campos.length; campo++){
+                for (int campo = 0; campo < campos.length; campo++) {
                     if (tieneEncabezados) {
                         EtiquetaString etiqueta = new EtiquetaString(campos[campo]);
                         encabezados[campo] = etiqueta;
@@ -67,14 +66,15 @@ public class LectorCSV {
                 columnas.get(i).add(campos[i]);
             }
         }
-        
+
         List<Columna> cols = new ArrayList<>();
         for (List<String> columna : columnas) {
             if (tieneEncabezados) {
-                columna.remove(0);}
+                columna.remove(0);
+            }
             if (esNum(columna.get(1))) {
                 List<CeldaNum> colNum = new ArrayList<>();
-                for(String celda : columna){
+                for (String celda : columna) {
                     int numero = Integer.parseInt(celda);
                     CeldaNum celdaNum = new CeldaNum(numero);
                     colNum.add(celdaNum);
@@ -83,7 +83,7 @@ public class LectorCSV {
                 cols.add(col);
             } else if (esBool(columna.get(1))) {
                 List<CeldaBoolean> colBool = new ArrayList<>();
-                for(String celda : columna){
+                for (String celda : columna) {
                     boolean booleano = Boolean.parseBoolean(celda);
                     CeldaBoolean celdaBool = new CeldaBoolean(booleano);
                     colBool.add(celdaBool);
@@ -92,14 +92,14 @@ public class LectorCSV {
                 cols.add(col);
             } else {
                 List<CeldaString> colString = new ArrayList<>();
-                for(String celda : columna){
+                for (String celda : columna) {
                     CeldaString celdaString = new CeldaString(celda);
                     colString.add(celdaString);
                 }
                 ColumnaString col = new ColumnaString(colString);
                 cols.add(col);
             }
-            
+
         }
         return cols;
     }
@@ -109,7 +109,7 @@ public class LectorCSV {
     }
 
     private static boolean esBool(String cadena) {
-        //TODO: tambien con 0 y 1
+        // TODO: tambien con 0 y 1
         return cadena.equalsIgnoreCase("true") || cadena.equalsIgnoreCase("false");
     }
 

@@ -6,9 +6,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
-
-import javax.naming.LinkRef;
-
 import Exceptions.EtiquetaInvalidaException;
 import lector.LectorCSV;
 import lector.exceptions.ArchivoNoEncontradoException;
@@ -24,29 +21,30 @@ import columna.ColumnaString;
 import etiqueta.Etiqueta;
 import etiqueta.EtiquetaNum;
 import etiqueta.EtiquetaString;
+import fila.Fila;
 
 public class Tabla {
     List<Columna> columnas;
-    Map <Etiqueta, Integer> colLabels;
-    Map <Etiqueta, Integer> rowLabels;
+    Map<Etiqueta, Integer> colLabels;
+    Map<Etiqueta, Integer> rowLabels;
     boolean tieneEtiquetaCol = false;
     boolean tieneEtiquetaFila = false;
 
-    public Tabla(int cantidadColumnas){
+    public Tabla(int cantidadColumnas) {
         // TODO : Exceptions
         columnas = new ArrayList<>();
         colLabels = new LinkedHashMap<>();
         rowLabels = new LinkedHashMap<>();
     }
 
-    public Tabla(int cantidadColumnas, Etiqueta[] etiquetas) {
+    public Tabla(int cantidadColumnas, String[] etiquetas) { // TODO: debe ser etiqueta[] no string[]
         this(cantidadColumnas);
         if (cantidadColumnas != etiquetas.length)
             throw new IllegalArgumentException("La longitud de etiquetas no coincide.");
         setEtiquetasColumnas(etiquetas);
     }
 
-    public Tabla (Tabla m){
+    public Tabla(Tabla m) {
         columnas = m.columnas;
         colLabels = new LinkedHashMap<Etiqueta, Integer>();
         colLabels.putAll(m.colLabels);
@@ -54,19 +52,19 @@ public class Tabla {
         rowLabels.putAll(m.rowLabels);
     }
 
-    public Tabla copia(Tabla origen){
-        Tabla nueva = new Tabla(this);
-        nueva.columnas = new ArrayList<>();
-        for (Columna columna : columnas){
-            if (columna instanceof ColumnaNum){ //TODO: demas clases
-                ColumnaNum columnaNum = (ColumnaNum) columna;
-                Columna columnaNueva = new ColumnaNum(new ArrayList<CeldaNum>());
-                for (CeldaNum celda : columnaNum.getCeldas()){
-                    columnaNueva.agregarCelda(celda.copia());
-                }
-            }
-        }
-    }
+    // public Tabla copia(Tabla origen) {
+    // Tabla nueva = new Tabla(this);
+    // nueva.columnas = new ArrayList<>();
+    // for (Columna columna : columnas) {
+    // if (columna instanceof ColumnaNum) { // TODO: demas clases
+    // ColumnaNum columnaNum = (ColumnaNum) columna;
+    // Columna columnaNueva = new ColumnaNum(new ArrayList<CeldaNum>());
+    // for (CeldaNum celda : columnaNum.getCeldas()) {
+    // columnaNueva.agregarCelda(celda.copia());
+    // }
+    // }
+    // }
+    // }
 
     public Tabla(Object[][] matriz, boolean tieneEncabezadosColumnas, boolean tieneEncabezadosFilas) {
         this.tieneEtiquetaCol = tieneEncabezadosColumnas;
@@ -99,7 +97,7 @@ public class Tabla {
         for (int i = inicioColumna; i < matriz.length; i++) {
             Etiqueta etiqueta;
             if (tieneEncabezadosFilas) {
-                etiqueta = new EtiquetaString(matriz[i][0].toString()); 
+                etiqueta = new EtiquetaString(matriz[i][0].toString());
             } else {
                 etiqueta = new EtiquetaNum(i - inicioColumna);
             }
@@ -108,15 +106,15 @@ public class Tabla {
     }
 
     public Tabla(int[][] matriz, boolean tieneEncabezadosColumnas, boolean tieneEncabezadosFilas) {
-        this(convertirMatrizANumber(matriz),tieneEncabezadosColumnas, tieneEncabezadosFilas);
+        this(convertirMatrizANumber(matriz), tieneEncabezadosColumnas, tieneEncabezadosFilas);
     }
 
     public Tabla(float[][] matriz, boolean tieneEncabezadosColumnas, boolean tieneEncabezadosFilas) {
-        this(convertirMatrizANumber(matriz),tieneEncabezadosColumnas, tieneEncabezadosFilas);
+        this(convertirMatrizANumber(matriz), tieneEncabezadosColumnas, tieneEncabezadosFilas);
     }
 
     public Tabla(double[][] matriz, boolean tieneEncabezadosColumnas, boolean tieneEncabezadosFilas) {
-        this(convertirMatrizANumber(matriz),tieneEncabezadosColumnas, tieneEncabezadosFilas);
+        this(convertirMatrizANumber(matriz), tieneEncabezadosColumnas, tieneEncabezadosFilas);
     }
 
     public Tabla(String rutaArchivo, boolean tieneEncabezadosColumnas, boolean tieneEncabezadosFilas) {
@@ -127,11 +125,13 @@ public class Tabla {
             List<String> lineas = lector.leer(rutaArchivo);
             List<Columna> cols = lector.parserColumnas(lineas, tieneEncabezadosColumnas);
             this.columnas = cols;
-            if (tieneEncabezadosColumnas) setEtiquetasColumnas(lector.getEncabezados());
+            if (tieneEncabezadosColumnas)
+                setEtiquetasColumnas(lector.getEncabezados());
             Etiqueta[] etiquetasFilas = new Etiqueta[this.columnas.get(0).size()];
-            for (int i = 0; i < this.columnas.get(0).size(); i ++) {
+            for (int i = 0; i < this.columnas.get(0).size(); i++) {
                 if (tieneEncabezadosFilas) {
-                    EtiquetaString etiqueta = new EtiquetaString(this.columnas.get(0).obtenerValor(i).getValor().toString());
+                    EtiquetaString etiqueta = new EtiquetaString(
+                            this.columnas.get(0).obtenerValor(i).getValor().toString());
                     etiquetasFilas[i] = etiqueta;
                     this.columnas.remove(0);
                 } else {
@@ -142,62 +142,78 @@ public class Tabla {
         } catch (ArchivoNoEncontradoException | CSVParserException e) {
             // TODO Auto-generated catch block
         }
-        
+
     }
 
-    public void setEtiquetasFilas(Etiqueta[] etiquetas) {
+    public void setEtiquetasFilas(String[] etiquetas) {
         rowLabels.clear();
-        for(int i=0; i < columnas.get(0).size(); i++) {
-            rowLabels.put(etiquetas[i], i);
+        for (int i = 0; i < columnas.get(0).size(); i++) {
+            Etiqueta etiqueta = new EtiquetaString(etiquetas[i]);
+            rowLabels.put(etiqueta, i);
         }
+        this.tieneEtiquetaFila = true;
     }
 
-    public void setEtiquetasColumnas(Etiqueta[] etiquetas) {
+    public void setEtiquetasColumnas(String[] etiquetas) {
         colLabels.clear();
-        for(int j=0; j < columnas.size(); j++) {
-            colLabels.put(etiquetas[j], j);
+        for (int j = 0; j < columnas.size(); j++) {
+            Etiqueta etiqueta = new EtiquetaString(etiquetas[j]);
+            colLabels.put(etiqueta, j);
         }
-    }
+        this.tieneEtiquetaCol = true;
+    } // TODO: No me gusta nada, consultar al profe como resolver lo de columnas para
+      // no harcodear etiquetaString
 
     // sería mejor que devuelva un iterable
-    public String obtenerEtiquetasColumnas(){
+    public String obtenerEtiquetasColumnas() {
         String etiquetasColumnas = "";
-        for (Etiqueta etiqueta : colLabels.keySet()){
+        for (Etiqueta etiqueta : colLabels.keySet()) {
             etiquetasColumnas += etiqueta + ", ";
         }
         return etiquetasColumnas;
     }
 
-    public String obtenerEtiquetasFilas(){
+    public String obtenerEtiquetasFilas() {
         String etiquetasFilas = "";
-        for (Etiqueta etiqueta : rowLabels.keySet()){
+        for (Etiqueta etiqueta : rowLabels.keySet()) {
             etiquetasFilas += etiqueta + ", ";
         }
         return etiquetasFilas;
     }
 
-    public Celda obtenerCelda(Etiqueta etiquetaFila, Etiqueta etiquetaColumna) {
-        return columnas.get(colLabels.get(etiquetaColumna)).obtenerValor(rowLabels.get(etiquetaFila)); 
+    public Celda obtenerCelda(Etiqueta etiquetaFila, Etiqueta etiquetaColumna) throws EtiquetaInvalidaException {
+        if (!rowLabels.containsKey(etiquetaFila)) {
+            throw new EtiquetaInvalidaException();
+        }
+        if (!colLabels.containsKey(etiquetaColumna)) {
+            throw new EtiquetaInvalidaException();
+        }
+        return columnas.get(colLabels.get(etiquetaColumna)).obtenerValor(rowLabels.get(etiquetaFila));
     }
 
-    public Celda cambiarValor(Etiqueta etiquetaFila, Etiqueta etiquetaColumna, Celda valor) {
-        Celda celdaBorrada = obtenerCelda(etiquetaFila, etiquetaColumna);
-        columnas.get(colLabels.get(etiquetaColumna)).fijarValor(rowLabels.get(etiquetaFila), valor);
-
-        return celdaBorrada; 
+    public Celda cambiarValor(Etiqueta etiquetaFila, Etiqueta etiquetaColumna, Celda valor)
+            throws EtiquetaInvalidaException {
+        try {
+            Celda celdaBorrada = obtenerCelda(etiquetaFila, etiquetaColumna);
+            columnas.get(colLabels.get(etiquetaColumna)).fijarValor(rowLabels.get(etiquetaFila), valor);
+            return celdaBorrada;
+        } catch (EtiquetaInvalidaException e) {
+            System.out.println(e.getMessage());
+            throw e;
+        }
     }
 
-    public int obtenerCantidadFilas(){
-        int cantidadFilas  = columnas.get(0).size();
+    public int obtenerCantidadFilas() {
+        int cantidadFilas = columnas.get(0).size();
         return cantidadFilas;
     }
 
-    public int obtenerCantidadColumnas(){
+    public int obtenerCantidadColumnas() {
         int cantidadColumnas = columnas.size();
         return cantidadColumnas;
     }
 
-    public Columna obtenerColumna(String etiquetaColumnaNombre){
+    public Columna obtenerColumna(String etiquetaColumnaNombre) {
         try {
             Etiqueta etiquetaColumna = getEtiquetaColumna(etiquetaColumnaNombre);
             Columna columnaPedida = columnas.get(colLabels.get(etiquetaColumna));
@@ -209,8 +225,8 @@ public class Tabla {
         }
     }
 
-    //en caso de que la etiqueta sea numerica
-    public Columna obtenerColumna(Integer etiquetaColumnaNombre){
+    // en caso de que la etiqueta sea numerica
+    public Columna obtenerColumna(Integer etiquetaColumnaNombre) {
         try {
             Etiqueta etiquetaColumna = getEtiquetaColumna(etiquetaColumnaNombre);
             Columna columnaPedida = columnas.get(colLabels.get(etiquetaColumna));
@@ -222,22 +238,89 @@ public class Tabla {
         }
     }
 
-    private void generarRowLabelsOrdenado(List<Etiqueta> orden){
-        for (Etiqueta etiqueta : orden){
+    public Tabla ordernarPorColumnas(String[] columnasOrden, String queOrden) {
+        List<Etiqueta> orden = new ArrayList<>(rowLabels.keySet());
+        int n = orden.size();
+        boolean huboCambio;
+        Etiqueta[] etiquetasColumnas = new Etiqueta[columnasOrden.length];
+        try {
+            for (int i = 0; i < columnasOrden.length; i++) {
+                Etiqueta etiqueta = getEtiquetaColumna(columnasOrden[i]);
+                etiquetasColumnas[i] = etiqueta;
+            }
+        } catch (EtiquetaInvalidaException e) {
+            System.out.println(e.getMessage() + " La etiqueta debe estar en: " + colLabels.keySet().toString());
+        }
+
+        do {
+            huboCambio = false;
+            for (int i = 1; i < n; i++) {
+                Etiqueta etiquetaPrevia = orden.get(i - 1);
+                Etiqueta etiquetaActual = orden.get(i);
+
+                // Obtener filas con seleccion de columnas a ordenar
+                Fila filaPrevia = getFila(etiquetaPrevia, etiquetasColumnas);
+                Fila filaActual = getFila(etiquetaActual, etiquetasColumnas);
+
+                if (queOrden == "ascendente") {
+                    if (filaPrevia.compareTo(filaActual) > 0) {
+                        orden.set(i - 1, orden.get(i));
+                        orden.set(i, etiquetaPrevia);
+                        huboCambio = true;
+                    }
+                } else if (queOrden == "descendiente") {
+                    if (filaPrevia.compareTo(filaActual) < 0) {
+                        orden.set(i - 1, orden.get(i));
+                        orden.set(i, etiquetaPrevia);
+                        huboCambio = true;
+                    }
+                } else {
+                    throw new IllegalArgumentException("Indique un orden : 'ascendente' o 'descendente'");
+                }
+            }
+            n--;
+        } while (huboCambio);
+
+        Tabla nuevaTabla = new Tabla(this);
+        nuevaTabla.generarRowLabelsOrdenado(orden);
+        return nuevaTabla;
+    }
+
+    private Fila getFila(Etiqueta etiquetaFila, Etiqueta[] etiquetasColumnas) {
+        List<Celda> retorno = new ArrayList<>();
+        if (!rowLabels.containsKey(etiquetaFila)) {
+            throw new IllegalArgumentException();
+        }
+        for (Etiqueta etiqueta : etiquetasColumnas) {
+            if (!colLabels.containsKey(etiqueta)) {
+                throw new IllegalArgumentException();
+            }
+            try {
+                retorno.add(obtenerCelda(etiquetaFila, etiqueta));
+            } catch (EtiquetaInvalidaException e) {
+                e.getMessage();
+            }
+
+        }
+        return new Fila(retorno);
+    }
+
+    private void generarRowLabelsOrdenado(List<Etiqueta> orden) {
+        for (Etiqueta etiqueta : orden) {
             Integer indice = rowLabels.get(etiqueta);
             rowLabels.remove(etiqueta);
             rowLabels.put(etiqueta, indice);
         }
     }
 
-
     public void ordenar(Etiqueta etiquetaColumna, String orden) {
         Columna columna = columnas.get(colLabels.get(etiquetaColumna));
         columna.ordenar(orden);
     }
 
-    //TODO: parece que ningun metodo funciona por lo de abajo, :)
-//tener que pasarle una instancia de etiqueta es incomodo para trabajar, no es mejor que reciba un string o un int? (en los demás métodos también)
+    // TODO: parece que ningun metodo funciona por lo de abajo, :)
+    // tener que pasarle una instancia de etiqueta es incomodo para trabajar, no es
+    // mejor que reciba un string o un int? (en los demás métodos también)
     public void eliminarColumna(String etiquetaNombre) {
         try {
             Etiqueta etiqueta = getEtiquetaColumna(etiquetaNombre);
@@ -250,7 +333,7 @@ public class Tabla {
         }
     }
 
-    //en caso de que la etiqueta sea numerica
+    // en caso de que la etiqueta sea numerica
     public void eliminarColumna(Integer etiquetaNombre) {
         try {
             Etiqueta etiqueta = getEtiquetaColumna(etiquetaNombre);
@@ -263,11 +346,12 @@ public class Tabla {
         }
     }
 
-    //TODO: metodos que usen el indice de la etiqueta, eliminarColumnaPorIndice(int indice), etc.
+    // TODO: metodos que usen el indice de la etiqueta, eliminarColumnaPorIndice(int
+    // indice), etc.
 
     private Etiqueta getEtiquetaColumna(String valor) throws EtiquetaInvalidaException {
         for (Etiqueta etiqueta : this.colLabels.keySet()) {
-            if(etiqueta.getNombre().equals(valor)) {
+            if (etiqueta.getNombre().equals(valor)) {
                 return etiqueta;
             }
         }
@@ -276,25 +360,25 @@ public class Tabla {
 
     private Etiqueta getEtiquetaColumna(Integer valor) throws EtiquetaInvalidaException {
         for (Etiqueta etiqueta : this.colLabels.keySet()) {
-            if(etiqueta.getNombre().equals(valor)) {
+            if (etiqueta.getNombre().equals(valor)) {
                 return etiqueta;
             }
         }
         throw new EtiquetaInvalidaException();
     }
 
-    private Etiqueta getEtiquetaFila(String valor) throws EtiquetaInvalidaException {
+    public Etiqueta getEtiquetaFila(String valor) throws EtiquetaInvalidaException {
         for (Etiqueta etiqueta : this.rowLabels.keySet()) {
-            if(etiqueta.getNombre().equals(valor)) {
+            if (etiqueta.getNombre().equals(valor)) {
                 return etiqueta;
             }
         }
         throw new EtiquetaInvalidaException();
     }
 
-    private Etiqueta getEtiquetaFila(Integer valor) throws EtiquetaInvalidaException {
+    public Etiqueta getEtiquetaFila(Integer valor) throws EtiquetaInvalidaException {
         for (Etiqueta etiqueta : this.rowLabels.keySet()) {
-            if(etiqueta.getNombre().equals(valor)) {
+            if (etiqueta.getNombre().equals(valor)) {
                 return etiqueta;
             }
         }
@@ -310,7 +394,7 @@ public class Tabla {
         } else if (valor instanceof String) {
             celda = new CeldaString((String) valor);
         } else {
-            //TODO: excepcion propia
+            // TODO: excepcion propia
             throw new IllegalArgumentException("Tipo de datos no compatible en la matriz");
         }
         return celda;
@@ -377,7 +461,7 @@ public class Tabla {
         return matrizNumber;
     }
 
-    //TODO: esto hay que mejorarlo
+    // TODO: esto hay que mejorarlo
     @Override
     public String toString() {
         String out;
@@ -387,28 +471,30 @@ public class Tabla {
             out = "";
         }
         String sep = " | ";
-        if (tieneEtiquetaCol){
-            for(Etiqueta label : colLabels.keySet()) {
+        if (tieneEtiquetaCol) {
+            for (Etiqueta label : colLabels.keySet()) {
                 out += label + sep;
             }
         }
         out += "\n";
-        for(Etiqueta fila : rowLabels.keySet()) {
-            if (tieneEtiquetaFila) out += fila + sep;
-            for(Etiqueta columna : colLabels.keySet()) {
-                out += obtenerCelda(fila, columna);
-                out += sep;
+        for (Etiqueta fila : rowLabels.keySet()) {
+            if (tieneEtiquetaFila)
+                out += fila + sep;
+            for (Etiqueta columna : colLabels.keySet()) {
+                try {
+                    out += obtenerCelda(fila, columna);
+                    out += sep;
+                } catch (EtiquetaInvalidaException e) {
+                    e.getMessage();
+                }
+
             }
             out += "\n";
         }
         return out;
     }
 
-
-
-    
-
-    public Tabla filtrar ( Etiqueta col, char operador, Celda valor){
+    public Tabla filtrar(Etiqueta col, char operador, Celda valor) {
         Map<Character, Predicate<Celda>> operadores = new HashMap<>();
         operadores.put('<', e -> e.compareTo(valor) < 0);
         operadores.put('>', e -> e.compareTo(valor) > 0);
@@ -417,20 +503,24 @@ public class Tabla {
 
         Predicate<Celda> condicion = operadores.get(operador);
         List<Etiqueta> salida = new ArrayList<>();
-        
-        if (condicion != null){
-            for(Etiqueta rowLabel : rowLabels.keySet()){
-                Celda valorAComparar = obtenerCelda(rowLabel, col);
-                if (condicion.test(valorAComparar)){
-                    salida.add(rowLabel);
-                }                
+
+        if (condicion != null) {
+            for (Etiqueta rowLabel : rowLabels.keySet()) {
+                try {
+                    Celda valorAComparar = obtenerCelda(rowLabel, col);
+                    if (condicion.test(valorAComparar)) {
+                        salida.add(rowLabel);
+                    }
+                } catch (EtiquetaInvalidaException e) {
+                    e.getMessage();
+                }
             }
-        }else{
+        } else {
             throw new IllegalArgumentException();
         }
         Tabla nueva = new Tabla(this);
         nueva.generarRowLabelsOrdenado(salida);
-        return nueva; 
+        return nueva;
 
     }
 
@@ -447,7 +537,6 @@ public class Tabla {
         matriz[2][1] = "Moreno";
         matriz[2][2] = "34";
 
-        
         // matriz[0][0] = 0;
         // matriz[0][1] = 1;
         // matriz[0][2] = 2;
@@ -465,7 +554,6 @@ public class Tabla {
         System.out.println(tabla.colLabels.keySet());
         System.out.println(tabla.colLabels.values());
 
-        
         System.out.println("etiquetas de fila");
         System.out.println(tabla.rowLabels.keySet());
         System.out.println(tabla.rowLabels.values());
@@ -478,7 +566,6 @@ public class Tabla {
         System.out.println(tabla.colLabels.keySet());
         System.out.println(tabla.colLabels.values());
 
-        
         System.out.println("etiquetas de fila");
         System.out.println(tabla.rowLabels.keySet());
         System.out.println(tabla.rowLabels.values());
