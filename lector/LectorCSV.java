@@ -19,8 +19,7 @@ import etiqueta.EtiquetaString;
 import lector.exceptions.ArchivoNoEncontradoException;
 import lector.exceptions.CSVParserException;
 
-public class LectorCSV {
-
+public class LectorCSV extends LectorArchivo {
     private Etiqueta[] encabezados;
 
     public List<String> leer(String ruta) throws ArchivoNoEncontradoException {
@@ -102,18 +101,5 @@ public class LectorCSV {
             
         }
         return cols;
-    }
-
-    private static boolean esNum(String cadena) {
-        return cadena.matches("-?\\d+(\\.\\d+)?");
-    }
-
-    private static boolean esBool(String cadena) {
-        //TODO: tambien con 0 y 1
-        return cadena.equalsIgnoreCase("true") || cadena.equalsIgnoreCase("false");
-    }
-
-    public Etiqueta[] getEncabezados() {
-        return this.encabezados;
     }
 }
