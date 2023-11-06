@@ -5,7 +5,12 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import javax.naming.LinkRef;
 
@@ -307,6 +312,16 @@ public class Tabla {
         return copiaTabla;
     }
 
+    public Tabla filtrarFilas(List<Etiqueta> etiquetas) {
+        Tabla copiaTabla = copia(this);
+        for (Etiqueta etiqueta : copiaTabla.getEtiquetasFilas()) {
+            if (!(etiquetas.contains(etiqueta))) {
+                copiaTabla.eliminarFila(etiqueta);
+            }
+        }
+        return copiaTabla;
+    }
+
     private Etiqueta getEtiquetaColumna(String valor) throws EtiquetaInvalidaException {
         for (Etiqueta etiqueta : this.colLabels.keySet()) {
             if(etiqueta.getNombre().equals(valor)) {
@@ -550,6 +565,98 @@ public class Tabla {
         } 
         return nuevaTabla;
     }    
+
+    public <T> Map<T, Tabla> groupByColumna(Etiqueta etiqueta) {
+        if (getEtiquetasColumnas().contains(columna)){
+            Columna laColumnaIndicada = obtenerColumna((String) etiqueta.getNombre());
+            List<Celda> celdasColumna = laColumnaIndicada.getCeldas();
+            List<Etiqueta> etiquetasFilas = getEtiquetasFilas();
+
+            Map<Etiqueta, Celda> valores = new HashMap<>();
+            Map mapaAgrupado;
+            Map<Object, Tabla> resultadoAgrupado;
+            
+            for (int i=0; i< celdasColumna.size(); i++) {
+                valores.put(etiquetasFilas.get(i), celdasColumna.get(i));
+            }
+    
+            mapaAgrupado = valores.entrySet()
+                .stream()
+                .collect(Collectors.groupingBy(
+                    entry -> entry.getValue().getValor(),
+                    Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)
+                ));
+
+            if (laColumnaIndicada.tipoDato() == "String") {
+                for (String key : mapaAgrupado.keySet()) {
+                    Set filasGrupo = mapaAgrupado.get(key).keySet();
+                    List<Etiqueta> filasGrupoLista = (List<Etiqueta>) filasGrupo;
+                    Tabla subsetAgrupado = filtrarFilas(filasGrupoLista);
+                    resultadoAgrupado.put(key, subsetAgrupado);
+                }
+            } else if (laColumnaIndicada.tipoDato() == "Numerica") {
+                for (int key : mapaAgrupado.keySet()) {
+                    Set filasGrupo = mapaAgrupado.get(key).keySet();
+                    List<Etiqueta> filasGrupoLista = (List<Etiqueta>) filasGrupo;
+                    Tabla subsetAgrupado = filtrarFilas(filasGrupoLista);
+                    resultadoAgrupado.put(key, subsetAgrupado);
+                }
+            }
+            return resultadoAgrupado;
+        } else {
+            // TODO: Algun tipo de IndexError propio
+            throw new IllegalArgumentException("La etiqueta no se encuentra en las columnas.");
+        }
+    }
+
+    public <T> Map<Map<Etiqueta, T>, Tabla> groupByRecursivo(List<Etiqueta> etiquetas) {
+        if (etiquetas.size() == 1) {
+            Etiqueta ultimaEtiqueta = (Etiqueta) etiquetas.get(0);
+            Map<T, Tabla> agrupadoUnaColumna = groupByColumna(ultimaEtiqueta);
+            Map<Map<Etiqueta, T>, Tabla> resultadoProvisorio = new HashMap<>();
+            for (T key : agrupadoUnaColumna.keySet()) {
+                Map<Etiqueta, T> mapaEtiquetaValor = new HashMap<>();
+                mapaEtiquetaValor.put(ultimaEtiqueta, key);
+                resultadoProvisorio.put(mapaEtiquetaValor, agrupadoUnaColumna.get(key));
+            }
+            return resultadoProvisorio;
+        } else {
+            Map<Map<Etiqueta, T>, Tabla> resultadoProvisorio = new HashMap<>();
+            Etiqueta etiquetaActual = etiquetas.get(0);
+            etiquetas.remove(0);
+            resultadoProvisorio = groupByRecursivo(etiquetas);
+
+            Map<Map<Etiqueta, T>, Tabla> nuevoResultadoProvisorio = new HashMap<>();
+            for (Map.Entry entry : resultadoProvisorio.entrySet()) {
+                Tabla valoresAgrupados = (Tabla) entry.getValue();
+                Map<Etiqueta, T> mapaEtiquetaValor = (Map<Etiqueta, T>) entry.getKey();
+                Map<T, Tabla> agrupadoNuevaColumna = valoresAgrupados.groupByColumna(etiquetaActual);
+
+                for (Map.Entry entryInterior : agrupadoNuevaColumna.entrySet()) {
+                    Tabla valoresAgrupadosInterno = (Tabla) entryInterior.getValue();
+                    T valorEspecifico = (T) entryInterior.getKey();
+
+                    Map<Etiqueta, T> nuevoMapaEtiquetaValor = new HashMap();
+                    for (Etiqueta etiquetaInterior : mapaEtiquetaValor.keySet()) {
+                        nuevoMapaEtiquetaValor.put(etiquetaInterior, mapaEtiquetaValor.get(etiquetaInterior));
+                    }
+                    nuevoMapaEtiquetaValor.put(etiquetaActual, valorEspecifico);
+                    nuevoResultadoProvisorio.put(nuevoMapaEtiquetaValor, valoresAgrupadosInterno);
+                }
+            }
+            return nuevoResultadoProvisorio;
+        }
+    } 
+
+    public <T> Map<Map<Etiqueta, T>, Tabla> groupByMultiple(List<Etiqueta> etiquetas) {
+        if (getEtiquetasColumnas().containsAll(columnas)) {
+            Map<Map<Etiqueta, T>, Tabla> resultadoAgrupado = groupByRecursivo(etiquetas); 
+            return resultadoAgrupado;
+        } else {
+            // TODO: Algún tipo de IndexError
+            throw new IllegalArgumentException("No todas las etiquetas se encuentran en las columnas.");
+        }
+    }
 
     public Tabla filtrar ( Etiqueta col, char operador, Celda valor){
         Map<Character, Predicate<Celda>> operadores = new HashMap<>();
