@@ -151,6 +151,23 @@ public class Tabla {
 
     }
 
+    private Etiqueta[] convertirAEtiqueta(String[] nombres){
+        Etiqueta[] salida = new Etiqueta[nombres.length];
+        for (int i = 0; i < nombres.length; i++) {
+            Etiqueta etiqueta = Etiqueta.crear(nombres[i]);
+            salida[i] = etiqueta;
+        }
+        return salida;
+    }
+    private Etiqueta[] convertirAEtiqueta(int[] nombres){
+        Etiqueta[] salida = new Etiqueta[nombres.length];
+        for (int i = 0; i < nombres.length; i++) {
+            Etiqueta etiqueta = Etiqueta.crear(nombres[i]);
+            salida[i] = etiqueta;
+        }
+        return salida;
+    }
+
 
     private void setEtiquetasFilas(Etiqueta[] etiquetas) {
         rowLabels.clear();
@@ -161,21 +178,12 @@ public class Tabla {
     }
 
     public void setEtiquetasFilas(String[] etiquetas) {
-        Etiqueta[] salida = new Etiqueta[etiquetas.length];
-        for (int i = 0; i < etiquetas.length; i++) {
-            Etiqueta etiqueta = new EtiquetaString(etiquetas[i]);
-            salida[i] = etiqueta;
-        }
-        setEtiquetasFilas(salida);
+        setEtiquetasFilas(convertirAEtiqueta(etiquetas));
     }
     public void setEtiquetasFilas(int[] etiquetas) {
-        Etiqueta[] salida = new Etiqueta[etiquetas.length];
-        for (int i = 0; i < etiquetas.length; i++) {
-            Etiqueta etiqueta = new EtiquetaNum(etiquetas[i]);
-            salida[i] = etiqueta;
-        }
-        setEtiquetasFilas(salida);
+        setEtiquetasFilas(convertirAEtiqueta(etiquetas));
     }
+
 
     private void setEtiquetasColumnas(Etiqueta[] etiquetas) {
         colLabels.clear();
@@ -231,7 +239,7 @@ public class Tabla {
         return columnas.get(colLabels.get(etiquetaColumna)).obtenerValor(rowLabels.get(etiquetaFila));
     }
 
-    public <T> Celda obtenerCelda(T etiquetaFila,T etiquetaColumna){
+    public Celda obtenerCelda(String etiquetaFila,String etiquetaColumna){
         
         return null;                        
     }
@@ -617,13 +625,13 @@ public class Tabla {
 
         // System.out.println("columna Apellido: " + tabla.obtenerColumna("Apellido"));
 
-        // String[] etiquetas = {"Hola", "Mundo", "JAVA"};
-        // String[] etiquetasFila = {"Alumno1", "Alumno2"};
+        String[] etiquetas = {"Hola", "Mundo", "JAVA"};
+        String[] etiquetasFila = {"Alumno1", "Alumno2"};
 
-        // tabla.setEtiquetasColumnas(etiquetas);
-        // System.out.println(tabla);
-        // tabla.setEtiquetasFilas(etiquetasFila);
-        // System.out.println(tabla);
+        tabla.setEtiquetasColumnas(etiquetas);
+        System.out.println(tabla);
+        tabla.setEtiquetasFilas(etiquetasFila);
+        System.out.println(tabla);
 
         System.out.println(tabla.obtenerEtiquetasColumnas());
         System.out.println(tabla.obtenerEtiquetasFilas());

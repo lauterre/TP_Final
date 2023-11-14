@@ -9,6 +9,7 @@ public class EtiquetaNum extends Etiqueta {
         this.nombre = nombre;
     }
 
+
     public Integer getNombre() {
         return nombre;
     }
