@@ -1,4 +1,3 @@
-import etiqueta.Etiqueta;
 import matriz.Tabla;
 
 public class App {

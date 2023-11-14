@@ -6,21 +6,27 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
+
 import Exceptions.EtiquetaInvalidaException;
+
 import lector.LectorCSV;
 import lector.exceptions.ArchivoNoEncontradoException;
 import lector.exceptions.CSVParserException;
+
 import celda.Celda;
 import celda.CeldaBoolean;
 import celda.CeldaNum;
 import celda.CeldaString;
+
 import columna.Columna;
 import columna.ColumnaBoolean;
 import columna.ColumnaNum;
 import columna.ColumnaString;
+
 import etiqueta.Etiqueta;
 import etiqueta.EtiquetaNum;
 import etiqueta.EtiquetaString;
+
 import fila.Fila;
 
 public class Tabla {
@@ -145,41 +151,75 @@ public class Tabla {
 
     }
 
-    public void setEtiquetasFilas(String[] etiquetas) {
+
+    private void setEtiquetasFilas(Etiqueta[] etiquetas) {
         rowLabels.clear();
         for (int i = 0; i < columnas.get(0).size(); i++) {
-            Etiqueta etiqueta = new EtiquetaString(etiquetas[i]);
-            rowLabels.put(etiqueta, i);
+            rowLabels.put(etiquetas[i], i);
         }
         this.tieneEtiquetaFila = true;
     }
 
-    public void setEtiquetasColumnas(String[] etiquetas) {
+    public void setEtiquetasFilas(String[] etiquetas) {
+        Etiqueta[] salida = new Etiqueta[etiquetas.length];
+        for (int i = 0; i < etiquetas.length; i++) {
+            Etiqueta etiqueta = new EtiquetaString(etiquetas[i]);
+            salida[i] = etiqueta;
+        }
+        setEtiquetasFilas(salida);
+    }
+    public void setEtiquetasFilas(int[] etiquetas) {
+        Etiqueta[] salida = new Etiqueta[etiquetas.length];
+        for (int i = 0; i < etiquetas.length; i++) {
+            Etiqueta etiqueta = new EtiquetaNum(etiquetas[i]);
+            salida[i] = etiqueta;
+        }
+        setEtiquetasFilas(salida);
+    }
+
+    private void setEtiquetasColumnas(Etiqueta[] etiquetas) {
         colLabels.clear();
+        //TODO: validar tamaño de lista
         for (int j = 0; j < columnas.size(); j++) {
-            Etiqueta etiqueta = new EtiquetaString(etiquetas[j]);
-            colLabels.put(etiqueta, j);
+            colLabels.put(etiquetas[j], j);
         }
         this.tieneEtiquetaCol = true;
-    } // TODO: No me gusta nada, consultar al profe como resolver lo de columnas para
-      // no harcodear etiquetaString
-
-    // sería mejor que devuelva un iterable
-    public String obtenerEtiquetasColumnas() {
-        String etiquetasColumnas = "";
-        for (Etiqueta etiqueta : colLabels.keySet()) {
-            etiquetasColumnas += etiqueta + ", ";
-        }
-        return etiquetasColumnas;
     }
 
-    public String obtenerEtiquetasFilas() {
-        String etiquetasFilas = "";
+    public void setEtiquetasColumnas(String[] etiquetas) {
+        Etiqueta[] salida = new Etiqueta[etiquetas.length];
+        for (int i = 0; i < etiquetas.length; i++) {
+            Etiqueta etiqueta = new EtiquetaString(etiquetas[i]);
+            salida[i] = etiqueta;
+        }
+        setEtiquetasColumnas(salida);
+    } 
+    
+    public void setEtiquetasColumnas(int[] etiquetas) {
+        Etiqueta[] salida = new Etiqueta[etiquetas.length];
+        for (int i = 0; i < etiquetas.length; i++) {
+            Etiqueta etiqueta = new EtiquetaNum(etiquetas[i]);
+            salida[i] = etiqueta;
+        }
+        setEtiquetasColumnas(salida);
+    }
+    
+
+    public List<Object> obtenerEtiquetasColumnas() {
+        List<Object> salida = new ArrayList<>(); 
+        for (Etiqueta etiqueta : colLabels.keySet()){
+            salida.add(etiqueta.getNombre());
+        }
+        return salida;
+    }
+
+    public List<Object> obtenerEtiquetasFilas() {
+        List<Object> salida = new ArrayList<>(); 
         for (Etiqueta etiqueta : rowLabels.keySet()) {
-            etiquetasFilas += etiqueta + ", ";
+            salida.add(etiqueta.getNombre());
         }
-        return etiquetasFilas;
-    }
+        return salida;
+    }    //TODO: polemico, pensar otra solucion que no sea object
 
     public Celda obtenerCelda(Etiqueta etiquetaFila, Etiqueta etiquetaColumna) throws EtiquetaInvalidaException {
         if (!rowLabels.containsKey(etiquetaFila)) {
@@ -189,6 +229,11 @@ public class Tabla {
             throw new EtiquetaInvalidaException();
         }
         return columnas.get(colLabels.get(etiquetaColumna)).obtenerValor(rowLabels.get(etiquetaFila));
+    }
+
+    public <T> Celda obtenerCelda(T etiquetaFila,T etiquetaColumna){
+        
+        return null;                        
     }
 
     public Celda cambiarValor(Etiqueta etiquetaFila, Etiqueta etiquetaColumna, Celda valor)
@@ -550,26 +595,37 @@ public class Tabla {
         Tabla tabla = new Tabla(matriz, true, false);
 
         System.out.println(tabla.toString());
-        System.out.println("etiquetas de columna");
-        System.out.println(tabla.colLabels.keySet());
-        System.out.println(tabla.colLabels.values());
+        // System.out.println("etiquetas de columna");
+        // System.out.println(tabla.colLabels.keySet());
+        // System.out.println(tabla.colLabels.values());
 
-        System.out.println("etiquetas de fila");
-        System.out.println(tabla.rowLabels.keySet());
-        System.out.println(tabla.rowLabels.values());
+        // System.out.println("etiquetas de fila");
+        // System.out.println(tabla.rowLabels.keySet());
+        // System.out.println(tabla.rowLabels.values());
 
-        System.out.println("Borro la columna edad");
-        tabla.eliminarColumna("Edad");
-        System.out.println(tabla.toString());
+        // System.out.println("Borro la columna edad");
+        // tabla.eliminarColumna("Edad");
+        // System.out.println(tabla.toString());
 
-        System.out.println("etiquetas de columna");
-        System.out.println(tabla.colLabels.keySet());
-        System.out.println(tabla.colLabels.values());
+        // System.out.println("etiquetas de columna");
+        // System.out.println(tabla.colLabels.keySet());
+        // System.out.println(tabla.colLabels.values());
 
-        System.out.println("etiquetas de fila");
-        System.out.println(tabla.rowLabels.keySet());
-        System.out.println(tabla.rowLabels.values());
+        // System.out.println("etiquetas de fila");
+        // System.out.println(tabla.rowLabels.keySet());
+        // System.out.println(tabla.rowLabels.values());
 
-        System.out.println("columna Apellido: " + tabla.obtenerColumna("Apellido"));
+        // System.out.println("columna Apellido: " + tabla.obtenerColumna("Apellido"));
+
+        // String[] etiquetas = {"Hola", "Mundo", "JAVA"};
+        // String[] etiquetasFila = {"Alumno1", "Alumno2"};
+
+        // tabla.setEtiquetasColumnas(etiquetas);
+        // System.out.println(tabla);
+        // tabla.setEtiquetasFilas(etiquetasFila);
+        // System.out.println(tabla);
+
+        System.out.println(tabla.obtenerEtiquetasColumnas());
+        System.out.println(tabla.obtenerEtiquetasFilas());
     }
 }
