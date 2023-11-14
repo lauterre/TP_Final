@@ -1,5 +1,7 @@
 package etiqueta;
 
+import java.util.Objects;
+
 public class EtiquetaString extends Etiqueta {
     private String nombre;
 
@@ -18,5 +20,19 @@ public class EtiquetaString extends Etiqueta {
     @Override
     public String toString() {
         return nombre;
+    }
+
+    @Override
+    public boolean equals(Object otro){
+        if (otro == this) return true;
+        if (otro == null || otro.getClass() != this.getClass()) return false;
+
+        EtiquetaNum otro2 = (EtiquetaNum) otro;
+        return this.nombre.equals(otro2.getNombre());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(nombre);
     }
 }
