@@ -151,15 +151,7 @@ public class Tabla {
 
     }
 
-    private Etiqueta[] convertirAEtiqueta(String[] nombres){
-        Etiqueta[] salida = new Etiqueta[nombres.length];
-        for (int i = 0; i < nombres.length; i++) {
-            Etiqueta etiqueta = Etiqueta.crear(nombres[i]);
-            salida[i] = etiqueta;
-        }
-        return salida;
-    }
-    private Etiqueta[] convertirAEtiqueta(int[] nombres){
+    private Etiqueta[] convertirAEtiqueta(String[] nombres) {
         Etiqueta[] salida = new Etiqueta[nombres.length];
         for (int i = 0; i < nombres.length; i++) {
             Etiqueta etiqueta = Etiqueta.crear(nombres[i]);
@@ -168,6 +160,26 @@ public class Tabla {
         return salida;
     }
 
+    private Etiqueta convertirAEtiqueta(String nombre) {
+        Etiqueta etiqueta = Etiqueta.crear(nombre);
+        return etiqueta;
+    }
+
+    // TODO: validar etiqueta para armar las exceptions
+
+    private Etiqueta[] convertirAEtiqueta(int[] nombres) {
+        Etiqueta[] salida = new Etiqueta[nombres.length];
+        for (int i = 0; i < nombres.length; i++) {
+            Etiqueta etiqueta = Etiqueta.crear(nombres[i]);
+            salida[i] = etiqueta;
+        }
+        return salida;
+    }
+
+    private Etiqueta convertirAEtiqueta(int nombre) {
+        Etiqueta etiqueta = Etiqueta.crear(nombre);
+        return etiqueta;
+    }
 
     private void setEtiquetasFilas(Etiqueta[] etiquetas) {
         rowLabels.clear();
@@ -180,14 +192,14 @@ public class Tabla {
     public void setEtiquetasFilas(String[] etiquetas) {
         setEtiquetasFilas(convertirAEtiqueta(etiquetas));
     }
+
     public void setEtiquetasFilas(int[] etiquetas) {
         setEtiquetasFilas(convertirAEtiqueta(etiquetas));
     }
 
-
     private void setEtiquetasColumnas(Etiqueta[] etiquetas) {
         colLabels.clear();
-        //TODO: validar tamaño de lista
+        // TODO: validar tamaño de lista
         for (int j = 0; j < columnas.size(); j++) {
             colLabels.put(etiquetas[j], j);
         }
@@ -195,39 +207,28 @@ public class Tabla {
     }
 
     public void setEtiquetasColumnas(String[] etiquetas) {
-        Etiqueta[] salida = new Etiqueta[etiquetas.length];
-        for (int i = 0; i < etiquetas.length; i++) {
-            Etiqueta etiqueta = new EtiquetaString(etiquetas[i]);
-            salida[i] = etiqueta;
-        }
-        setEtiquetasColumnas(salida);
-    } 
-    
-    public void setEtiquetasColumnas(int[] etiquetas) {
-        Etiqueta[] salida = new Etiqueta[etiquetas.length];
-        for (int i = 0; i < etiquetas.length; i++) {
-            Etiqueta etiqueta = new EtiquetaNum(etiquetas[i]);
-            salida[i] = etiqueta;
-        }
-        setEtiquetasColumnas(salida);
+        setEtiquetasColumnas(convertirAEtiqueta(etiquetas));
     }
-    
+
+    public void setEtiquetasColumnas(int[] etiquetas) {
+        setEtiquetasColumnas(convertirAEtiqueta(etiquetas));
+    }
 
     public List<Object> obtenerEtiquetasColumnas() {
-        List<Object> salida = new ArrayList<>(); 
-        for (Etiqueta etiqueta : colLabels.keySet()){
+        List<Object> salida = new ArrayList<>();
+        for (Etiqueta etiqueta : colLabels.keySet()) {
             salida.add(etiqueta.getNombre());
         }
         return salida;
     }
 
     public List<Object> obtenerEtiquetasFilas() {
-        List<Object> salida = new ArrayList<>(); 
+        List<Object> salida = new ArrayList<>();
         for (Etiqueta etiqueta : rowLabels.keySet()) {
             salida.add(etiqueta.getNombre());
         }
         return salida;
-    }    //TODO: polemico, pensar otra solucion que no sea object
+    } // TODO: polemico, pensar otra solucion que no sea object
 
     public Celda obtenerCelda(Etiqueta etiquetaFila, Etiqueta etiquetaColumna) throws EtiquetaInvalidaException {
         if (!rowLabels.containsKey(etiquetaFila)) {
@@ -239,21 +240,53 @@ public class Tabla {
         return columnas.get(colLabels.get(etiquetaColumna)).obtenerValor(rowLabels.get(etiquetaFila));
     }
 
-    public Celda obtenerCelda(String etiquetaFila,String etiquetaColumna){
-        
-        return null;                        
+    public Celda obtenerCelda(String etiquetaFila, String etiquetaColumna) throws EtiquetaInvalidaException {
+        return obtenerCelda(convertirAEtiqueta(etiquetaFila), convertirAEtiqueta(etiquetaColumna));
     }
 
-    public Celda cambiarValor(Etiqueta etiquetaFila, Etiqueta etiquetaColumna, Celda valor)
+    public Celda obtenerCelda(int etiquetaFila, int etiquetaColumna) throws EtiquetaInvalidaException {
+        return obtenerCelda(convertirAEtiqueta(etiquetaFila), convertirAEtiqueta(etiquetaColumna));
+    }
+
+    public Celda obtenerCelda(String etiquetaFila, int etiquetaColumna) throws EtiquetaInvalidaException {
+        return obtenerCelda(convertirAEtiqueta(etiquetaFila), convertirAEtiqueta(etiquetaColumna));
+    }
+
+    public Celda obtenerCelda(int etiquetaFila, String etiquetaColumna) throws EtiquetaInvalidaException {
+        return obtenerCelda(convertirAEtiqueta(etiquetaFila), convertirAEtiqueta(etiquetaColumna));
+    }
+
+    private Celda cambiarValor(Etiqueta etiquetaFila, Etiqueta etiquetaColumna, Object valor)
             throws EtiquetaInvalidaException {
+        // TODO: revisar el tipo de dato valor, si dejamos object deberiamos cuidar que
+        // no se rompa, quiza otra exception
         try {
             Celda celdaBorrada = obtenerCelda(etiquetaFila, etiquetaColumna);
             columnas.get(colLabels.get(etiquetaColumna)).fijarValor(rowLabels.get(etiquetaFila), valor);
+            System.out.println(
+                    "Se cambio el valor de la columna\n- Valor anterior: " + celdaBorrada + "\nValor nuevo: " + valor);
             return celdaBorrada;
         } catch (EtiquetaInvalidaException e) {
             System.out.println(e.getMessage());
             throw e;
         }
+    }
+
+    public Celda cambiarValor(String etiquetaFila, String etiquetaColumna, Object valor)
+            throws EtiquetaInvalidaException {
+        return cambiarValor(convertirAEtiqueta(etiquetaFila), convertirAEtiqueta(etiquetaColumna), valor);
+    }
+
+    public Celda cambiarValor(int etiquetaFila, int etiquetaColumna, Object valor) throws EtiquetaInvalidaException {
+        return cambiarValor(convertirAEtiqueta(etiquetaFila), convertirAEtiqueta(etiquetaColumna), valor);
+    }
+
+    public Celda cambiarValor(String etiquetaFila, int etiquetaColumna, Object valor) throws EtiquetaInvalidaException {
+        return cambiarValor(convertirAEtiqueta(etiquetaFila), convertirAEtiqueta(etiquetaColumna), valor);
+    }
+
+    public Celda cambiarValor(int etiquetaFila, String etiquetaColumna, Object valor) throws EtiquetaInvalidaException {
+        return cambiarValor(convertirAEtiqueta(etiquetaFila), convertirAEtiqueta(etiquetaColumna), valor);
     }
 
     public int obtenerCantidadFilas() {
@@ -266,11 +299,15 @@ public class Tabla {
         return cantidadColumnas;
     }
 
+    private Columna obtenerColumna(Etiqueta etiquetaColumna) {
+        Columna columnaPedida = columnas.get(colLabels.get(etiquetaColumna));
+        return columnaPedida;
+    }
+
     public Columna obtenerColumna(String etiquetaColumnaNombre) {
         try {
             Etiqueta etiquetaColumna = getEtiquetaColumna(etiquetaColumnaNombre);
-            Columna columnaPedida = columnas.get(colLabels.get(etiquetaColumna));
-            return columnaPedida;
+            return obtenerColumna(etiquetaColumna);
         } catch (EtiquetaInvalidaException e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
@@ -278,12 +315,10 @@ public class Tabla {
         }
     }
 
-    // en caso de que la etiqueta sea numerica
     public Columna obtenerColumna(Integer etiquetaColumnaNombre) {
         try {
             Etiqueta etiquetaColumna = getEtiquetaColumna(etiquetaColumnaNombre);
-            Columna columnaPedida = columnas.get(colLabels.get(etiquetaColumna));
-            return columnaPedida;
+            return obtenerColumna(etiquetaColumna);
         } catch (EtiquetaInvalidaException e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
@@ -625,8 +660,8 @@ public class Tabla {
 
         // System.out.println("columna Apellido: " + tabla.obtenerColumna("Apellido"));
 
-        String[] etiquetas = {"Hola", "Mundo", "JAVA"};
-        String[] etiquetasFila = {"Alumno1", "Alumno2"};
+        String[] etiquetas = { "Hola", "Mundo", "JAVA" };
+        String[] etiquetasFila = { "Alumno1", "Alumno2" };
 
         tabla.setEtiquetasColumnas(etiquetas);
         System.out.println(tabla);

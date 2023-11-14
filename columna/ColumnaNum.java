@@ -15,7 +15,7 @@ public class ColumnaNum extends Columna {
     }
 
     @Override
-    public void ordenar(String orden){
+    public void ordenar(String orden) {
         Collections.sort(celdas);
 
         if ("descendente".equals(orden)) {
@@ -24,20 +24,21 @@ public class ColumnaNum extends Columna {
     }
 
     @Override
-    public Celda obtenerValor(Integer indiceFila){
+    public Celda obtenerValor(Integer indiceFila) {
         // Asegúrate de que el índice de fila sea válido
         if (indiceFila >= 0 && indiceFila < celdas.size()) {
-            return celdas.get(indiceFila); //celdas.get(indiceFila).getValor()?
+            return celdas.get(indiceFila); // celdas.get(indiceFila).getValor()?
         } else {
             throw new IllegalArgumentException("Índice de fila fuera de rango");
         }
     }
 
     @Override
-    public void fijarValor(Integer indiceFIla, Celda valor) {
+    public void fijarValor(Integer indiceFila, Object valor) {
         // Asegúrate de que el índice de fila sea válido
-        if (indiceFIla >= 0 && indiceFIla < celdas.size()) {
-            celdas.set(indiceFIla, (CeldaNum) valor);
+        if (indiceFila >= 0 && indiceFila < celdas.size()) {
+            celdas.get(indiceFila).setValor((Number) valor);
+
         } else {
             throw new IllegalArgumentException("Índice de fila fuera de rango");
         }
@@ -60,14 +61,14 @@ public class ColumnaNum extends Columna {
     public void setCeldas(List<CeldaNum> celdas) {
         this.celdas = celdas;
     }
-    
+
     @Override
     public void agregarCelda(Celda celda) {
-        //TODO: excepcion ClassCast
+        // TODO: excepcion ClassCast
         this.celdas.add((CeldaNum) celda);
     }
 
-    //para probar cosas:
+    // para probar cosas:
     public String toString() {
         String inicial = "";
         for (CeldaNum celda : celdas) {
@@ -95,7 +96,7 @@ public class ColumnaNum extends Columna {
 
         col.ordenar("descendente");
 
-        System.out.println("desc: "+ col);
+        System.out.println("desc: " + col);
 
         col.ordenar(null);
 

@@ -7,7 +7,7 @@ import java.util.List;
 import celda.Celda;
 import celda.CeldaString;
 
-public class ColumnaString extends Columna{
+public class ColumnaString extends Columna {
     private List<CeldaString> celdas;
 
     public ColumnaString(List<CeldaString> celdas) {
@@ -15,7 +15,7 @@ public class ColumnaString extends Columna{
     }
 
     @Override
-    public void ordenar(String orden){
+    public void ordenar(String orden) {
         Collections.sort(celdas);
 
         if ("descendente".equals(orden)) {
@@ -24,20 +24,20 @@ public class ColumnaString extends Columna{
     }
 
     @Override
-    public Celda obtenerValor(Integer indiceFila){
+    public Celda obtenerValor(Integer indiceFila) {
         // Asegúrate de que el índice de fila sea válido
         if (indiceFila >= 0 && indiceFila < celdas.size()) {
-            return celdas.get(indiceFila); //celdas.get(indiceFila).getValor()?
+            return celdas.get(indiceFila); // celdas.get(indiceFila).getValor()?
         } else {
             throw new IllegalArgumentException("Índice de fila fuera de rango");
         }
     }
 
     @Override
-    public void fijarValor(Integer indiceFIla, Celda valor) {
+    public void fijarValor(Integer indiceFila, Object valor) {
         // Asegúrate de que el índice de fila sea válido
-        if (indiceFIla >= 0 && indiceFIla < celdas.size()) {
-            celdas.set(indiceFIla, (CeldaString) valor);
+        if (indiceFila >= 0 && indiceFila < celdas.size()) {
+            celdas.get(indiceFila).setValor((String) valor);
         } else {
             throw new IllegalArgumentException("Índice de fila fuera de rango");
         }
@@ -63,11 +63,11 @@ public class ColumnaString extends Columna{
 
     @Override
     public void agregarCelda(Celda celda) {
-        //TODO: excepcion ClassCast
+        // TODO: excepcion ClassCast
         this.celdas.add((CeldaString) celda);
     }
 
-    //para probar cosas:
+    // para probar cosas:
     public String toString() {
         String inicial = "";
         for (CeldaString celda : celdas) {
@@ -99,7 +99,7 @@ public class ColumnaString extends Columna{
 
         col.ordenar("descendente");
 
-        System.out.println("desc: "+ col);
+        System.out.println("desc: " + col);
 
         col.ordenar(null);
 
