@@ -214,7 +214,23 @@ public class Tabla {
         setEtiquetasColumnas(convertirAEtiqueta(etiquetas));
     }
 
-    public List<Object> obtenerEtiquetasColumnas() {
+        public List<Etiqueta> obtenerEtiquetasColumnas() {
+        List<Etiqueta> salida = new ArrayList<>();
+        for (Etiqueta etiqueta : colLabels.keySet()) {
+            salida.add(etiqueta);
+        }
+        return salida;
+    }
+
+    public List<Etiqueta> obtenerEtiquetasFilas() {
+        List<Etiqueta> salida = new ArrayList<>();
+        for (Etiqueta etiqueta : rowLabels.keySet()) {
+            salida.add(etiqueta);
+        }
+        return salida;
+    }
+
+    public List<Object> obtenerNombreEtiquetasColumnas() {
         List<Object> salida = new ArrayList<>();
         for (Etiqueta etiqueta : colLabels.keySet()) {
             salida.add(etiqueta.getNombre());
@@ -222,7 +238,7 @@ public class Tabla {
         return salida;
     }
 
-    public List<Object> obtenerEtiquetasFilas() {
+    public List<Object> obtenerNombreEtiquetasFilas() {
         List<Object> salida = new ArrayList<>();
         for (Etiqueta etiqueta : rowLabels.keySet()) {
             salida.add(etiqueta.getNombre());
@@ -374,7 +390,7 @@ public class Tabla {
         return nuevaTabla;
     }
 
-    private Fila getFila(Etiqueta etiquetaFila, Etiqueta[] etiquetasColumnas) {
+    public Fila getFila(Etiqueta etiquetaFila, Etiqueta[] etiquetasColumnas) {
         List<Celda> retorno = new ArrayList<>();
         if (!rowLabels.containsKey(etiquetaFila)) {
             throw new IllegalArgumentException();
@@ -549,6 +565,14 @@ public class Tabla {
         return matrizNumber;
     }
 
+    public boolean tieneEncabezadosColumnas() {
+        return tieneEtiquetaCol;
+    }
+
+    public boolean tieneEtiquetasFilas() {
+        return tieneEtiquetaFila;
+    }
+
     // TODO: esto hay que mejorarlo
     @Override
     public String toString() {
@@ -668,7 +692,7 @@ public class Tabla {
         tabla.setEtiquetasFilas(etiquetasFila);
         System.out.println(tabla);
 
-        System.out.println(tabla.obtenerEtiquetasColumnas());
-        System.out.println(tabla.obtenerEtiquetasFilas());
+        System.out.println(tabla.obtenerNombreEtiquetasColumnas());
+        System.out.println(tabla.obtenerNombreEtiquetasFilas());
     }
 }
