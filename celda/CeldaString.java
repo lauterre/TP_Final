@@ -1,5 +1,7 @@
 package celda;
 
+import java.util.Objects;
+
 public class CeldaString extends Celda{
     private String valor;
 
@@ -44,5 +46,19 @@ public class CeldaString extends Celda{
     @Override
     public String toString() {
         return this.valor;
+    }
+
+        @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (this == null || this.getClass() != obj.getClass()) return false;
+
+        CeldaString celda = (CeldaString) obj;
+        return celda.valor.equals(this.valor);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(valor);
     }
 }

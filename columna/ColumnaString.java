@@ -35,7 +35,8 @@ public class ColumnaString extends Columna {
 
     @Override
     public void fijarValor(Integer indiceFila, Object valor) {
-        // Asegúrate de que el índice de fila sea válido
+        //TODO: exception propia
+        if (!(valor instanceof String)) throw new IllegalArgumentException("Tipo de valor invalido");
         if (indiceFila >= 0 && indiceFila < celdas.size()) {
             celdas.get(indiceFila).setValor((String) valor);
         } else {
@@ -45,7 +46,7 @@ public class ColumnaString extends Columna {
 
     @Override
     public String tipoDato() {
-        return "String".toString();
+        return "String";
     }
 
     @Override
