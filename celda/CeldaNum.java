@@ -1,5 +1,7 @@
 package celda;
 
+import java.util.Objects;
+
 public class CeldaNum extends Celda{
     private Number valor;
 
@@ -57,5 +59,19 @@ public class CeldaNum extends Celda{
         } else {
             return null; //return "NA".toString()
         }
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (this == null || this.getClass() != obj.getClass()) return false;
+
+        CeldaNum celda = (CeldaNum) obj;
+        return celda.valor == this.valor;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(valor);
     }
 }

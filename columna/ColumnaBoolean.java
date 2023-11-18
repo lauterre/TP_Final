@@ -35,7 +35,8 @@ public class ColumnaBoolean extends Columna {
 
     @Override
     public void fijarValor(Integer indiceFila, Object valor) {
-        // Asegúrate de que el índice de fila sea válido
+        //TODO: exception propia
+        if (!(valor instanceof Boolean)) throw new IllegalArgumentException("Tipo de valor invalido"); 
         if (indiceFila >= 0 && indiceFila < celdas.size()) {
             celdas.get(indiceFila).setValor((Boolean) valor);
         } else {
@@ -45,7 +46,7 @@ public class ColumnaBoolean extends Columna {
 
     @Override
     public String tipoDato() {
-        return "Booleana".toString();
+        return "Boolean";
     }
 
     @Override

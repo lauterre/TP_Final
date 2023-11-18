@@ -27,7 +27,7 @@ public class EtiquetaString extends Etiqueta {
         if (otro == this) return true;
         if (otro == null || otro.getClass() != this.getClass()) return false;
 
-        EtiquetaNum otro2 = (EtiquetaNum) otro;
+        EtiquetaString otro2 = (EtiquetaString) otro;
         return this.nombre.equals(otro2.getNombre());
     }
 

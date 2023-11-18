@@ -75,7 +75,7 @@ public class LectorCSV {
             if (esNum(columna.get(1))) {
                 List<CeldaNum> colNum = new ArrayList<>();
                 for (String celda : columna) {
-                    int numero = Integer.parseInt(celda);
+                    double numero = Double.parseDouble(celda);
                     CeldaNum celdaNum = new CeldaNum(numero);
                     colNum.add(celdaNum);
                 }
