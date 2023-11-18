@@ -59,7 +59,6 @@ public class LectorCSV {
                     }
                 }
             }
-            System.out.println(campos.length);
             if (campos.length != cantidadColumnas) {
                 throw new CSVParserException();
             }

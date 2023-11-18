@@ -9,7 +9,7 @@ import Exceptions.ValorInvalidoException;
 import celda.Celda;
 import celda.CeldaNum;
 
-public class ColumnaNum extends Columna {
+public class ColumnaNum extends Columna<CeldaNum> {
     private List<CeldaNum> celdas;
 
     public ColumnaNum(List<CeldaNum> celdas) {
@@ -37,7 +37,8 @@ public class ColumnaNum extends Columna {
 
     @Override
     public void fijarValor(Integer indiceFila, Object valor) {
-        if (!(valor instanceof Number)) throw new ValorInvalidoException("Tipo de valor invalido"); 
+        if (!(valor instanceof Number))
+            throw new ValorInvalidoException("Tipo de valor invalido");
         if (indiceFila >= 0 && indiceFila < celdas.size()) {
             celdas.get(indiceFila).setValor((Number) valor);
 

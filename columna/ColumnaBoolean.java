@@ -9,7 +9,7 @@ import Exceptions.ValorInvalidoException;
 import celda.Celda;
 import celda.CeldaBoolean;
 
-public class ColumnaBoolean extends Columna {
+public class ColumnaBoolean extends Columna<CeldaBoolean> {
     private List<CeldaBoolean> celdas;
 
     public ColumnaBoolean(List<CeldaBoolean> celdas) {
@@ -37,7 +37,8 @@ public class ColumnaBoolean extends Columna {
 
     @Override
     public void fijarValor(Integer indiceFila, Object valor) {
-        if (!(valor instanceof Boolean)) throw new ValorInvalidoException("Tipo de valor invalido"); 
+        if (!(valor instanceof Boolean))
+            throw new ValorInvalidoException("Tipo de valor invalido");
         if (indiceFila >= 0 && indiceFila < celdas.size()) {
             celdas.get(indiceFila).setValor((Boolean) valor);
         } else {
@@ -72,8 +73,8 @@ public class ColumnaBoolean extends Columna {
         }
     }
 
-
     // para probar cosas:
+    @Override
     public String toString() {
         String inicial = "";
         for (CeldaBoolean celda : celdas) {
@@ -100,16 +101,17 @@ public class ColumnaBoolean extends Columna {
         listaCeldas.add(celda6);
 
         ColumnaBoolean col = new ColumnaBoolean(listaCeldas);
+        col.agregarCelda(celda1);
 
         System.out.println("original: " + col);
 
-        col.ordenar("descendente");
+        // col.ordenar("descendente");
 
-        System.out.println("desc: " + col);
+        // System.out.println("desc: " + col);
 
-        col.ordenar(null);
+        // col.ordenar(null);
 
-        System.out.println("asc: " + col);
+        // System.out.println("asc: " + col);
 
     }
 }

@@ -1,14 +1,16 @@
 package matriz;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import Exceptions.EtiquetaInvalidaException;
-
+import Exceptions.TablasNoConcatenablesException;
 import lector.LectorCSV;
 import lector.exceptions.ArchivoNoEncontradoException;
 import lector.exceptions.CSVParserException;
@@ -36,29 +38,21 @@ public class Tabla {
     boolean tieneEtiquetaCol = false;
     boolean tieneEtiquetaFila = false;
 
-    public Tabla(int cantidadColumnas) {
+    public Tabla() {
         columnas = new ArrayList<>();
         colLabels = new LinkedHashMap<>();
         rowLabels = new LinkedHashMap<>();
-    } // TODO: agregarColumna(List<String>), agregarColumna(List<Number>),
-      // agregarColumna(List<Boolean>)
+    }
 
     public Tabla(int cantidadColumnas, String[] etiquetas) {
-        this(cantidadColumnas);
+        this();
         if (cantidadColumnas != etiquetas.length)
             throw new IllegalArgumentException("La longitud de etiquetas no coincide.");
         setEtiquetasColumnas(etiquetas);
     }
 
     public Tabla(Tabla m) {
-        columnas = m.columnas;
-        colLabels = new LinkedHashMap<Etiqueta, Integer>();
-        colLabels.putAll(m.colLabels);
-        rowLabels = new LinkedHashMap<Etiqueta, Integer>();
-        rowLabels.putAll(m.rowLabels);
-        tieneEtiquetaCol = m.tieneEtiquetaCol;
-        tieneEtiquetaFila = m.tieneEtiquetaFila;
-
+        this.copiarTabla(m);
     }
 
     // public Tabla copia(Tabla origen) {
@@ -355,35 +349,34 @@ public class Tabla {
         return obtenerCelda(convertirAEtiqueta(etiquetaFila), convertirAEtiqueta(etiquetaColumna));
     }
 
-    private Celda cambiarValor(Etiqueta etiquetaFila, Etiqueta etiquetaColumna, Object valor)
-            throws EtiquetaInvalidaException {
+    private void cambiarValor(Etiqueta etiquetaFila, Etiqueta etiquetaColumna, Object valorNuevo) {
         try {
             Celda celdaBorrada = obtenerCelda(etiquetaFila, etiquetaColumna);
-            columnas.get(colLabels.get(etiquetaColumna)).fijarValor(rowLabels.get(etiquetaFila), valor);
+            Object valorAnterior = celdaBorrada.getValor();
+            columnas.get(colLabels.get(etiquetaColumna)).fijarValor(rowLabels.get(etiquetaFila), valorNuevo);
             System.out.println(
-                    "Se cambio el valor de la celda\n- Valor anterior: " + celdaBorrada + "\nValor nuevo: " + valor);
-            return celdaBorrada;
+                    "Se cambio el valor de la celda[" + etiquetaFila + ", " + etiquetaColumna + "]\n- Valor anterior: "
+                            + valorAnterior + "\n- Valor nuevo: " + valorNuevo);
         } catch (EtiquetaInvalidaException e) {
             System.out.println(e.getMessage());
-            throw e;
         }
     }
 
-    public Celda cambiarValor(String etiquetaFila, String etiquetaColumna, Object valor)
+    public void cambiarValor(String etiquetaFila, String etiquetaColumna, Object valor)
             throws EtiquetaInvalidaException {
-        return cambiarValor(convertirAEtiqueta(etiquetaFila), convertirAEtiqueta(etiquetaColumna), valor);
+        cambiarValor(convertirAEtiqueta(etiquetaFila), convertirAEtiqueta(etiquetaColumna), valor);
     }
 
-    public Celda cambiarValor(int etiquetaFila, int etiquetaColumna, Object valor) throws EtiquetaInvalidaException {
-        return cambiarValor(convertirAEtiqueta(etiquetaFila), convertirAEtiqueta(etiquetaColumna), valor);
+    public void cambiarValor(int etiquetaFila, int etiquetaColumna, Object valor) throws EtiquetaInvalidaException {
+        cambiarValor(convertirAEtiqueta(etiquetaFila), convertirAEtiqueta(etiquetaColumna), valor);
     }
 
-    public Celda cambiarValor(String etiquetaFila, int etiquetaColumna, Object valor) throws EtiquetaInvalidaException {
-        return cambiarValor(convertirAEtiqueta(etiquetaFila), convertirAEtiqueta(etiquetaColumna), valor);
+    public void cambiarValor(String etiquetaFila, int etiquetaColumna, Object valor) throws EtiquetaInvalidaException {
+        cambiarValor(convertirAEtiqueta(etiquetaFila), convertirAEtiqueta(etiquetaColumna), valor);
     }
 
-    public Celda cambiarValor(int etiquetaFila, String etiquetaColumna, Object valor) throws EtiquetaInvalidaException {
-        return cambiarValor(convertirAEtiqueta(etiquetaFila), convertirAEtiqueta(etiquetaColumna), valor);
+    public void cambiarValor(int etiquetaFila, String etiquetaColumna, Object valor) {
+        cambiarValor(convertirAEtiqueta(etiquetaFila), convertirAEtiqueta(etiquetaColumna), valor);
     }
 
     public int obtenerCantidadFilas() {
@@ -655,37 +648,67 @@ public class Tabla {
         return matrizNumber;
     }
 
-    // TODO: esto hay que mejorarlo
-    @Override
-    public String toString() {
-        String out;
-        if (tieneEtiquetaFila) {
-            out = "      | ";
-        } else {
-            out = "";
-        }
-        String sep = " | ";
-        if (tieneEtiquetaCol) {
-            for (Etiqueta label : colLabels.keySet()) {
-                out += label + sep;
-            }
-        }
-        out += "\n";
-        for (Etiqueta fila : rowLabels.keySet()) {
-            if (tieneEtiquetaFila)
-                out += fila + sep;
-            for (Etiqueta columna : colLabels.keySet()) {
-                try {
-                    out += obtenerCelda(fila, columna);
-                    out += sep;
-                } catch (EtiquetaInvalidaException e) {
-                    e.getMessage();
+    public static Tabla copiarTabla(Tabla origen) {
+        Tabla nueva = new Tabla();
+        nueva.colLabels.putAll(origen.colLabels);
+        nueva.rowLabels.putAll(origen.rowLabels);
+        nueva.tieneEtiquetaCol = origen.tieneEtiquetaCol;
+        nueva.tieneEtiquetaFila = origen.tieneEtiquetaFila;
+        nueva.columnas = new ArrayList<>();
+        for (Columna columna : origen.columnas) {
+            if (columna instanceof ColumnaNum) {
+                ColumnaNum columnaNum = (ColumnaNum) columna;
+                ColumnaNum columnaNueva = new ColumnaNum(new ArrayList<CeldaNum>());
+                for (CeldaNum celda : columnaNum.getCeldas()) {
+                    columnaNueva.agregarCelda(celda.copia());
                 }
-
+                nueva.columnas.add(columnaNueva);
+            } else if (columna instanceof ColumnaString) {
+                ColumnaString columnaString = (ColumnaString) columna;
+                ColumnaString columnaNueva = new ColumnaString(new ArrayList<CeldaString>());
+                for (CeldaString celda : columnaString.getCeldas()) {
+                    columnaNueva.agregarCelda(celda.copia());
+                }
+                nueva.columnas.add(columnaNueva);
+            } else {
+                ColumnaBoolean columnaBoolean = (ColumnaBoolean) columna;
+                ColumnaBoolean columnaNueva = new ColumnaBoolean(new ArrayList<CeldaBoolean>());
+                for (CeldaBoolean celda : columnaBoolean.getCeldas()) {
+                    columnaNueva.agregarCelda(celda.copia());
+                }
+                nueva.columnas.add(columnaNueva);
             }
-            out += "\n";
         }
-        return out;
+        return nueva;
+    }
+
+    public <T extends Celda> Tabla concatenar(Tabla otraTabla)
+            throws TablasNoConcatenablesException {
+        if (mismasColumnas(this, otraTabla)) {
+            Tabla nuevaTabla = copiarTabla(this);
+            for (Etiqueta etiqueta : nuevaTabla.obtenerEtiquetasColumnas()) {
+                Columna<T> columna = nuevaTabla.obtenerColumna(etiqueta);
+                Columna<T> columnaOtraTabla = otraTabla.obtenerColumna(etiqueta);
+                for (T celda : columnaOtraTabla.getCeldas()) {
+                    columna.agregarCelda(celda);
+                }
+            }
+            return nuevaTabla;
+        } else {
+            throw new TablasNoConcatenablesException();
+        }
+    }
+
+    private static boolean mismasColumnas(Tabla tabla1, Tabla tabla2) {
+        List<String> columnas1 = tabla1.obtenerNombreEtiquetasColumnas().stream()
+                .map(x -> x.toString()).collect(Collectors.toList());
+        List<String> columnas2 = tabla2.obtenerNombreEtiquetasColumnas().stream()
+                .map(x -> x.toString()).collect(Collectors.toList());
+
+        Collections.sort(columnas1);
+        Collections.sort(columnas2);
+
+        return columnas1.equals(columnas2);
     }
 
     public Tabla filtrar(Etiqueta col, char operador, Celda valor) { // TODO: String col, Object valor
@@ -729,6 +752,82 @@ public class Tabla {
 
     }
 
+    public void mostrarTabla() {
+        System.out.println(this);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder out = new StringBuilder();
+        int anchoEtiquetaFila = obtenerAnchoEtiquetasFilas();
+        String sep = " | ";
+        int anchoTotal = 0;
+
+        if (tieneEtiquetaFila) {
+            out.append(" ".repeat(anchoEtiquetaFila)).append(sep);
+        }
+
+        if (tieneEtiquetaCol) {
+            for (Etiqueta encabezado : colLabels.keySet()) {
+                int anchoColumna = obtenerAnchoColumna(encabezado);
+                anchoTotal += anchoColumna + sep.length();
+                out.append(String.format("%-" + anchoColumna + "s", encabezado)).append(sep);
+            }
+        }
+        out.append("\n");
+        out.append("-".repeat(anchoTotal + anchoEtiquetaFila));
+        out.append("\n");
+
+        for (Etiqueta fila : rowLabels.keySet()) {
+            if (tieneEtiquetaFila) {
+                out.append(String.format("%-" + anchoEtiquetaFila + "s", fila)).append(sep);
+            }
+            for (Etiqueta columna : colLabels.keySet()) {
+                try {
+                    Celda valorCelda = obtenerCelda(fila, columna);
+                    int anchoColumna = obtenerAnchoColumna(columna);
+                    out.append(String.format("%-" + anchoColumna + "s", valorCelda)).append(sep);
+                } catch (EtiquetaInvalidaException e) {
+                    e.getMessage();
+                }
+            }
+            out.append("\n");
+        }
+
+        return out.toString();
+    }
+
+    private int obtenerAnchoColumna(Etiqueta etiquetaColumna) {
+        int anchoMaximo = etiquetaColumna.toString().length();
+
+        for (Etiqueta etiquetaFila : rowLabels.keySet()) {
+            try {
+                Celda valorCelda = obtenerCelda(etiquetaFila, etiquetaColumna);
+                int longitudValor = valorCelda.toString().length();
+                if (longitudValor > anchoMaximo) {
+                    anchoMaximo = longitudValor;
+                }
+            } catch (EtiquetaInvalidaException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return anchoMaximo;
+    }
+
+    private int obtenerAnchoEtiquetasFilas() {
+        int anchoMaximo = 0;
+
+        for (Etiqueta etiquetaFila : rowLabels.keySet()) {
+            int longitudEtiqueta = etiquetaFila.toString().length();
+            if (longitudEtiqueta > anchoMaximo) {
+                anchoMaximo = longitudEtiqueta;
+            }
+        }
+
+        return anchoMaximo;
+    }
+
     public static void main(String[] args) {
         String[][] matriz = new String[3][3];
 
@@ -753,10 +852,32 @@ public class Tabla {
         // matriz[2][2] = 8;
 
         Tabla tabla = new Tabla(matriz, true, false);
+        Tabla tabla2 = copiarTabla(tabla);
+        // List<Number> nuevaCol = new ArrayList<>();
+        // nuevaCol.add(10);
+        // nuevaCol.add(7);
+        // tabla.agregarColumnaNum(nuevaCol, "Nota");
+        // String[] etiquetas = { "Hola", "Mundo", "JAVA" };
+        // tabla.setEtiquetasColumnas(etiquetas);
+        tabla.cambiarValor(0, "Nombre", "juean");
 
-        System.out.println(tabla.toString());
+        System.out.println(tabla);
+        System.out.println(tabla2);
+        Tabla tabla3;
+        try {
+            tabla3 = tabla.concatenar(tabla2);
+            System.out.println(tabla3);
+        } catch (TablasNoConcatenablesException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
-        // Tabla tabla2 = new Tabla(tabla);
+        // System.out.println(tabla.obtenerEtiquetasColumnas());
+        // System.out.println(tabla.obtenerEtiquetasFilas());
+        // tabla.mostrarTabla();
+        // System.out.println(tabla.toString());
+        // System.out.println(tabla.obtenerEtiquetasColumnas());
+        // System.out.println(tabla.obtenerEtiquetasFilas());
 
         // System.out.println(tabla2.toString());
 
@@ -790,9 +911,6 @@ public class Tabla {
         // tabla.setEtiquetasFilas(etiquetasFila);
         // System.out.println(tabla);
 
-        System.out.println(tabla.obtenerEtiquetasColumnas());
-        System.out.println(tabla.obtenerEtiquetasFilas());
-
         // Etiqueta etiqueta = new EtiquetaString("Apellido");
 
         // CeldaString celda = new CeldaString("25");
@@ -801,32 +919,25 @@ public class Tabla {
 
         // System.out.println(tablaFiltrada);
 
-        // Tabla iris = new Tabla("E:/java_workspace/TP_Final/IRIS.csv", false, false);
-
-        // System.out.println(iris);
-        // System.out.println(iris.obtenerCantidadColumnas());
-        // System.out.println(iris.obtenerCantidadFilas());
-        // System.out.println(iris.obtenerEtiquetasColumnas());
-        // System.out.println(iris.obtenerEtiquetasFilas());
-
-        // Tabla pokemon = new Tabla("E:/java_workspace/TP_Final/Pokemon.csv", true,
-        // false);
-        // System.out.println(pokemon);
+        Tabla pokemon = new Tabla("E:/java_workspace/TP_Final/Pokemon.csv", true, false);
+        // // System.out.println(pokemon);
+        Tabla pokemon2 = new Tabla("E:/java_workspace/TP_Final/Pokemon.csv", true, false);
         // System.out.println(pokemon.obtenerEtiquetasColumnas());
         // System.out.println(pokemon.obtenerEtiquetasFilas());
         // String[] etiqeutas = { "Attack", "HP" };
         // System.out.println(pokemon.ordernarPorColumnas(etiqeutas, "descendente"));
 
-        // Etiqueta ataquelabel = new EtiquetaString("Attack");
-        // Celda ataque = new CeldaNum(100);
+        // pokemon.cambiarValor(0, "Type 1", "pokemon");
+        // System.out.println(pokemon);
+        // pokemon.mostrarTabla();
 
-        List<Number> nuevaCol = new ArrayList<>();
-        nuevaCol.add(10);
-        nuevaCol.add(7);
-        tabla.agregarColumnaNum(nuevaCol, "Nota");
+        // try {
+        // Tabla pokemon3 = pokemon.concatenar(pokemon2);
+        // System.out.println(pokemon3);
+        // } catch (TablasNoConcatenablesException e) {
+        // // TODO Auto-generated catch block
+        // e.printStackTrace();
+        // }
 
-        System.out.println(tabla);
-        System.out.println(tabla.obtenerEtiquetasColumnas());
-        System.out.println(tabla.obtenerEtiquetasFilas());
     }
 }
