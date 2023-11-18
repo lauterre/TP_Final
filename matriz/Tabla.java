@@ -40,7 +40,8 @@ public class Tabla {
         columnas = new ArrayList<>();
         colLabels = new LinkedHashMap<>();
         rowLabels = new LinkedHashMap<>();
-    } //TODO: agregarColumna(List<String>), agregarColumna(List<Number>), agregarColumna(List<Boolean>)
+    } // TODO: agregarColumna(List<String>), agregarColumna(List<Number>),
+      // agregarColumna(List<Boolean>)
 
     public Tabla(int cantidadColumnas, String[] etiquetas) {
         this(cantidadColumnas);
@@ -49,7 +50,7 @@ public class Tabla {
         setEtiquetasColumnas(etiquetas);
     }
 
-    public Tabla(Tabla m) { 
+    public Tabla(Tabla m) {
         columnas = m.columnas;
         colLabels = new LinkedHashMap<Etiqueta, Integer>();
         colLabels.putAll(m.colLabels);
@@ -129,6 +130,8 @@ public class Tabla {
         this.tieneEtiquetaCol = tieneEncabezadosColumnas;
         this.tieneEtiquetaFila = tieneEncabezadosFilas;
         LectorCSV lector = new LectorCSV();
+        this.colLabels = new LinkedHashMap<>();
+        this.rowLabels = new LinkedHashMap<>();
         try {
             List<String> lineas = lector.leer(rutaArchivo);
             List<Columna> cols = lector.parserColumnas(lineas, tieneEncabezadosColumnas);
@@ -147,6 +150,7 @@ public class Tabla {
                     etiquetasFilas[i] = etiqueta;
                 }
             }
+            setEtiquetasFilas(etiquetasFilas);
         } catch (ArchivoNoEncontradoException | CSVParserException e) {
             // TODO Auto-generated catch block
         }
@@ -393,8 +397,8 @@ public class Tabla {
         return new Fila(retorno);
     }
 
-    private void generarRowLabelsOrdenado(List<Etiqueta> orden) {//TODO validar que este en tabla
-        
+    private void generarRowLabelsOrdenado(List<Etiqueta> orden) {// TODO validar que este en tabla
+
         for (Etiqueta etiqueta : orden) {
             Integer indice = rowLabels.get(etiqueta);
             rowLabels.remove(etiqueta);
@@ -583,7 +587,7 @@ public class Tabla {
         return out;
     }
 
-    public Tabla filtrar(Etiqueta col, char operador, Celda valor) { //TODO: String col, Object valor
+    public Tabla filtrar(Etiqueta col, char operador, Celda valor) { // TODO: String col, Object valor
         Map<Character, Predicate<Celda>> operadores = new HashMap<>();
         operadores.put('<', e -> e.compareTo(valor) < 0);
         operadores.put('>', e -> e.compareTo(valor) > 0);
@@ -623,8 +627,6 @@ public class Tabla {
         return nueva;
 
     }
-
-
 
     public static void main(String[] args) {
         String[][] matriz = new String[3][3];
@@ -698,10 +700,12 @@ public class Tabla {
 
         System.out.println(tablaFiltrada);
 
+        Tabla iris = new Tabla("E:/java_workspace/TP_Final/IRIS.csv", false, false);
 
-        Tabla IRIS = new Tabla("C:/Users/Marce/Documents/TP_Final/IRIS.csv", false, false);
-
-
-        System.out.println(IRIS);
+        System.out.println(iris);
+        System.out.println(iris.obtenerCantidadColumnas());
+        System.out.println(iris.obtenerCantidadFilas());
+        System.out.println(iris.obtenerEtiquetasColumnas());
+        System.out.println(iris.obtenerEtiquetasFilas());
     }
 }

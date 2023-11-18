@@ -2,7 +2,7 @@ package celda;
 
 import java.util.Objects;
 
-public class CeldaNum extends Celda{
+public class CeldaNum extends Celda {
     private Number valor;
 
     public CeldaNum(Number valor) {
@@ -17,7 +17,7 @@ public class CeldaNum extends Celda{
         } else if (otraCelda.isNA()) {
             return 1;
         }
-        
+
         double diferencia = this.valor.doubleValue() - otraCeldaNum.valor.doubleValue();
         if (diferencia < 0) {
             return -1;
@@ -34,7 +34,7 @@ public class CeldaNum extends Celda{
     }
 
     @Override
-    public CeldaNum copia(){
+    public CeldaNum copia() {
         valor = this.getValor();
         return new CeldaNum(valor);
     }
@@ -44,7 +44,7 @@ public class CeldaNum extends Celda{
     }
 
     @Override
-    public boolean isNA(){
+    public boolean isNA() {
         if (valor == null) {
             return true;
         } else {
@@ -54,17 +54,19 @@ public class CeldaNum extends Celda{
 
     @Override
     public String toString() {
-        if (!(valor==null)){
+        if (!(valor == null)) {
             return valor.toString();
         } else {
-            return null; //return "NA".toString()
+            return "N/A"; // return "NA".toString()
         }
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (this == null || this.getClass() != obj.getClass()) return false;
+        if (this == obj)
+            return true;
+        if (this == null || this.getClass() != obj.getClass())
+            return false;
 
         CeldaNum celda = (CeldaNum) obj;
         return celda.valor == this.valor;

@@ -69,9 +69,6 @@ public class LectorCSV {
 
         List<Columna> cols = new ArrayList<>();
         for (List<String> columna : columnas) {
-            if (tieneEncabezados) {
-                columna.remove(0);
-            }
             if (esNum(columna.get(1))) {
                 List<CeldaNum> colNum = new ArrayList<>();
                 for (String celda : columna) {
@@ -98,6 +95,9 @@ public class LectorCSV {
                 }
                 ColumnaString col = new ColumnaString(colString);
                 cols.add(col);
+            }
+            if (tieneEncabezados) {
+                columna.remove(0);
             }
 
         }
