@@ -46,12 +46,11 @@ public class CeldaString extends Celda {
 
     @Override
     public String toString() {
-        if (!(valor == null || valor == "")) {
+        if (!(valor == null || valor.equals(""))) {
             return this.valor;
         } else {
             return "NA";
         }
-
     }
 
     @Override
