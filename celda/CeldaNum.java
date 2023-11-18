@@ -1,6 +1,9 @@
 package celda;
 
 import java.util.Objects;
+import java.lang.Math;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 
 public class CeldaNum extends Celda {
     private Number valor;
@@ -55,9 +58,12 @@ public class CeldaNum extends Celda {
     @Override
     public String toString() {
         if (!(valor == null)) {
-            return valor.toString();
+            DecimalFormatSymbols simbolos = new DecimalFormatSymbols();
+            simbolos.setDecimalSeparator('.');
+            DecimalFormat df = new DecimalFormat("###.##", simbolos);
+            return df.format(valor);
         } else {
-            return "N/A"; // return "NA".toString()
+            return "NA"; // return "NA".toString()
         }
     }
 

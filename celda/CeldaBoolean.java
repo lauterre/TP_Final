@@ -11,7 +11,7 @@ public class CeldaBoolean extends Celda {
     public CeldaBoolean(Integer valor) {
         if (valor == null) {
             this.valor = null;
-        }else if (valor == 0) {
+        } else if (valor == 0) {
             this.valor = false;
         } else {
             this.valor = true;
@@ -38,7 +38,8 @@ public class CeldaBoolean extends Celda {
             return 1;
         } else if (valorThis < valorOtraCelda) {
             return -1;
-        } else return 0;
+        } else
+            return 0;
     }
 
     @Override
@@ -51,17 +52,17 @@ public class CeldaBoolean extends Celda {
     }
 
     @Override
-    public CeldaBoolean copia(){
-    valor = this.getValor();
-    return new CeldaBoolean(valor);
+    public CeldaBoolean copia() {
+        valor = this.getValor();
+        return new CeldaBoolean(valor);
     }
 
     @Override
     public String toString() {
-        if (!(valor==null)){
+        if (!(valor == null)) {
             return valor.toString();
         } else {
-            return null; //return "NA".toString()
+            return "NA"; // return "NA".toString()
         }
     }
 }

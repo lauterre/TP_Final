@@ -136,32 +136,41 @@ public class Tabla {
             List<String> lineas = lector.leer(rutaArchivo);
             List<Columna> cols = lector.parserColumnas(lineas, tieneEncabezadosColumnas);
             this.columnas = cols;
-            if (tieneEncabezadosColumnas)
+            if (tieneEncabezadosColumnas) {
                 setEtiquetasColumnas(lector.getEncabezados());
-            Etiqueta[] etiquetasFilas = new Etiqueta[this.columnas.get(0).size()];
+            } else {
+                List<Etiqueta> etiquetaCol = new ArrayList<>();
+                for (int i = 0; i < cols.size(); i++) {
+                    Etiqueta etiqueta = new EtiquetaNum(i);
+                    etiquetaCol.add(etiqueta);
+                }
+                setEtiquetasColumnas(etiquetaCol);
+            }
+            List<Etiqueta> etiquetasFilas = new ArrayList<>();
             for (int i = 0; i < this.columnas.get(0).size(); i++) {
                 if (tieneEncabezadosFilas) {
                     EtiquetaString etiqueta = new EtiquetaString(
                             this.columnas.get(0).obtenerValor(i).getValor().toString());
-                    etiquetasFilas[i] = etiqueta;
+                    etiquetasFilas.add(etiqueta);
                     this.columnas.remove(0);
                 } else {
                     EtiquetaNum etiqueta = new EtiquetaNum(i);
-                    etiquetasFilas[i] = etiqueta;
+                    etiquetasFilas.add(etiqueta);
                 }
             }
             setEtiquetasFilas(etiquetasFilas);
         } catch (ArchivoNoEncontradoException | CSVParserException e) {
-            // TODO Auto-generated catch block
+            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
 
     }
 
-    private Etiqueta[] convertirAEtiqueta(String[] nombres) {
-        Etiqueta[] salida = new Etiqueta[nombres.length];
+    private List<Etiqueta> convertirAEtiqueta(String[] nombres) {
+        List<Etiqueta> salida = new ArrayList<>();
         for (int i = 0; i < nombres.length; i++) {
             Etiqueta etiqueta = Etiqueta.crear(nombres[i]);
-            salida[i] = etiqueta;
+            salida.add(etiqueta);
         }
         return salida;
     }
@@ -173,11 +182,11 @@ public class Tabla {
 
     // TODO: validar etiqueta para armar las exceptions
 
-    private Etiqueta[] convertirAEtiqueta(int[] nombres) {
-        Etiqueta[] salida = new Etiqueta[nombres.length];
+    private List<Etiqueta> convertirAEtiqueta(int[] nombres) {
+        List<Etiqueta> salida = new ArrayList<>();
         for (int i = 0; i < nombres.length; i++) {
             Etiqueta etiqueta = Etiqueta.crear(nombres[i]);
-            salida[i] = etiqueta;
+            salida.add(etiqueta);
         }
         return salida;
     }
@@ -187,10 +196,10 @@ public class Tabla {
         return etiqueta;
     }
 
-    private void setEtiquetasFilas(Etiqueta[] etiquetas) {
+    private void setEtiquetasFilas(List<Etiqueta> etiquetas) {
         rowLabels.clear();
         for (int i = 0; i < columnas.get(0).size(); i++) {
-            rowLabels.put(etiquetas[i], i);
+            rowLabels.put(etiquetas.get(i), i);
         }
         this.tieneEtiquetaFila = true;
     }
@@ -203,11 +212,11 @@ public class Tabla {
         setEtiquetasFilas(convertirAEtiqueta(etiquetas));
     }
 
-    private void setEtiquetasColumnas(Etiqueta[] etiquetas) {
+    private void setEtiquetasColumnas(List<Etiqueta> etiquetas) {
         colLabels.clear();
         // TODO: validar tamaño de lista
         for (int j = 0; j < columnas.size(); j++) {
-            colLabels.put(etiquetas[j], j);
+            colLabels.put(etiquetas.get(j), j);
         }
         this.tieneEtiquetaCol = true;
     }
@@ -354,13 +363,13 @@ public class Tabla {
                 Fila filaPrevia = getFila(etiquetaPrevia, etiquetasColumnas);
                 Fila filaActual = getFila(etiquetaActual, etiquetasColumnas);
 
-                if (queOrden == "ascendente") {
+                if (queOrden.equalsIgnoreCase("ascendente")) {
                     if (filaPrevia.compareTo(filaActual) > 0) {
                         orden.set(i - 1, orden.get(i));
                         orden.set(i, etiquetaPrevia);
                         huboCambio = true;
                     }
-                } else if (queOrden == "descendiente") {
+                } else if (queOrden.equalsIgnoreCase("descendente")) {
                     if (filaPrevia.compareTo(filaActual) < 0) {
                         orden.set(i - 1, orden.get(i));
                         orden.set(i, etiquetaPrevia);
@@ -702,10 +711,21 @@ public class Tabla {
 
         Tabla iris = new Tabla("E:/java_workspace/TP_Final/IRIS.csv", false, false);
 
-        System.out.println(iris);
-        System.out.println(iris.obtenerCantidadColumnas());
-        System.out.println(iris.obtenerCantidadFilas());
-        System.out.println(iris.obtenerEtiquetasColumnas());
-        System.out.println(iris.obtenerEtiquetasFilas());
+        // System.out.println(iris);
+        // System.out.println(iris.obtenerCantidadColumnas());
+        // System.out.println(iris.obtenerCantidadFilas());
+        // System.out.println(iris.obtenerEtiquetasColumnas());
+        // System.out.println(iris.obtenerEtiquetasFilas());
+
+        Tabla pokemon = new Tabla("E:/java_workspace/TP_Final/Pokemon.csv", true,
+                false);
+        System.out.println(pokemon);
+        System.out.println(pokemon.obtenerEtiquetasColumnas());
+        System.out.println(pokemon.obtenerEtiquetasFilas());
+        String[] etiqeutas = { "Attack", "HP" };
+        System.out.println(pokemon.ordernarPorColumnas(etiqeutas, "descendente"));
+
+        Etiqueta ataquelabel = new EtiquetaString("Attack");
+        Celda ataque = new CeldaNum(100);
     }
 }

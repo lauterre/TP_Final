@@ -21,7 +21,7 @@ import lector.exceptions.CSVParserException;
 
 public class LectorCSV {
 
-    private Etiqueta[] encabezados;
+    private List<Etiqueta> encabezados;
 
     public List<String> leer(String ruta) throws ArchivoNoEncontradoException {
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(ruta))) {
@@ -36,6 +36,7 @@ public class LectorCSV {
         }
     }
 
+    // TODO: ver que pasa si el cvs tiene null en la ultima columna
     public List<Columna> parserColumnas(List<String> lineas, boolean tieneEncabezados) throws CSVParserException {
         int cantidadColumnas = lineas.get(0).split(",").length;
         List<List<String>> columnas = new ArrayList<>();
@@ -47,17 +48,18 @@ public class LectorCSV {
         for (int l = 0; l < lineas.size(); l++) {
             String[] campos = lineas.get(l).split(",");
             if (l == 0) {
-                this.encabezados = new Etiqueta[campos.length];
+                this.encabezados = new ArrayList<>();
                 for (int campo = 0; campo < campos.length; campo++) {
                     if (tieneEncabezados) {
                         EtiquetaString etiqueta = new EtiquetaString(campos[campo]);
-                        encabezados[campo] = etiqueta;
+                        encabezados.add(etiqueta);
                     } else {
                         EtiquetaNum etiqueta = new EtiquetaNum(campo);
-                        encabezados[campo] = etiqueta;
+                        encabezados.add(etiqueta);
                     }
                 }
             }
+            System.out.println(campos.length);
             if (campos.length != cantidadColumnas) {
                 throw new CSVParserException();
             }
@@ -69,10 +71,18 @@ public class LectorCSV {
 
         List<Columna> cols = new ArrayList<>();
         for (List<String> columna : columnas) {
+            if (tieneEncabezados) {
+                columna.remove(0);
+            }
             if (esNum(columna.get(1))) {
                 List<CeldaNum> colNum = new ArrayList<>();
                 for (String celda : columna) {
-                    double numero = Double.parseDouble(celda);
+                    Double numero;
+                    if (celda.equals("")) {
+                        numero = null;
+                    } else {
+                        numero = Double.parseDouble(celda);
+                    }
                     CeldaNum celdaNum = new CeldaNum(numero);
                     colNum.add(celdaNum);
                 }
@@ -81,7 +91,12 @@ public class LectorCSV {
             } else if (esBool(columna.get(1))) {
                 List<CeldaBoolean> colBool = new ArrayList<>();
                 for (String celda : columna) {
-                    boolean booleano = Boolean.parseBoolean(celda);
+                    Boolean booleano;
+                    if (celda.equals("")) {
+                        booleano = null;
+                    } else {
+                        booleano = Boolean.parseBoolean(celda);
+                    }
                     CeldaBoolean celdaBool = new CeldaBoolean(booleano);
                     colBool.add(celdaBool);
                 }
@@ -96,10 +111,6 @@ public class LectorCSV {
                 ColumnaString col = new ColumnaString(colString);
                 cols.add(col);
             }
-            if (tieneEncabezados) {
-                columna.remove(0);
-            }
-
         }
         return cols;
     }
@@ -113,7 +124,7 @@ public class LectorCSV {
         return cadena.equalsIgnoreCase("true") || cadena.equalsIgnoreCase("false");
     }
 
-    public Etiqueta[] getEncabezados() {
+    public List<Etiqueta> getEncabezados() {
         return this.encabezados;
     }
 }

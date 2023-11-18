@@ -2,7 +2,7 @@ package celda;
 
 import java.util.Objects;
 
-public class CeldaString extends Celda{
+public class CeldaString extends Celda {
     private String valor;
 
     public CeldaString(String valor) {
@@ -17,7 +17,7 @@ public class CeldaString extends Celda{
     public void setValor(String valor) {
         this.valor = valor;
     }
-    
+
     @Override
     public int compareTo(Celda otraCelda) {
         CeldaString otraCeldaString = (CeldaString) otraCelda;
@@ -31,7 +31,7 @@ public class CeldaString extends Celda{
     }
 
     @Override
-    public CeldaString copia(){
+    public CeldaString copia() {
         valor = this.getValor();
         return new CeldaString(valor);
     }
@@ -40,18 +40,26 @@ public class CeldaString extends Celda{
     public boolean isNA() {
         if (this.valor == null || this.valor.equalsIgnoreCase("NA")) {
             return true;
-        } else return false;
+        } else
+            return false;
     }
 
     @Override
     public String toString() {
-        return this.valor;
+        if (!(valor == null || valor == "")) {
+            return this.valor;
+        } else {
+            return "NA";
+        }
+
     }
 
-        @Override
+    @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (this == null || this.getClass() != obj.getClass()) return false;
+        if (this == obj)
+            return true;
+        if (this == null || this.getClass() != obj.getClass())
+            return false;
 
         CeldaString celda = (CeldaString) obj;
         return celda.valor.equals(this.valor);
