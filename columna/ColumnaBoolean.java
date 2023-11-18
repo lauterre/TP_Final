@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import Exceptions.ConversionDeTiposException;
+import Exceptions.ValorInvalidoException;
 import celda.Celda;
 import celda.CeldaBoolean;
 
@@ -29,18 +31,17 @@ public class ColumnaBoolean extends Columna {
         if (indiceFila >= 0 && indiceFila < celdas.size()) {
             return celdas.get(indiceFila); // celdas.get(indiceFila).getValor()?
         } else {
-            throw new IllegalArgumentException("Índice de fila fuera de rango");
+            throw new ValorInvalidoException("Indice de fila fuera de rango");
         }
     }
 
     @Override
     public void fijarValor(Integer indiceFila, Object valor) {
-        //TODO: exception propia
-        if (!(valor instanceof Boolean)) throw new IllegalArgumentException("Tipo de valor invalido"); 
+        if (!(valor instanceof Boolean)) throw new ValorInvalidoException("Tipo de valor invalido"); 
         if (indiceFila >= 0 && indiceFila < celdas.size()) {
             celdas.get(indiceFila).setValor((Boolean) valor);
         } else {
-            throw new IllegalArgumentException("Índice de fila fuera de rango");
+            throw new ValorInvalidoException("Índice de fila fuera de rango");
         }
     }
 
@@ -64,9 +65,13 @@ public class ColumnaBoolean extends Columna {
 
     @Override
     public void agregarCelda(Celda celda) {
-        // TODO: excepcion ClassCast
-        this.celdas.add((CeldaBoolean) celda);
+        try {
+            this.celdas.add((CeldaBoolean) celda);
+        } catch (ConversionDeTiposException e) {
+            System.out.println("Error de conversión de tipos: " + e.getMessage());
+        }
     }
+
 
     // para probar cosas:
     public String toString() {
