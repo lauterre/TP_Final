@@ -682,32 +682,56 @@ public class Tabla {
         return nueva;
     }
 
-    public <T extends Celda> Tabla concatenar(Tabla otraTabla, boolean coincideEtiquetaFila)
-            throws TablasNoConcatenablesException {
-        if (mismasColumnas(this, otraTabla)) {
-            Tabla nuevaTabla = copiarTabla(this);
-            if (coincideEtiquetaFila) {
-
-            }
-            for (Etiqueta etiqueta : nuevaTabla.obtenerEtiquetasColumnas()) {
-                Columna<T> columna = nuevaTabla.obtenerColumna(etiqueta);
-                Columna<T> columnaOtraTabla = otraTabla.obtenerColumna(etiqueta);
-                for (T celda : columnaOtraTabla.getCeldas()) {
-                    columna.agregarCelda(celda);
+    public <T extends Celda> Tabla concatenar(Tabla otraTabla, boolean coincideEtiquetaFila) {
+        try {
+            mismasColumnas(this, otraTabla);
+        } catch (TablasNoConcatenablesException e) {
+            System.out.println(e.getMessage());
+            return this;
+        }
+        Tabla nuevaTabla = copiarTabla(this);
+        if (coincideEtiquetaFila) {
+            if (!mismoTipoEtiqueta(this.obtenerEtiquetasFilas(), otraTabla.obtenerEtiquetasFilas())) {
+                throw new IllegalArgumentException(
+                        "No coinciden las etiquetas, por favor indique falso en el argumento");// TODO: exception
+            } else {
+                for (int i = 0; i < otraTabla.obtenerCantidadFilas(); i++) {
+                    if (otraTabla.obtenerEtiquetasFilas().get(i) instanceof EtiquetaString) {
+                        nuevaTabla.rowLabels.put(otraTabla.obtenerEtiquetasFilas().get(i),
+                                i + nuevaTabla.obtenerCantidadFilas());
+                    } else {
+                        nuevaTabla.rowLabels.put(new EtiquetaNum(i + nuevaTabla.obtenerCantidadFilas()),
+                                i + nuevaTabla.obtenerCantidadFilas());
+                    }
                 }
             }
-            System.out.println(nuevaTabla.obtenerColumna("Edad"));
-            return nuevaTabla;
         } else {
-            throw new TablasNoConcatenablesException();
+            List<Etiqueta> etiquetasNuevas = new ArrayList<>();
+            for (int i = 0; i < (nuevaTabla.obtenerCantidadFilas()); i++) {
+                etiquetasNuevas.add(new EtiquetaNum(i));
+            }
+            nuevaTabla.setEtiquetasFilas(etiquetasNuevas);
+            for (int i = 0; i < otraTabla.obtenerCantidadFilas(); i++) {
+                nuevaTabla.rowLabels.put(new EtiquetaNum(i + nuevaTabla.obtenerCantidadFilas()),
+                        i + nuevaTabla.obtenerCantidadFilas());
+            }
         }
+        for (Etiqueta etiqueta : nuevaTabla.obtenerEtiquetasColumnas()) {
+            Columna<T> columna = nuevaTabla.obtenerColumna(etiqueta);
+            Columna<T> columnaOtraTabla = otraTabla.obtenerColumna(etiqueta);
+            for (T celda : columnaOtraTabla.getCeldas()) {
+                columna.agregarCelda(celda);
+            }
+        }
+        System.out.println(nuevaTabla.obtenerColumna("Edad"));
+        return nuevaTabla;
     }
 
     private static boolean mismoTipoEtiqueta(List<Etiqueta> etiqueta1, List<Etiqueta> etiqueta2) {
         return (etiqueta1.get(0).getClass() == etiqueta2.get(0).getClass());
     }
 
-    private static boolean mismasColumnas(Tabla tabla1, Tabla tabla2) {
+    private static boolean mismasColumnas(Tabla tabla1, Tabla tabla2) throws TablasNoConcatenablesException {
         List<String> columnas1 = tabla1.obtenerNombreEtiquetasColumnas().stream()
                 .map(x -> x.toString()).collect(Collectors.toList());
         List<String> columnas2 = tabla2.obtenerNombreEtiquetasColumnas().stream()
@@ -716,7 +740,11 @@ public class Tabla {
         Collections.sort(columnas1);
         Collections.sort(columnas2);
 
-        return columnas1.equals(columnas2);
+        if (columnas1.equals(columnas2)) {
+            return true;
+        } else {
+            throw new TablasNoConcatenablesException();
+        }
     }
 
     public Tabla filtrar(Etiqueta col, char operador, Celda valor) { // TODO: String col, Object valor
@@ -872,18 +900,16 @@ public class Tabla {
         System.out.println(tabla);
         System.out.println(tabla2);
         Tabla tabla3;
-        try {
-            tabla3 = tabla.concatenar(tabla2);
-            System.out.println(tabla3);
-            System.out.println(tabla3.obtenerEtiquetasFilas());
 
-        } catch (TablasNoConcatenablesException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        tabla3 = tabla.concatenar(tabla2, false);
+        System.out.println(tabla3);
+
+        tabla3 = tabla.concatenar(tabla2, true);
+
+        System.out.println(tabla3);
+        System.out.println(tabla3.obtenerEtiquetasFilas());
 
         // System.out.println(tabla.obtenerEtiquetasColumnas());
-        // System.out.println(tabla.obtenerEtiquetasFilas());
         // tabla.mostrarTabla();
         // System.out.println(tabla.toString());
         // System.out.println(tabla.obtenerEtiquetasColumnas());
@@ -932,6 +958,8 @@ public class Tabla {
         Tabla pokemon = new Tabla("E:/java_workspace/TP_Final/Pokemon.csv", true, false);
         // // System.out.println(pokemon);
         Tabla pokemon2 = new Tabla("E:/java_workspace/TP_Final/Pokemon.csv", true, false);
+        Tabla tabla4 = tabla.concatenar(pokemon, true);
+
         // System.out.println(pokemon.obtenerEtiquetasColumnas());
         // System.out.println(pokemon.obtenerEtiquetasFilas());
         // String[] etiqeutas = { "Attack", "HP" };
@@ -948,13 +976,6 @@ public class Tabla {
         // // TODO Auto-generated catch block
         // e.printStackTrace();
         // }
-
-        List<Etiqueta> etiquetas1 = new ArrayList<>();
-        etiquetas1.add(new EtiquetaNum(2));
-        List<Etiqueta> etiquetas1 = new ArrayList<>();
-        etiquetas1.add(new EtiquetaNum(2));
-        etiquetas1.add(new EtiquetaString("gokas"));
-        etiquetas1.add(new EtiquetaString("SAKHFGBJ")):"
 
     }
 }
