@@ -166,6 +166,74 @@ public class Tabla {
 
     }
 
+    // TODO: si tiene encabezado no deberia tomar una columna sin etiqueta y
+    // viceversa
+    public void agregarColumnaString(List<String> columna) {
+        List<CeldaString> celdas = new ArrayList<>();
+        for (String string : columna) {
+            CeldaString celda = new CeldaString(string);
+            celdas.add(celda);
+        }
+        ColumnaString col = new ColumnaString(celdas);
+        this.colLabels.put(new EtiquetaNum(this.columnas.size()), this.columnas.size());
+        this.columnas.add(col);
+    }
+
+    public void agregarColumnaString(List<String> columna, String encabezado) {
+        List<CeldaString> celdas = new ArrayList<>();
+        for (String string : columna) {
+            CeldaString celda = new CeldaString(string);
+            celdas.add(celda);
+        }
+        ColumnaString col = new ColumnaString(celdas);
+        this.colLabels.put(new EtiquetaString(encabezado), this.columnas.size());
+        this.columnas.add(col);
+    }
+
+    public void agregarColumnaNum(List<Number> columna) {
+        List<CeldaNum> celdas = new ArrayList<>();
+        for (Number num : columna) {
+            CeldaNum celda = new CeldaNum(num);
+            celdas.add(celda);
+        }
+        ColumnaNum col = new ColumnaNum(celdas);
+        this.colLabels.put(new EtiquetaNum(this.columnas.size()), this.columnas.size());
+        this.columnas.add(col);
+    }
+
+    public void agregarColumnaNum(List<Number> columna, String encabezado) {
+        List<CeldaNum> celdas = new ArrayList<>();
+        for (Number num : columna) {
+            CeldaNum celda = new CeldaNum(num);
+            celdas.add(celda);
+        }
+        ColumnaNum col = new ColumnaNum(celdas);
+        this.colLabels.put(new EtiquetaString(encabezado), this.columnas.size());
+        this.columnas.add(col);
+    }
+
+    public void agregarColumnaBoolean(List<Boolean> columna) {
+        List<CeldaBoolean> celdas = new ArrayList<>();
+        for (Boolean bool : columna) {
+            CeldaBoolean celda = new CeldaBoolean(bool);
+            celdas.add(celda);
+        }
+        ColumnaBoolean col = new ColumnaBoolean(celdas);
+        this.colLabels.put(new EtiquetaNum(this.columnas.size()), this.columnas.size());
+        this.columnas.add(col);
+    }
+
+    public void agregarColumnaBoolean(List<Boolean> columna, String encabezado) {
+        List<CeldaBoolean> celdas = new ArrayList<>();
+        for (Boolean bool : columna) {
+            CeldaBoolean celda = new CeldaBoolean(bool);
+            celdas.add(celda);
+        }
+        ColumnaBoolean col = new ColumnaBoolean(celdas);
+        this.colLabels.put(new EtiquetaString(encabezado), this.columnas.size());
+        this.columnas.add(col);
+    }
+
     private List<Etiqueta> convertirAEtiqueta(String[] nombres) {
         List<Etiqueta> salida = new ArrayList<>();
         for (int i = 0; i < nombres.length; i++) {
@@ -725,15 +793,15 @@ public class Tabla {
         System.out.println(tabla.obtenerEtiquetasColumnas());
         System.out.println(tabla.obtenerEtiquetasFilas());
 
-        Etiqueta etiqueta = new EtiquetaString("Apellido");
+        // Etiqueta etiqueta = new EtiquetaString("Apellido");
 
-        CeldaString celda = new CeldaString("25");
+        // CeldaString celda = new CeldaString("25");
 
-        Tabla tablaFiltrada = tabla.filtrar(etiqueta, '>', celda);
+        // Tabla tablaFiltrada = tabla.filtrar(etiqueta, '>', celda);
 
-        System.out.println(tablaFiltrada);
+        // System.out.println(tablaFiltrada);
 
-        Tabla iris = new Tabla("E:/java_workspace/TP_Final/IRIS.csv", false, false);
+        // Tabla iris = new Tabla("E:/java_workspace/TP_Final/IRIS.csv", false, false);
 
         // System.out.println(iris);
         // System.out.println(iris.obtenerCantidadColumnas());
@@ -741,15 +809,24 @@ public class Tabla {
         // System.out.println(iris.obtenerEtiquetasColumnas());
         // System.out.println(iris.obtenerEtiquetasFilas());
 
-        Tabla pokemon = new Tabla("E:/java_workspace/TP_Final/Pokemon.csv", true,
-                false);
-        System.out.println(pokemon);
-        System.out.println(pokemon.obtenerNombreEtiquetasColumnas());
-        System.out.println(pokemon.obtenerNombreEtiquetasFilas());
-        String[] etiqeutas = { "Attack", "HP" };
-        System.out.println(pokemon.ordernarPorColumnas(etiqeutas, "descendente"));
+        // Tabla pokemon = new Tabla("E:/java_workspace/TP_Final/Pokemon.csv", true,
+        // false);
+        // System.out.println(pokemon);
+        // System.out.println(pokemon.obtenerEtiquetasColumnas());
+        // System.out.println(pokemon.obtenerEtiquetasFilas());
+        // String[] etiqeutas = { "Attack", "HP" };
+        // System.out.println(pokemon.ordernarPorColumnas(etiqeutas, "descendente"));
 
-        Etiqueta ataquelabel = new EtiquetaString("Attack");
-        Celda ataque = new CeldaNum(100);
+        // Etiqueta ataquelabel = new EtiquetaString("Attack");
+        // Celda ataque = new CeldaNum(100);
+
+        List<Number> nuevaCol = new ArrayList<>();
+        nuevaCol.add(10);
+        nuevaCol.add(7);
+        tabla.agregarColumnaNum(nuevaCol, "Nota");
+
+        System.out.println(tabla);
+        System.out.println(tabla.obtenerEtiquetasColumnas());
+        System.out.println(tabla.obtenerEtiquetasFilas());
     }
 }

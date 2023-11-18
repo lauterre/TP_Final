@@ -6,11 +6,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import columna.ColumnaBoolean;
 import celda.CeldaBoolean;
 import celda.CeldaNum;
 import celda.CeldaString;
 import columna.Columna;
+import columna.ColumnaBoolean;
 import columna.ColumnaNum;
 import columna.ColumnaString;
 import etiqueta.Etiqueta;
