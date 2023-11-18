@@ -682,10 +682,13 @@ public class Tabla {
         return nueva;
     }
 
-    public <T extends Celda> Tabla concatenar(Tabla otraTabla)
+    public <T extends Celda> Tabla concatenar(Tabla otraTabla, boolean coincideEtiquetaFila)
             throws TablasNoConcatenablesException {
         if (mismasColumnas(this, otraTabla)) {
             Tabla nuevaTabla = copiarTabla(this);
+            if (coincideEtiquetaFila) {
+
+            }
             for (Etiqueta etiqueta : nuevaTabla.obtenerEtiquetasColumnas()) {
                 Columna<T> columna = nuevaTabla.obtenerColumna(etiqueta);
                 Columna<T> columnaOtraTabla = otraTabla.obtenerColumna(etiqueta);
@@ -693,10 +696,15 @@ public class Tabla {
                     columna.agregarCelda(celda);
                 }
             }
+            System.out.println(nuevaTabla.obtenerColumna("Edad"));
             return nuevaTabla;
         } else {
             throw new TablasNoConcatenablesException();
         }
+    }
+
+    private static boolean mismoTipoEtiqueta(List<Etiqueta> etiqueta1, List<Etiqueta> etiqueta2) {
+        return (etiqueta1.get(0).getClass() == etiqueta2.get(0).getClass());
     }
 
     private static boolean mismasColumnas(Tabla tabla1, Tabla tabla2) {
@@ -867,6 +875,8 @@ public class Tabla {
         try {
             tabla3 = tabla.concatenar(tabla2);
             System.out.println(tabla3);
+            System.out.println(tabla3.obtenerEtiquetasFilas());
+
         } catch (TablasNoConcatenablesException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -938,6 +948,13 @@ public class Tabla {
         // // TODO Auto-generated catch block
         // e.printStackTrace();
         // }
+
+        List<Etiqueta> etiquetas1 = new ArrayList<>();
+        etiquetas1.add(new EtiquetaNum(2));
+        List<Etiqueta> etiquetas1 = new ArrayList<>();
+        etiquetas1.add(new EtiquetaNum(2));
+        etiquetas1.add(new EtiquetaString("gokas"));
+        etiquetas1.add(new EtiquetaString("SAKHFGBJ")):"
 
     }
 }
