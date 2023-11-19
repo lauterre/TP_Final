@@ -20,8 +20,8 @@ public class App {
 
         String[] columnasAOrdenar = { "A", "B" };
 
-        System.out.println(miMatriz.ordernarPorColumnas(columnasAOrdenar, "ascendente"));
-        System.out.println(miMatriz.ordernarPorColumnas(columnasAOrdenar, "descendiente"));
+        System.out.println(miMatriz.ordenarPorColumnas(columnasAOrdenar, "ascendente"));
+        System.out.println(miMatriz.ordenarPorColumnas(columnasAOrdenar, "descendiente"));
         System.out.println(miMatriz.obtenerEtiquetasFilas());
     }
 

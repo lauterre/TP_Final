@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import javax.swing.text.TabableView;
+
 import Exceptions.EtiquetaInvalidaException;
 import Exceptions.TablasNoConcatenablesException;
 import lector.LectorCSV;
@@ -51,9 +53,9 @@ public class Tabla {
         setEtiquetasColumnas(etiquetas);
     }
 
-    public Tabla(Tabla m) {
-        this.copiarTabla(m);
-    }
+    // public Tabla(Tabla m) {
+    //     copiarTabla(m);
+    // }
 
     // public Tabla copia(Tabla origen) {
     // Tabla nueva = new Tabla(this);
@@ -416,7 +418,7 @@ public class Tabla {
         }
     }
 
-    public Tabla ordernarPorColumnas(String[] columnasOrden, String queOrden) {
+    public Tabla ordenarPorColumnas(String[] columnasOrden, String queOrden) {
         List<Etiqueta> orden = new ArrayList<>(rowLabels.keySet());
         int n = orden.size();
         boolean huboCambio;
@@ -459,7 +461,7 @@ public class Tabla {
             n--;
         } while (huboCambio);
 
-        Tabla nuevaTabla = new Tabla(this);
+        Tabla nuevaTabla = copiarTabla(this);
         nuevaTabla.generarRowLabelsOrdenado(orden);
         return nuevaTabla;
     }
@@ -564,6 +566,7 @@ public class Tabla {
         throw new EtiquetaInvalidaException();
     }
 
+    //TODO
     private Celda crearCelda(Object valor) {
         Celda celda;
         if (valor instanceof Boolean) {
@@ -573,7 +576,6 @@ public class Tabla {
         } else if (valor instanceof String) {
             celda = new CeldaString((String) valor);
         } else {
-            // TODO: excepcion propia
             throw new IllegalArgumentException("Tipo de datos no compatible en la matriz");
         }
         return celda;
@@ -747,7 +749,44 @@ public class Tabla {
         }
     }
 
-    public Tabla filtrar(Etiqueta col, char operador, Celda valor) { // TODO: String col, Object valor
+    public Tabla filtrar(String col, char operador, int valor) {
+        try {
+            Etiqueta etiquetaCol = getEtiquetaColumna(col);
+            Celda celda = new CeldaNum(valor);
+            return filtrar(etiquetaCol, operador, celda);
+        } catch (EtiquetaInvalidaException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public Tabla filtrar(String col, char operador, String valor) {
+        try {
+            Etiqueta etiquetaCol = getEtiquetaColumna(col);
+            Celda celda = new CeldaString(valor);
+            return filtrar(etiquetaCol, operador, celda);
+        } catch (EtiquetaInvalidaException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public Tabla filtrar(String col, char operador, boolean valor) {
+        try {
+            Etiqueta etiquetaCol = getEtiquetaColumna(col);
+            Celda celda = new CeldaBoolean(valor);
+            return filtrar(etiquetaCol, operador, celda);
+        } catch (EtiquetaInvalidaException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    //TODO: para el >= y <= podriamos usar concatenar de las tablas filtradas por = y por < o >
+    private Tabla filtrar(Etiqueta col, char operador, Celda valor) {
         Map<Character, Predicate<Celda>> operadores = new HashMap<>();
         operadores.put('<', e -> e.compareTo(valor) < 0);
         operadores.put('>', e -> e.compareTo(valor) > 0);
@@ -773,7 +812,7 @@ public class Tabla {
         } else {
             throw new IllegalArgumentException();
         }
-        Tabla nueva = new Tabla(this);
+        Tabla nueva = copiarTabla(this);
         // nueva.generarRowLabelsOrdenado(salida);
         List<Etiqueta> auxiliar = new ArrayList<>();
         for (Etiqueta fila : nueva.rowLabels.keySet()) {
@@ -854,10 +893,12 @@ public class Tabla {
     private int obtenerAnchoEtiquetasFilas() {
         int anchoMaximo = 0;
 
-        for (Etiqueta etiquetaFila : rowLabels.keySet()) {
-            int longitudEtiqueta = etiquetaFila.toString().length();
-            if (longitudEtiqueta > anchoMaximo) {
-                anchoMaximo = longitudEtiqueta;
+        if (rowLabels != null) {
+            for (Etiqueta etiquetaFila : rowLabels.keySet()) {
+                int longitudEtiqueta = etiquetaFila.toString().length();
+                if (longitudEtiqueta > anchoMaximo) {
+                    anchoMaximo = longitudEtiqueta;
+                }
             }
         }
 
@@ -955,10 +996,13 @@ public class Tabla {
 
         // System.out.println(tablaFiltrada);
 
-        Tabla pokemon = new Tabla("E:/java_workspace/TP_Final/Pokemon.csv", true, false);
-        // // System.out.println(pokemon);
-        Tabla pokemon2 = new Tabla("E:/java_workspace/TP_Final/Pokemon.csv", true, false);
-        Tabla tabla4 = tabla.concatenar(pokemon, true);
+        Tabla pokemon = new Tabla("C:/Users/nazar/OneDrive/Escritorio/TP_Final/Pokemon.csv", true, false);
+        Tabla pokemonFiltrado = pokemon.filtrar("Attack", '>', 120);
+        String[] columnas = {"Attack", "HP"};
+        Tabla pokemonOrdenado = pokemonFiltrado.ordenarPorColumnas(columnas, "descendente");
+        System.out.println(pokemonOrdenado);
+        //Tabla pokemon2 = new Tabla("E:/java_workspace/TP_Final/Pokemon.csv", true, false);
+        //Tabla tabla4 = tabla.concatenar(pokemon, true);
 
         // System.out.println(pokemon.obtenerEtiquetasColumnas());
         // System.out.println(pokemon.obtenerEtiquetasFilas());
