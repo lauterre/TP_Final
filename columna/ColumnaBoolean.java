@@ -3,7 +3,6 @@ package columna;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,7 +10,6 @@ import Exceptions.ConversionDeTiposException;
 import Exceptions.ValorInvalidoException;
 import celda.Celda;
 import celda.CeldaBoolean;
-import celda.CeldaNum;
 
 public class ColumnaBoolean extends Columna<CeldaBoolean> {
     private List<CeldaBoolean> celdas;
@@ -121,7 +119,7 @@ public class ColumnaBoolean extends Columna<CeldaBoolean> {
     public List<CeldaBoolean> unique() {
         List<CeldaBoolean> unicos = new ArrayList<>();
         for (CeldaBoolean celda : celdas) {
-            if (!(unicos.contains(celda))) { //OJO
+            if (!(unicos.contains(celda))) { // OJO
                 unicos.add(celda);
             }
         }

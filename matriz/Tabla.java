@@ -9,8 +9,6 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import javax.swing.text.TabableView;
-
 import Exceptions.EtiquetaInvalidaException;
 import Exceptions.TablasNoConcatenablesException;
 import lector.LectorCSV;
@@ -34,7 +32,7 @@ import etiqueta.EtiquetaString;
 import fila.Fila;
 
 public class Tabla {
-    List<Columna> columnas;
+    List<Columna<? extends Celda>> columnas;
     Map<Etiqueta, Integer> colLabels;
     Map<Etiqueta, Integer> rowLabels;
     boolean tieneEtiquetaCol = false;
@@ -54,7 +52,7 @@ public class Tabla {
     }
 
     // public Tabla(Tabla m) {
-    //     copiarTabla(m);
+    // copiarTabla(m);
     // }
 
     // public Tabla copia(Tabla origen) {
@@ -88,7 +86,7 @@ public class Tabla {
                 Celda celda = crearCelda(matriz[j][i]);
                 celdas.add(celda);
             }
-            Columna columna = crearColumna(celdas);
+            Columna<? extends Celda> columna = crearColumna(celdas);
             this.columnas.add(columna);
             if (tieneEncabezadosColumnas) {
                 Etiqueta etiqueta = new EtiquetaString(matriz[0][i].toString());
@@ -130,7 +128,7 @@ public class Tabla {
         this.rowLabels = new LinkedHashMap<>();
         try {
             List<String> lineas = lector.leer(rutaArchivo);
-            List<Columna> cols = lector.parserColumnas(lineas, tieneEncabezadosColumnas);
+            List<Columna<? extends Celda>> cols = lector.parserColumnas(lineas, tieneEncabezadosColumnas);
             this.columnas = cols;
             if (tieneEncabezadosColumnas) {
                 setEtiquetasColumnas(lector.getEncabezados());
@@ -391,12 +389,12 @@ public class Tabla {
         return cantidadColumnas;
     }
 
-    private Columna obtenerColumna(Etiqueta etiquetaColumna) {
-        Columna columnaPedida = columnas.get(colLabels.get(etiquetaColumna));
+    private Columna<? extends Celda> obtenerColumna(Etiqueta etiquetaColumna) {
+        Columna<? extends Celda> columnaPedida = columnas.get(colLabels.get(etiquetaColumna));
         return columnaPedida;
     }
 
-    public Columna obtenerColumna(String etiquetaColumnaNombre) {
+    public Columna<? extends Celda> obtenerColumna(String etiquetaColumnaNombre) {
         try {
             Etiqueta etiquetaColumna = getEtiquetaColumna(etiquetaColumnaNombre);
             return obtenerColumna(etiquetaColumna);
@@ -407,7 +405,7 @@ public class Tabla {
         }
     }
 
-    public Columna obtenerColumna(Integer etiquetaColumnaNombre) {
+    public Columna<? extends Celda> obtenerColumna(Integer etiquetaColumnaNombre) {
         try {
             Etiqueta etiquetaColumna = getEtiquetaColumna(etiquetaColumnaNombre);
             return obtenerColumna(etiquetaColumna);
@@ -495,7 +493,7 @@ public class Tabla {
     }
 
     public void ordenar(Etiqueta etiquetaColumna, String orden) {
-        Columna columna = columnas.get(colLabels.get(etiquetaColumna));
+        Columna<? extends Celda> columna = columnas.get(colLabels.get(etiquetaColumna));
         columna.ordenar(orden);
     }
 
@@ -505,7 +503,7 @@ public class Tabla {
     public void eliminarColumna(String etiquetaNombre) {
         try {
             Etiqueta etiqueta = getEtiquetaColumna(etiquetaNombre);
-            Columna columna = obtenerColumna(etiquetaNombre);
+            Columna<? extends Celda> columna = obtenerColumna(etiquetaNombre);
             this.columnas.remove(columna);
             this.colLabels.remove(etiqueta);
         } catch (EtiquetaInvalidaException e) {
@@ -518,7 +516,7 @@ public class Tabla {
     public void eliminarColumna(Integer etiquetaNombre) {
         try {
             Etiqueta etiqueta = getEtiquetaColumna(etiquetaNombre);
-            Columna columna = obtenerColumna(etiquetaNombre);
+            Columna<? extends Celda> columna = obtenerColumna(etiquetaNombre);
             this.columnas.remove(columna);
             this.colLabels.remove(etiqueta);
         } catch (EtiquetaInvalidaException e) {
@@ -566,7 +564,7 @@ public class Tabla {
         throw new EtiquetaInvalidaException();
     }
 
-    //TODO
+    // TODO
     private Celda crearCelda(Object valor) {
         Celda celda;
         if (valor instanceof Boolean) {
@@ -581,7 +579,7 @@ public class Tabla {
         return celda;
     }
 
-    private Columna crearColumna(List<Celda> celdas) {
+    private Columna<? extends Celda> crearColumna(List<Celda> celdas) {
         // Identificar el tipo de columna
         if (celdas.get(0) instanceof CeldaBoolean) {
             List<CeldaBoolean> booleanCeldas = new ArrayList<>();
@@ -657,7 +655,7 @@ public class Tabla {
         nueva.tieneEtiquetaCol = origen.tieneEtiquetaCol;
         nueva.tieneEtiquetaFila = origen.tieneEtiquetaFila;
         nueva.columnas = new ArrayList<>();
-        for (Columna columna : origen.columnas) {
+        for (Columna<? extends Celda> columna : origen.columnas) {
             if (columna instanceof ColumnaNum) {
                 ColumnaNum columnaNum = (ColumnaNum) columna;
                 ColumnaNum columnaNueva = new ColumnaNum(new ArrayList<CeldaNum>());
@@ -719,9 +717,9 @@ public class Tabla {
             }
         }
         for (Etiqueta etiqueta : nuevaTabla.obtenerEtiquetasColumnas()) {
-            Columna<T> columna = nuevaTabla.obtenerColumna(etiqueta);
-            Columna<T> columnaOtraTabla = otraTabla.obtenerColumna(etiqueta);
-            for (T celda : columnaOtraTabla.getCeldas()) {
+            Columna<? extends Celda> columna = nuevaTabla.obtenerColumna(etiqueta);
+            Columna<? extends Celda> columnaOtraTabla = otraTabla.obtenerColumna(etiqueta);
+            for (Celda celda : columnaOtraTabla.getCeldas()) {
                 columna.agregarCelda(celda);
             }
         }
@@ -785,7 +783,8 @@ public class Tabla {
         }
     }
 
-    //TODO: para el >= y <= podriamos usar concatenar de las tablas filtradas por = y por < o >
+    // TODO: para el >= y <= podriamos usar concatenar de las tablas filtradas por =
+    // y por < o >
     private Tabla filtrar(Etiqueta col, char operador, Celda valor) {
         Map<Character, Predicate<Celda>> operadores = new HashMap<>();
         operadores.put('<', e -> e.compareTo(valor) < 0);
@@ -827,13 +826,14 @@ public class Tabla {
         return nueva;
 
     }
+
     public void mostrarTabla() {
         System.out.println(this);
     }
 
     private void eliminarFila(Etiqueta etiqueta) {
         int indice = rowLabels.get(etiqueta);
-        for (Columna columna : columnas) {
+        for (Columna<? extends Celda> columna : columnas) {
             columna.getCeldas().remove(indice);
         }
         rowLabels.remove(etiqueta);
@@ -941,7 +941,7 @@ public class Tabla {
 
     private List<Etiqueta> getEtiquetasNa(Etiqueta etiCol) {
         List<Etiqueta> etiquetasNA = new ArrayList<>();
-        Columna columna = obtenerColumna(etiCol);
+        Columna<? extends Celda> columna = obtenerColumna(etiCol);
         List<Integer> inicesNA = columna.indicesNA();
         for (Integer i : inicesNA) {
             Etiqueta etiqueta = obtenerClavePorValor(this.rowLabels, i);
@@ -960,85 +960,85 @@ public class Tabla {
     }
 
     public double promedio(String etiquetaCol) {
-        Columna columna = obtenerColumna(etiquetaCol);
+        Columna<? extends Celda> columna = obtenerColumna(etiquetaCol);
         return promedio(columna);
     }
 
     public double promedio(int etiquetaCol) {
-        Columna columna = obtenerColumna(etiquetaCol);
+        Columna<? extends Celda> columna = obtenerColumna(etiquetaCol);
         return promedio(columna);
     }
 
-    private double promedio(Columna columna) {
+    private double promedio(Columna<? extends Celda> columna) {
         return columna.promedio();
     }
 
     public double suma(String etiquetaCol) {
-        Columna columna = obtenerColumna(etiquetaCol);
+        Columna<? extends Celda> columna = obtenerColumna(etiquetaCol);
         return suma(columna);
     }
 
     public double suma(int etiquetaCol) {
-        Columna columna = obtenerColumna(etiquetaCol);
+        Columna<? extends Celda> columna = obtenerColumna(etiquetaCol);
         return suma(columna);
     }
 
-    //TODO al pedo
-    private double suma(Columna columna) {
+    // TODO al pedo
+    private double suma(Columna<? extends Celda> columna) {
         return columna.suma();
     }
 
-    //Count
+    // Count
     public int count(String valor, String etiquetaCol) {
-        Columna columna = obtenerColumna(etiquetaCol);
+        Columna<? extends Celda> columna = obtenerColumna(etiquetaCol);
         return columna.count(valor);
     }
 
     public int count(boolean valor, String etiquetaCol) {
-        Columna columna = obtenerColumna(etiquetaCol);
+        Columna<? extends Celda> columna = obtenerColumna(etiquetaCol);
         return columna.count(valor);
     }
-    
+
     public int count(Number valor, String etiquetaCol) {
-        Columna columna = obtenerColumna(etiquetaCol);
+        Columna<? extends Celda> columna = obtenerColumna(etiquetaCol);
         return columna.count(valor);
     }
 
     public int count(String valor, int etiquetaCol) {
-        Columna columna = obtenerColumna(etiquetaCol);
+        Columna<? extends Celda> columna = obtenerColumna(etiquetaCol);
         return columna.count(valor);
     }
 
     public int count(boolean valor, int etiquetaCol) {
-        Columna columna = obtenerColumna(etiquetaCol);
+        Columna<? extends Celda> columna = obtenerColumna(etiquetaCol);
         return columna.count(valor);
     }
-    
+
     public int count(Number valor, int etiquetaCol) {
-        Columna columna = obtenerColumna(etiquetaCol);
+        Columna<? extends Celda> columna = obtenerColumna(etiquetaCol);
         return columna.count(valor);
     }
 
-    //Count bien
+    // Count bien
 
-    public Map<Celda, Integer> count(String etiquetaCol) {
-        Columna columna = obtenerColumna(etiquetaCol);
-        return columna.count();
-    }
-    
-    public Map<Celda, Integer> count(int etiquetaCol) {
-        Columna columna = obtenerColumna(etiquetaCol);
+    public Map<? extends Celda, Integer> count(String etiquetaCol) {
+        Columna<? extends Celda> columna = obtenerColumna(etiquetaCol);
         return columna.count();
     }
 
-    //Unique
-    public List<Celda> unique(String etiquetaCol) {
-        Columna columna = obtenerColumna(etiquetaCol);
+    public Map<? extends Celda, Integer> count(int etiquetaCol) {
+        Columna<? extends Celda> columna = obtenerColumna(etiquetaCol);
+        return columna.count();
+    }
+
+    // Unique
+    public List<? extends Celda> unique(String etiquetaCol) {
+        Columna<? extends Celda> columna = obtenerColumna(etiquetaCol);
         return columna.unique();
     }
 
-    public List<Celda> unique(int etiquetaCol) {
-        Columna columna = obtenerColumna(etiquetaCol);
+    public List<? extends Celda> unique(int etiquetaCol) {
+        Columna<? extends Celda> columna = obtenerColumna(etiquetaCol);
         return columna.unique();
     }
 
@@ -1207,11 +1207,11 @@ public class Tabla {
 
         // System.out.println(tablaFiltrada);
 
-        Tabla pokemon = new Tabla("C:/Users/nazar/OneDrive/Escritorio/TP_Final/Pokemon.csv", true, false);
-        // Tabla pokemonFiltrado = pokemon.filtrar("Attack", '>', 120);
-        // String[] columnas = {"Attack", "HP"};
-        // Tabla pokemonOrdenado = pokemonFiltrado.ordenarPorColumnas(columnas, "descendente");
-        // System.out.println(pokemonOrdenado);
+        Tabla pokemon = new Tabla("E:/java_workspace/TP_Final/Pokemon.csv", true, false);
+        Tabla pokemonFiltrado = pokemon.filtrar("Attack", '>', 120);
+        String[] columnas = { "Attack", "HP" };
+        Tabla pokemonOrdenado = pokemonFiltrado.ordenarPorColumnas(columnas, "descendente");
+        System.out.println(pokemonOrdenado);
         System.out.println(pokemon);
         Tabla pokemonImputado = pokemon.imputar("Pokemon", "Type 2");
         System.out.println(pokemonImputado);
@@ -1231,14 +1231,13 @@ public class Tabla {
         System.out.println(pokemon.unique("Type 1"));
         System.out.println("Count de Name: " + pokemon.count("Type 1"));
 
-        //TODO: WTF
-        // System.out.println(pokemonOrdenado.obtenerEtiquetasFilas());
-        // pokemonOrdenado.eliminarFila(163);
-        // System.out.println(pokemonOrdenado);
+        System.out.println(pokemonOrdenado.obtenerEtiquetasFilas());
+        pokemonOrdenado.eliminarFila(163);
+        System.out.println(pokemonOrdenado);
 
-
-        //Tabla pokemon2 = new Tabla("E:/java_workspace/TP_Final/Pokemon.csv", true, false);
-        //Tabla tabla4 = tabla.concatenar(pokemon, true);
+        // Tabla pokemon2 = new Tabla("E:/java_workspace/TP_Final/Pokemon.csv", true,
+        // false);
+        // Tabla tabla4 = tabla.concatenar(pokemon, true);
 
         // System.out.println(pokemon.obtenerEtiquetasColumnas());
         // System.out.println(pokemon.obtenerEtiquetasFilas());

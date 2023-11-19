@@ -32,13 +32,13 @@ public abstract class Columna<T extends Celda> {
 
     public abstract double promedio();
 
-    public abstract double suma();    
+    public abstract double suma();
 
     public abstract int count(Object valor);
 
-    public abstract Map<T, Integer> count();
+    public abstract Map<? extends Celda, Integer> count();
 
-    public abstract List<T> unique();
+    public abstract List<? extends Celda> unique();
 
     // public abstract <T extends Celda> List<T> getCeldas();
 

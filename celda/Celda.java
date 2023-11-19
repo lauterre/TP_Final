@@ -1,9 +1,6 @@
 package celda;
 
-import etiqueta.EtiquetaNum;
-import etiqueta.EtiquetaString;
-
-public abstract class Celda implements Comparable<Celda>{
+public abstract class Celda implements Comparable<Celda> {
 
     public abstract boolean isNA();
 

@@ -9,8 +9,6 @@ import java.util.Map;
 import Exceptions.ConversionDeTiposException;
 import Exceptions.ValorInvalidoException;
 import celda.Celda;
-import celda.CeldaBoolean;
-import celda.CeldaNum;
 import celda.CeldaString;
 
 public class ColumnaString extends Columna<CeldaString> {

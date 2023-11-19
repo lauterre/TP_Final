@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import celda.Celda;
 import celda.CeldaBoolean;
 import celda.CeldaNum;
 import celda.CeldaString;
@@ -37,7 +38,8 @@ public class LectorCSV {
     }
 
     // TODO: ver que pasa si el cvs tiene null en la ultima columna
-    public List<Columna> parserColumnas(List<String> lineas, boolean tieneEncabezados) throws CSVParserException {
+    public List<Columna<? extends Celda>> parserColumnas(List<String> lineas, boolean tieneEncabezados)
+            throws CSVParserException {
         int cantidadColumnas = lineas.get(0).split(",").length;
         List<List<String>> columnas = new ArrayList<>();
 
@@ -68,7 +70,7 @@ public class LectorCSV {
             }
         }
 
-        List<Columna> cols = new ArrayList<>();
+        List<Columna<? extends Celda>> cols = new ArrayList<>();
         for (List<String> columna : columnas) {
             if (tieneEncabezados) {
                 columna.remove(0);
