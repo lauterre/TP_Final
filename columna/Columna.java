@@ -27,6 +27,14 @@ public abstract class Columna<T extends Celda> {
 
     public abstract List<Integer> indicesNA();
 
+    public abstract double promedio();
+
+    public abstract double suma();    
+
+    public abstract int count(Object valor);
+
+    public abstract List<T> unique();
+
     // public abstract <T extends Celda> List<T> getCeldas();
 
     public static ColumnaNum crear(Number[] e) {

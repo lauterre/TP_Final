@@ -7,6 +7,7 @@ import java.util.List;
 import Exceptions.ConversionDeTiposException;
 import Exceptions.ValorInvalidoException;
 import celda.Celda;
+import celda.CeldaBoolean;
 import celda.CeldaString;
 
 public class ColumnaString extends Columna<CeldaString> {
@@ -54,6 +55,38 @@ public class ColumnaString extends Columna<CeldaString> {
             }
         }
         return indices;
+    }
+
+    @Override
+    public double promedio() {
+        throw new UnsupportedOperationException("No puede calcularse el promedio sobre valores de tipo cadena");
+    }
+
+    @Override
+    public double suma() {
+        throw new UnsupportedOperationException("No puede calcularse la suma sobre valores de tipo cadena");
+    }
+
+    @Override
+    public int count(Object valor) {
+        int contador = 0;
+        for (CeldaString celda : celdas) {
+            if (celda.getValor().equals(valor)) {
+                contador += 1;
+            }
+        }
+        return contador;
+    }
+
+    @Override
+    public List<CeldaString> unique() {
+        List<CeldaString> unicos = new ArrayList<>();
+        for (CeldaString celda : celdas) {
+            if (!(unicos.contains(celda))) {
+                unicos.add(celda);
+            }
+        }
+        return unicos;
     }
 
     @Override

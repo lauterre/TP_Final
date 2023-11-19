@@ -864,8 +864,7 @@ public class Tabla {
         }
     }
 
-    //TODO para etiquetas numericas
-    public Tabla imputar(int valor, String col) {
+    public Tabla imputar(Number valor, String col) {
         try {
             Etiqueta etiqueta = getEtiquetaColumna(col);
             return imputar(valor, etiqueta);
@@ -888,6 +887,39 @@ public class Tabla {
     }
 
     public Tabla imputar(boolean valor, String col) {
+        try {
+            Etiqueta etiqueta = getEtiquetaColumna(col);
+            return imputar(valor, etiqueta);
+        } catch (EtiquetaInvalidaException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public Tabla imputar(Number valor, int col) {
+        try {
+            Etiqueta etiqueta = getEtiquetaColumna(col);
+            return imputar(valor, etiqueta);
+        } catch (EtiquetaInvalidaException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public Tabla imputar(String valor, int col) {
+        try {
+            Etiqueta etiqueta = getEtiquetaColumna(col);
+            return imputar(valor, etiqueta);
+        } catch (EtiquetaInvalidaException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public Tabla imputar(boolean valor, int col) {
         try {
             Etiqueta etiqueta = getEtiquetaColumna(col);
             return imputar(valor, etiqueta);
@@ -925,6 +957,77 @@ public class Tabla {
             }
         }
         return null; // Valor no encontrado en el mapa
+    }
+
+    public double promedio(String etiquetaCol) {
+        Columna columna = obtenerColumna(etiquetaCol);
+        return promedio(columna);
+    }
+
+    public double promedio(int etiquetaCol) {
+        Columna columna = obtenerColumna(etiquetaCol);
+        return promedio(columna);
+    }
+
+    private double promedio(Columna columna) {
+        return columna.promedio();
+    }
+
+    public double suma(String etiquetaCol) {
+        Columna columna = obtenerColumna(etiquetaCol);
+        return suma(columna);
+    }
+
+    public double suma(int etiquetaCol) {
+        Columna columna = obtenerColumna(etiquetaCol);
+        return suma(columna);
+    }
+
+    //TODO al pedo
+    private double suma(Columna columna) {
+        return columna.suma();
+    }
+
+    //Count
+    public int count(String valor, String etiquetaCol) {
+        Columna columna = obtenerColumna(etiquetaCol);
+        return columna.count(valor);
+    }
+
+    public int count(boolean valor, String etiquetaCol) {
+        Columna columna = obtenerColumna(etiquetaCol);
+        return columna.count(valor);
+    }
+    
+    public int count(Number valor, String etiquetaCol) {
+        Columna columna = obtenerColumna(etiquetaCol);
+        return columna.count(valor);
+    }
+
+    public int count(String valor, int etiquetaCol) {
+        Columna columna = obtenerColumna(etiquetaCol);
+        return columna.count(valor);
+    }
+
+    public int count(boolean valor, int etiquetaCol) {
+        Columna columna = obtenerColumna(etiquetaCol);
+        return columna.count(valor);
+    }
+    
+    public int count(Number valor, int etiquetaCol) {
+        Columna columna = obtenerColumna(etiquetaCol);
+        return columna.count(valor);
+    }
+
+    //Unique
+    public List<Celda> unique(String etiquetaCol) {
+        Columna columna = obtenerColumna(etiquetaCol);
+        return columna.unique();
+    }
+
+    public List<Celda> unique(int etiquetaCol) {
+        Columna columna = obtenerColumna(etiquetaCol);
+        return columna.unique();
     }
 
     @Override
@@ -1100,10 +1203,27 @@ public class Tabla {
         System.out.println(pokemon);
         Tabla pokemonImputado = pokemon.imputar("Pokemon", "Type 2");
         System.out.println(pokemonImputado);
+
+        double promedioAtaque = pokemon.promedio("Attack");
+        System.out.println("Promedio de ataque: " + promedioAtaque);
+
+        Tabla pokemonImp2 = pokemon.imputar(promedioAtaque, "Attack");
+        System.out.println(pokemonImp2);
+
+        double proporcionLegendarios = pokemon.promedio("Legendary");
+        System.out.println("Proporcion de legendarios: " + proporcionLegendarios);
+
+        System.out.println("Suma ataque: " + pokemon.suma("Attack"));
+        System.out.println("Count de tipo 1 = Water :" + pokemon.count("Water", "Type 1"));
+        System.out.println("Unique de tipo 1");
+        System.out.println(pokemon.unique("Type 1"));
+        
         //TODO: WTF
         // System.out.println(pokemonOrdenado.obtenerEtiquetasFilas());
         // pokemonOrdenado.eliminarFila(163);
         // System.out.println(pokemonOrdenado);
+
+
         //Tabla pokemon2 = new Tabla("E:/java_workspace/TP_Final/Pokemon.csv", true, false);
         //Tabla tabla4 = tabla.concatenar(pokemon, true);
 
