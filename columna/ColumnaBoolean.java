@@ -47,6 +47,17 @@ public class ColumnaBoolean extends Columna<CeldaBoolean> {
     }
 
     @Override
+    public List<Integer> indicesNA() {
+        List<Integer> indices = new ArrayList<>();
+        for (int i = 0; i < celdas.size(); i++) {
+            if (celdas.get(i).isNA()) {
+                indices.add(i);
+            }
+        }
+        return indices;
+    }
+
+    @Override
     public String tipoDato() {
         return "Boolean";
     }

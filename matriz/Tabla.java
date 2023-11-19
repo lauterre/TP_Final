@@ -864,6 +864,69 @@ public class Tabla {
         }
     }
 
+    //TODO para etiquetas numericas
+    public Tabla imputar(int valor, String col) {
+        try {
+            Etiqueta etiqueta = getEtiquetaColumna(col);
+            return imputar(valor, etiqueta);
+        } catch (EtiquetaInvalidaException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public Tabla imputar(String valor, String col) {
+        try {
+            Etiqueta etiqueta = getEtiquetaColumna(col);
+            return imputar(valor, etiqueta);
+        } catch (EtiquetaInvalidaException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public Tabla imputar(boolean valor, String col) {
+        try {
+            Etiqueta etiqueta = getEtiquetaColumna(col);
+            return imputar(valor, etiqueta);
+        } catch (EtiquetaInvalidaException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private <T extends Celda> Tabla imputar(Object valor, Etiqueta etiCol) {
+        Tabla tablaImputada = copiarTabla(this);
+        List<Etiqueta> etiquetasFila = tablaImputada.getEtiquetasNa(etiCol);
+        for (Etiqueta etiqueta : etiquetasFila) {
+            tablaImputada.cambiarValor(etiqueta, etiCol, valor);
+        }
+        return tablaImputada;
+    }
+
+    private List<Etiqueta> getEtiquetasNa(Etiqueta etiCol) {
+        List<Etiqueta> etiquetasNA = new ArrayList<>();
+        Columna columna = obtenerColumna(etiCol);
+        List<Integer> inicesNA = columna.indicesNA();
+        for (Integer i : inicesNA) {
+            Etiqueta etiqueta = obtenerClavePorValor(this.rowLabels, i);
+            etiquetasNA.add(etiqueta);
+        }
+        return etiquetasNA;
+    }
+
+    private static <K, V> K obtenerClavePorValor(Map<K, V> mapa, V valorBuscado) {
+        for (Map.Entry<K, V> entry : mapa.entrySet()) {
+            if (entry.getValue().equals(valorBuscado)) {
+                return entry.getKey();
+            }
+        }
+        return null; // Valor no encontrado en el mapa
+    }
+
     @Override
     public String toString() {
         StringBuilder out = new StringBuilder();
@@ -1030,13 +1093,17 @@ public class Tabla {
         // System.out.println(tablaFiltrada);
 
         Tabla pokemon = new Tabla("C:/Users/nazar/OneDrive/Escritorio/TP_Final/Pokemon.csv", true, false);
-        Tabla pokemonFiltrado = pokemon.filtrar("Attack", '>', 120);
-        String[] columnas = {"Attack", "HP"};
-        Tabla pokemonOrdenado = pokemonFiltrado.ordenarPorColumnas(columnas, "descendente");
-        System.out.println(pokemonOrdenado);
-        System.out.println(pokemonOrdenado.obtenerEtiquetasFilas());
-        pokemonOrdenado.eliminarFila(163);
-        System.out.println(pokemonOrdenado);
+        // Tabla pokemonFiltrado = pokemon.filtrar("Attack", '>', 120);
+        // String[] columnas = {"Attack", "HP"};
+        // Tabla pokemonOrdenado = pokemonFiltrado.ordenarPorColumnas(columnas, "descendente");
+        // System.out.println(pokemonOrdenado);
+        System.out.println(pokemon);
+        Tabla pokemonImputado = pokemon.imputar("Pokemon", "Type 2");
+        System.out.println(pokemonImputado);
+        //TODO: WTF
+        // System.out.println(pokemonOrdenado.obtenerEtiquetasFilas());
+        // pokemonOrdenado.eliminarFila(163);
+        // System.out.println(pokemonOrdenado);
         //Tabla pokemon2 = new Tabla("E:/java_workspace/TP_Final/Pokemon.csv", true, false);
         //Tabla tabla4 = tabla.concatenar(pokemon, true);
 

@@ -25,6 +25,8 @@ public abstract class Columna<T extends Celda> {
 
     public abstract void agregarCelda(Celda celda);
 
+    public abstract List<Integer> indicesNA();
+
     // public abstract <T extends Celda> List<T> getCeldas();
 
     public static ColumnaNum crear(Number[] e) {
