@@ -146,6 +146,39 @@ public class Tabla {
 
     }
 
+    private void borrarEtiqueta(Etiqueta etiqueta, Map<Etiqueta, Integer> map) throws EtiquetaInvalidaException {
+        if (!(map.containsKey(etiqueta))) {
+            throw new EtiquetaInvalidaException();
+        }
+        boolean encontrado = false;
+        for (Etiqueta label : map.keySet()) {
+            if (encontrado == true) {
+                int valorActual = map.get(label);
+                map.put(label, (valorActual - 1));
+            }
+            if (label.equals(etiqueta)) {
+                encontrado = true;
+            }
+        }
+        map.remove(etiqueta);
+    }
+
+    private void borrarEtiquetaColumna(Etiqueta etiqueta) {
+        try {
+            borrarEtiqueta(etiqueta, colLabels);
+        } catch (EtiquetaInvalidaException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void borrarEtiquetaFila(Etiqueta etiqueta) {
+        try {
+            borrarEtiqueta(etiqueta, rowLabels);
+        } catch (EtiquetaInvalidaException e) {
+            e.printStackTrace();
+        }
+    }
+
     // TODO: si tiene encabezado no deberia tomar una columna sin etiqueta y
     // viceversa
     private void agregarColumna(List<Object> columna, Etiqueta etiqueta)
@@ -535,7 +568,6 @@ public class Tabla {
     }
 
     private void generarRowLabelsOrdenado(List<Etiqueta> orden) {// TODO validar que este en tabla
-
         for (Etiqueta etiqueta : orden) {
             Integer indice = rowLabels.get(etiqueta);
             rowLabels.remove(etiqueta);
@@ -557,7 +589,7 @@ public class Tabla {
         }
         Columna<? extends Celda> columna = obtenerColumna(etiquetaNombre);
         this.columnas.remove(columna);
-        this.colLabels.remove(etiquetaNombre);
+        borrarEtiquetaColumna(etiquetaNombre);
     }
 
     public void eliminarColumna(String etiquetaNombre) {
@@ -854,7 +886,6 @@ public class Tabla {
             throw new IllegalArgumentException();
         }
         Tabla nueva = copiarTabla(this);
-        // nueva.generarRowLabelsOrdenado(salida);
         List<Etiqueta> auxiliar = new ArrayList<>();
         for (Etiqueta fila : nueva.rowLabels.keySet()) {
             if (!(salida.contains(fila))) {
@@ -862,6 +893,7 @@ public class Tabla {
             }
         }
         for (Etiqueta etiqueta : auxiliar) {
+            nueva.eliminarFila(etiqueta);
             nueva.rowLabels.remove(etiqueta);
         }
 
@@ -873,17 +905,21 @@ public class Tabla {
         System.out.println(this);
     }
 
-    private void eliminarFila(Etiqueta etiqueta) {
+    private void eliminarFila(Etiqueta etiqueta) { // TODO: exception
+
         int indice = rowLabels.get(etiqueta);
         for (Columna<? extends Celda> columna : columnas) {
             columna.getCeldas().remove(indice);
         }
-        rowLabels.remove(etiqueta);
+        borrarEtiquetaFila(etiqueta);
         Map<Etiqueta, Integer> auxiliar = new LinkedHashMap<>();
+        List<Etiqueta> orden = new ArrayList<>();
         for (Etiqueta eti : rowLabels.keySet()) {
+            orden.add(eti);
             auxiliar.put(eti, auxiliar.size());
         }
         rowLabels = auxiliar;
+        generarRowLabelsOrdenado(orden);
     }
 
     public void eliminarFila(String etiqueta) {
@@ -1181,19 +1217,20 @@ public class Tabla {
         // matriz[2][1] = 7;
         // matriz[2][2] = 8;
 
-        Tabla tabla = new Tabla(matriz, true, false);
-        // Tabla tabla2 = copiarTabla(tabla);
-        List<Object> nuevaCol = new ArrayList<>();
-        nuevaCol.add(10);
-        nuevaCol.add(2);
-        // tabla.agregarColumnaNum(nuevaCol, "Nota");
-        // // String[] etiquetas = { "Hola", "Mundo", "JAVA" };
-        // // tabla.setEtiquetasColumnas(etiquetas);
-        // tabla.cambiarValor(0, "Nombre", "juean");
-        tabla.agregarColumna(nuevaCol, "Nota");
+        // Tabla tabla = new Tabla(matriz, true, false);
+        // // Tabla tabla2 = copiarTabla(tabla);
+        // List<Object> nuevaCol = new ArrayList<>();
+        // nuevaCol.add(10);
+        // nuevaCol.add(2);
+        // // tabla.agregarColumnaNum(nuevaCol, "Nota");
+        // // // String[] etiquetas = { "Hola", "Mundo", "JAVA" };
+        // // // tabla.setEtiquetasColumnas(etiquetas);
+        // // tabla.cambiarValor(0, "Nombre", "juean");
+        // tabla.agregarColumna(nuevaCol, "Nota");
+        // // System.out.println(tabla);
+        // tabla.eliminarColumna("Edad");
+        // tabla.eliminarFila(1);
         // System.out.println(tabla);
-        tabla.eliminarColumna("Edad");
-        System.out.println(tabla);
 
         // System.out.println(tabla);
         // System.out.println(tabla2);
@@ -1253,14 +1290,21 @@ public class Tabla {
 
         // System.out.println(tablaFiltrada);
 
-        // Tabla pokemon = new Tabla("E:/java_workspace/TP_Final/Pokemon.csv", true,
-        // true);
+        Tabla pokemon = new Tabla("E:/java_workspace/TP_Final/Pokemon.csv", true, false);
+        pokemon.eliminarFila(2);
+        pokemon.eliminarColumna("Name");
+
+        Tabla pokemonFiltrado = pokemon.filtrar("Attack", '>', 120);
+        System.out.println(pokemonFiltrado);
         // System.out.println(pokemon);
-        // Tabla pokemonFiltrado = pokemon.filtrar("Attack", '>', 120);
-        // String[] columnas = { "Attack", "HP" };
-        // Tabla pokemonOrdenado = pokemonFiltrado.ordenarPorColumnas(columnas,
-        // "descendente");
-        // System.out.println(pokemonOrdenado);
+        pokemonFiltrado.eliminarFila(7);
+        System.out.println(pokemonFiltrado);
+
+        String[] columnas = { "Attack", "HP" };
+        Tabla pokemonOrdenado = pokemonFiltrado.ordenarPorColumnas(columnas, "descendente");
+        System.out.println(pokemonOrdenado);
+        pokemonOrdenado.eliminarFila(19);
+        System.out.println(pokemonOrdenado);
         // System.out.println(pokemon);
         // Tabla pokemonImputado = pokemon.imputar("Pokemon", "Type 2");
         // System.out.println(pokemonImputado);
