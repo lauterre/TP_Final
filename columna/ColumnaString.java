@@ -63,6 +63,11 @@ public class ColumnaString extends Columna<CeldaString> {
         throw new UnsupportedOperationException("No puede calcularse el promedio sobre valores de tipo cadena");
     }
 
+        @Override
+    public double mediana() {
+        throw new UnsupportedOperationException("No puede calcularse la mediana sobre valores de tipo cadena");
+    }
+
     @Override
     public double suma() {
         throw new UnsupportedOperationException("No puede calcularse la suma sobre valores de tipo cadena");

@@ -96,6 +96,11 @@ public class ColumnaBoolean extends Columna<CeldaBoolean> {
     }
 
     @Override
+    public double mediana() {
+        throw new UnsupportedOperationException("No puede calcularse la mediana sobre valores de tipo boolean");
+    }
+
+    @Override
     public int count(Object valor) {
         int contador = 0;
         for (CeldaBoolean celda : celdas) {
