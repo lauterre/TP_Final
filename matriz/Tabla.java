@@ -3,9 +3,12 @@ package matriz;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -48,6 +51,8 @@ public class Tabla {
 
     public Tabla(int cantidadColumnas, String[] etiquetas) {
         this();
+        if (cantidadColumnas <= 0)
+            throw new IllegalArgumentException("Debe indicar un numero positivo.");
         if (cantidadColumnas != etiquetas.length)
             throw new IllegalArgumentException("La longitud de etiquetas no coincide.");
         setEtiquetasColumnas(etiquetas);
@@ -73,10 +78,10 @@ public class Tabla {
             Columna<? extends Celda> columna = crearColumna(celdas);
             this.columnas.add(columna);
             if (tieneEncabezadosColumnas) {
-                Etiqueta etiqueta = new EtiquetaString(matriz[0][i].toString());
+                Etiqueta etiqueta = Etiqueta.crear(matriz[0][i].toString());
                 this.colLabels.put(etiqueta, i - inicioFila);
             } else {
-                Etiqueta etiqueta = new EtiquetaNum(i - inicioFila);
+                Etiqueta etiqueta = Etiqueta.crear(i - inicioFila);
                 this.colLabels.put(etiqueta, i - inicioFila);
             }
         }
@@ -84,9 +89,9 @@ public class Tabla {
         for (int i = inicioColumna; i < matriz.length; i++) {
             Etiqueta etiqueta;
             if (tieneEncabezadosFilas) {
-                etiqueta = new EtiquetaString(matriz[i][0].toString());
+                etiqueta = Etiqueta.crear(matriz[i][0].toString());
             } else {
-                etiqueta = new EtiquetaNum(i - inicioColumna);
+                etiqueta = Etiqueta.crear(i - inicioColumna);
             }
             this.rowLabels.put(etiqueta, i - inicioColumna);
         }
@@ -119,7 +124,7 @@ public class Tabla {
             } else {
                 List<Etiqueta> etiquetaCol = new ArrayList<>();
                 for (int i = 0; i < cols.size(); i++) {
-                    Etiqueta etiqueta = new EtiquetaNum(i);
+                    Etiqueta etiqueta = Etiqueta.crear(i);
                     etiquetaCol.add(etiqueta);
                 }
                 setEtiquetasColumnas(etiquetaCol);
@@ -127,14 +132,13 @@ public class Tabla {
             List<Etiqueta> etiquetasFilas = new ArrayList<>();
             if (tieneEncabezadosFilas) {
                 for (int i = 0; i < this.columnas.get(0).size(); i++) {
-                    EtiquetaString etiqueta = new EtiquetaString(
-                            this.columnas.get(0).obtenerValor(i).getValor().toString());
+                    Etiqueta etiqueta = Etiqueta.crear(this.columnas.get(0).obtenerValor(i).getValor().toString());
                     etiquetasFilas.add(etiqueta);
                 }
                 this.columnas.remove(0);
             } else {
                 for (int i = 0; i < this.columnas.get(0).size(); i++) {
-                    EtiquetaNum etiqueta = new EtiquetaNum(i);
+                    Etiqueta etiqueta = Etiqueta.crear(i);
                     etiquetasFilas.add(etiqueta);
                 }
             }
@@ -179,8 +183,6 @@ public class Tabla {
         }
     }
 
-    // TODO: si tiene encabezado no deberia tomar una columna sin etiqueta y
-    // viceversa
     private void agregarColumna(List<Object> columna, Etiqueta etiqueta)
             throws EtiquetaExistenteException, ColumnaNoAgregableException {
         Columna<? extends Celda> col = Columna.crear(columna);
@@ -219,75 +221,6 @@ public class Tabla {
             e.printStackTrace();
         }
     }
-
-    // public void agregarColumnaString(List<String> columna) {
-    // List<CeldaString> celdas = new ArrayList<>();
-    // for (String string : columna) {
-    // CeldaString celda = new CeldaString(string);
-    // celdas.add(celda);
-    // }
-    // ColumnaString col = new ColumnaString(celdas);
-    // this.colLabels.put(new EtiquetaNum(this.columnas.size()),
-    // this.columnas.size());
-    // this.columnas.add(col);
-    // }
-
-    // public void agregarColumnaString(List<String> columna, String encabezado) {
-    // List<CeldaString> celdas = new ArrayList<>();
-    // for (String string : columna) {
-    // CeldaString celda = new CeldaString(string);
-    // celdas.add(celda);
-    // }
-    // ColumnaString col = new ColumnaString(celdas);
-    // this.colLabels.put(new EtiquetaString(encabezado), this.columnas.size());
-    // this.columnas.add(col);
-    // }
-
-    // public void agregarColumnaNum(List<Number> columna) {
-    // List<CeldaNum> celdas = new ArrayList<>();
-    // for (Number num : columna) {
-    // CeldaNum celda = new CeldaNum(num);
-    // celdas.add(celda);
-    // }
-    // ColumnaNum col = new ColumnaNum(celdas);
-    // this.colLabels.put(new EtiquetaNum(this.columnas.size()),
-    // this.columnas.size());
-    // this.columnas.add(col);
-    // }
-
-    // public void agregarColumnaNum(List<Number> columna, String encabezado) {
-    // List<CeldaNum> celdas = new ArrayList<>();
-    // for (Number num : columna) {
-    // CeldaNum celda = new CeldaNum(num);
-    // celdas.add(celda);
-    // }
-    // ColumnaNum col = new ColumnaNum(celdas);
-    // this.colLabels.put(new EtiquetaString(encabezado), this.columnas.size());
-    // this.columnas.add(col);
-    // }
-
-    // public void agregarColumnaBoolean(List<Boolean> columna) {
-    // List<CeldaBoolean> celdas = new ArrayList<>();
-    // for (Boolean bool : columna) {
-    // CeldaBoolean celda = new CeldaBoolean(bool);
-    // celdas.add(celda);
-    // }
-    // ColumnaBoolean col = new ColumnaBoolean(celdas);
-    // this.colLabels.put(new EtiquetaNum(this.columnas.size()),
-    // this.columnas.size());
-    // this.columnas.add(col);
-    // }
-
-    // public void agregarColumnaBoolean(List<Boolean> columna, String encabezado) {
-    // List<CeldaBoolean> celdas = new ArrayList<>();
-    // for (Boolean bool : columna) {
-    // CeldaBoolean celda = new CeldaBoolean(bool);
-    // celdas.add(celda);
-    // }
-    // ColumnaBoolean col = new ColumnaBoolean(celdas);
-    // this.colLabels.put(new EtiquetaString(encabezado), this.columnas.size());
-    // this.columnas.add(col);
-    // }
 
     private List<Etiqueta> convertirAEtiqueta(String[] nombres) {
         List<Etiqueta> salida = new ArrayList<>();
@@ -545,6 +478,8 @@ public class Tabla {
 
         Tabla nuevaTabla = copiarTabla(this);
         nuevaTabla.generarRowLabelsOrdenado(orden);
+        System.out.println(this.rowLabels);
+        System.out.println(nuevaTabla.rowLabels);
         return nuevaTabla;
     }
 
@@ -580,9 +515,6 @@ public class Tabla {
         columna.ordenar(orden);
     }
 
-    // TODO: parece que ningun metodo funciona por lo de abajo, :)
-    // tener que pasarle una instancia de etiqueta es incomodo para trabajar, no es
-    // mejor que reciba un string o un int? (en los demás métodos también)
     private void eliminarColumna(Etiqueta etiquetaNombre) throws EtiquetaInvalidaException {
         if (!(colLabels.containsKey(etiquetaNombre))) {
             throw new EtiquetaInvalidaException();
@@ -600,7 +532,6 @@ public class Tabla {
         }
     }
 
-    // en caso de que la etiqueta sea numerica
     public void eliminarColumna(Integer etiquetaNombre) {
         try {
             eliminarColumna(convertirAEtiqueta(etiquetaNombre));
@@ -1120,6 +1051,29 @@ public class Tabla {
         return columna.unique();
     }
 
+    private static List<Integer> generarNumeros(int cantidad, int rangoFinal) {
+        Set<Integer> numerosUnicos = new HashSet<>();
+        Random random = new Random();
+
+        while (numerosUnicos.size() < cantidad) {
+            int numeroAleatorio = random.nextInt(rangoFinal);
+            numerosUnicos.add(numeroAleatorio);
+        }
+        return new ArrayList<>(numerosUnicos);
+    }
+
+    public Tabla muestreo(int porcentaje) {
+        if (porcentaje <= 0 || porcentaje > 100)
+            throw new IllegalArgumentException("El porcentaje debe estar entre 0 y 100");
+        Tabla muestra = copiarTabla(this);
+        int filasParaBorrar = (int) Math.ceil((this.obtenerCantidadFilas() * (100 - porcentaje)) / 100);
+        List<Integer> indices = generarNumeros(filasParaBorrar, obtenerCantidadFilas());
+        for (Integer indice : indices) {
+            muestra.eliminarFila(indice);
+        }
+        return muestra;
+    }
+
     @Override
     public String toString() {
         StringBuilder out = new StringBuilder();
@@ -1291,20 +1245,27 @@ public class Tabla {
         // System.out.println(tablaFiltrada);
 
         Tabla pokemon = new Tabla("E:/java_workspace/TP_Final/Pokemon.csv", true, false);
-        pokemon.eliminarFila(2);
-        pokemon.eliminarColumna("Name");
+        // pokemon.eliminarFila(2);
+        // pokemon.eliminarColumna("Name");
 
-        Tabla pokemonFiltrado = pokemon.filtrar("Attack", '>', 120);
-        System.out.println(pokemonFiltrado);
-        // System.out.println(pokemon);
-        pokemonFiltrado.eliminarFila(7);
-        System.out.println(pokemonFiltrado);
+        // Tabla pokemonFiltrado = pokemon.filtrar("Attack", '>', 120);
+        // System.out.println(pokemonFiltrado);
+        // // System.out.println(pokemon);
+        // pokemonFiltrado.eliminarFila(7);
+        // System.out.println(pokemonFiltrado);
 
-        String[] columnas = { "Attack", "HP" };
-        Tabla pokemonOrdenado = pokemonFiltrado.ordenarPorColumnas(columnas, "descendente");
-        System.out.println(pokemonOrdenado);
-        pokemonOrdenado.eliminarFila(19);
-        System.out.println(pokemonOrdenado);
+        // String[] columnas = { "Attack", "HP" };
+        // Tabla pokemonOrdenado = pokemonFiltrado.ordenarPorColumnas(columnas,
+        // "descendente");
+        // System.out.println(pokemonOrdenado);
+        // pokemonOrdenado.eliminarFila(19);
+        // System.out.println(pokemonOrdenado);
+
+        Tabla pokemonmuestra = pokemon.muestreo(50);
+        System.out.println(pokemonmuestra.obtenerCantidadFilas());
+        System.out.println(pokemon.obtenerCantidadFilas());
+        System.out.println(pokemonmuestra);
+
         // System.out.println(pokemon);
         // Tabla pokemonImputado = pokemon.imputar("Pokemon", "Type 2");
         // System.out.println(pokemonImputado);
