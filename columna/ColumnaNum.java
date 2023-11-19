@@ -2,11 +2,14 @@ package columna;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import Exceptions.ConversionDeTiposException;
 import Exceptions.ValorInvalidoException;
 import celda.Celda;
+import celda.CeldaBoolean;
 import celda.CeldaNum;
 
 public class ColumnaNum extends Columna<CeldaNum> {
@@ -55,6 +58,61 @@ public class ColumnaNum extends Columna<CeldaNum> {
             }
         }
         return indices;
+    }
+
+    @Override
+    public double promedio() {
+        double suma = 0;
+        int cantCeldasNoNA = 0;
+        for (CeldaNum celdaNum : celdas) {
+            if (!(celdaNum.isNA())) {
+                suma += celdaNum.getValor().doubleValue();
+                cantCeldasNoNA += 1;
+            }
+        }
+        return suma / cantCeldasNoNA;
+    }
+
+    @Override
+    public double suma() {
+        double suma = 0;
+        for (CeldaNum celdaNum : celdas) {
+            if (!(celdaNum.isNA())) {
+                suma += celdaNum.getValor().doubleValue();
+            }
+        }
+        return suma;
+    }
+
+    @Override
+    public int count(Object valor) {
+        int contador = 0;
+        for (CeldaNum celda : celdas) {
+            if (celda.getValor() == valor || celda.getValor().equals(valor)) {
+                contador += 1;
+            }
+        }
+        return contador;
+    }
+
+    @Override
+    public Map<CeldaNum, Integer> count() {
+        Map<CeldaNum, Integer> contador = new HashMap<>();
+        for (CeldaNum celda : celdas) {
+            contador.put(celda, contador.getOrDefault(celda, 0) + 1);
+        }
+        return ordenarPorValor(contador);
+    }
+
+    @Override
+    public List<CeldaNum> unique() {
+        List<CeldaNum> unicos = new ArrayList<>();
+        for (CeldaNum celda : celdas) {
+            if (!(unicos.contains(celda))) {
+                unicos.add(celda);
+            }
+        }
+        return unicos;
     }
 
     @Override

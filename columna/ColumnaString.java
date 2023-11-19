@@ -2,11 +2,15 @@ package columna;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import Exceptions.ConversionDeTiposException;
 import Exceptions.ValorInvalidoException;
 import celda.Celda;
+import celda.CeldaBoolean;
+import celda.CeldaNum;
 import celda.CeldaString;
 
 public class ColumnaString extends Columna<CeldaString> {
@@ -54,6 +58,47 @@ public class ColumnaString extends Columna<CeldaString> {
             }
         }
         return indices;
+    }
+
+    @Override
+    public double promedio() {
+        throw new UnsupportedOperationException("No puede calcularse el promedio sobre valores de tipo cadena");
+    }
+
+    @Override
+    public double suma() {
+        throw new UnsupportedOperationException("No puede calcularse la suma sobre valores de tipo cadena");
+    }
+
+    @Override
+    public int count(Object valor) {
+        int contador = 0;
+        for (CeldaString celda : celdas) {
+            if (celda.getValor().equals(valor)) {
+                contador += 1;
+            }
+        }
+        return contador;
+    }
+
+    @Override
+    public Map<CeldaString, Integer> count() {
+        Map<CeldaString, Integer> contador = new HashMap<>();
+        for (CeldaString celda : celdas) {
+            contador.put(celda, contador.getOrDefault(celda, 0) + 1);
+        }
+        return ordenarPorValor(contador);
+    }
+
+    @Override
+    public List<CeldaString> unique() {
+        List<CeldaString> unicos = new ArrayList<>();
+        for (CeldaString celda : celdas) {
+            if (!(unicos.contains(celda))) {
+                unicos.add(celda);
+            }
+        }
+        return unicos;
     }
 
     @Override

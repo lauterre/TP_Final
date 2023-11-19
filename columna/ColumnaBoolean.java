@@ -2,12 +2,16 @@ package columna;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import Exceptions.ConversionDeTiposException;
 import Exceptions.ValorInvalidoException;
 import celda.Celda;
 import celda.CeldaBoolean;
+import celda.CeldaNum;
 
 public class ColumnaBoolean extends Columna<CeldaBoolean> {
     private List<CeldaBoolean> celdas;
@@ -55,6 +59,73 @@ public class ColumnaBoolean extends Columna<CeldaBoolean> {
             }
         }
         return indices;
+    }
+
+    @Override
+    public double promedio() {
+        double suma = 0;
+        int cantCeldasNoNA = 0;
+        for (CeldaBoolean celda : celdas) {
+            if (!(celda.isNA())) {
+                int valor;
+                if (celda.getValor() == false) {
+                    valor = 0;
+                } else {
+                    valor = 1;
+                }
+                suma += valor;
+                cantCeldasNoNA += 1;
+            }
+        }
+        return suma / cantCeldasNoNA;
+    }
+
+    @Override
+    public double suma() {
+        double suma = 0;
+        for (CeldaBoolean celda : celdas) {
+            if (!(celda.isNA())) {
+                int valor;
+                if (celda.getValor() == false) {
+                    valor = 0;
+                } else {
+                    valor = 1;
+                }
+                suma += valor;
+            }
+        }
+        return suma;
+    }
+
+    @Override
+    public int count(Object valor) {
+        int contador = 0;
+        for (CeldaBoolean celda : celdas) {
+            if (celda.getValor() == valor || celda.getValor().equals(valor)) {
+                contador += 1;
+            }
+        }
+        return contador;
+    }
+
+    @Override
+    public Map<CeldaBoolean, Integer> count() {
+        Map<CeldaBoolean, Integer> contador = new HashMap<>();
+        for (CeldaBoolean celda : celdas) {
+            contador.put(celda, contador.getOrDefault(celda, 0) + 1);
+        }
+        return ordenarPorValor(contador);
+    }
+
+    @Override
+    public List<CeldaBoolean> unique() {
+        List<CeldaBoolean> unicos = new ArrayList<>();
+        for (CeldaBoolean celda : celdas) {
+            if (!(unicos.contains(celda))) { //OJO
+                unicos.add(celda);
+            }
+        }
+        return unicos;
     }
 
     @Override
