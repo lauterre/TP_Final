@@ -73,6 +73,23 @@ public class ColumnaNum extends Columna<CeldaNum> {
     }
 
     @Override
+    public double mediana() {
+        List<Double> valores = new ArrayList<>();
+        for (CeldaNum celdaNum : celdas) {
+            if (!celdaNum.isNA()) {
+                valores.add(celdaNum.getValor().doubleValue());
+            }
+        }
+        Collections.sort(valores);
+        int size = valores.size();
+        if (size % 2 != 0) {
+            return valores.get(size / 2);
+        } else {
+            return (valores.get((size - 1) / 2) + valores.get(size / 2)) / 2.0;
+        }
+    }
+
+    @Override
     public double suma() {
         double suma = 0;
         for (CeldaNum celdaNum : celdas) {

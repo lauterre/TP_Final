@@ -13,25 +13,21 @@ import Exceptions.ColumnaNoAgregableException;
 import Exceptions.EtiquetaExistenteException;
 import Exceptions.EtiquetaInvalidaException;
 import Exceptions.TablasNoConcatenablesException;
-import lector.LectorCSV;
-import lector.exceptions.ArchivoNoEncontradoException;
-import lector.exceptions.CSVParserException;
-
 import celda.Celda;
 import celda.CeldaBoolean;
 import celda.CeldaNum;
 import celda.CeldaString;
-
 import columna.Columna;
 import columna.ColumnaBoolean;
 import columna.ColumnaNum;
 import columna.ColumnaString;
-
 import etiqueta.Etiqueta;
 import etiqueta.EtiquetaNum;
 import etiqueta.EtiquetaString;
-
 import fila.Fila;
+import lector.LectorCSV;
+import lector.exceptions.ArchivoNoEncontradoException;
+import lector.exceptions.CSVParserException;
 
 public class Tabla {
     List<Columna<? extends Celda>> columnas;
@@ -1051,6 +1047,20 @@ public class Tabla {
         return columna.promedio();
     }
 
+        public double mediana(String etiquetaCol) {
+        Columna<? extends Celda> columna = obtenerColumna(etiquetaCol);
+        return mediana(columna);
+    }
+
+    public double mediana(int etiquetaCol) {
+        Columna<? extends Celda> columna = obtenerColumna(etiquetaCol);
+        return mediana(columna);
+    }
+
+    private double mediana(Columna<? extends Celda> columna) {
+        return columna.mediana();
+    }
+
     public double suma(String etiquetaCol) {
         Columna<? extends Celda> columna = obtenerColumna(etiquetaCol);
         return suma(columna);
@@ -1290,21 +1300,23 @@ public class Tabla {
 
         // System.out.println(tablaFiltrada);
 
-        Tabla pokemon = new Tabla("E:/java_workspace/TP_Final/Pokemon.csv", true, false);
-        pokemon.eliminarFila(2);
-        pokemon.eliminarColumna("Name");
+        Tabla pokemon = new Tabla("C:\\Users\\Fd\\Documents\\TP_Final\\Pokemon.csv", true, false);
+        // pokemon.eliminarFila(2);
+        // pokemon.eliminarColumna("Name");
 
-        Tabla pokemonFiltrado = pokemon.filtrar("Attack", '>', 120);
-        System.out.println(pokemonFiltrado);
-        // System.out.println(pokemon);
-        pokemonFiltrado.eliminarFila(7);
-        System.out.println(pokemonFiltrado);
+        // Tabla pokemonFiltrado = pokemon.filtrar("Attack", '>', 120);
+        // System.out.println(pokemonFiltrado);
+        // // System.out.println(pokemon);
+        // pokemonFiltrado.eliminarFila(7);
+        // System.out.println(pokemonFiltrado);
 
-        String[] columnas = { "Attack", "HP" };
-        Tabla pokemonOrdenado = pokemonFiltrado.ordenarPorColumnas(columnas, "descendente");
-        System.out.println(pokemonOrdenado);
-        pokemonOrdenado.eliminarFila(19);
-        System.out.println(pokemonOrdenado);
+        // String[] columnas = { "Attack", "HP" };
+        // Tabla pokemonOrdenado = pokemonFiltrado.ordenarPorColumnas(columnas, "descendente");
+        // System.out.println(pokemonOrdenado);
+        // pokemonOrdenado.eliminarFila(19);
+        // System.out.println(pokemonOrdenado);
+
+        System.out.println(pokemon.mediana("Legendary"));
         // System.out.println(pokemon);
         // Tabla pokemonImputado = pokemon.imputar("Pokemon", "Type 2");
         // System.out.println(pokemonImputado);
