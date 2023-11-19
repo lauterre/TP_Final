@@ -2,7 +2,10 @@ package columna;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import Exceptions.ConversionDeTiposException;
 import Exceptions.ValorInvalidoException;
@@ -103,6 +106,15 @@ public class ColumnaBoolean extends Columna<CeldaBoolean> {
             }
         }
         return contador;
+    }
+
+    @Override
+    public Map<CeldaBoolean, Integer> count() {
+        Map<CeldaBoolean, Integer> contador = new HashMap<>();
+        for (CeldaBoolean celda : celdas) {
+            contador.put(celda, contador.getOrDefault(celda, 0) + 1);
+        }
+        return ordenarPorValor(contador);
     }
 
     @Override

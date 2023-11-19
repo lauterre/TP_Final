@@ -1019,6 +1019,18 @@ public class Tabla {
         return columna.count(valor);
     }
 
+    //Count bien
+
+    public Map<Celda, Integer> count(String etiquetaCol) {
+        Columna columna = obtenerColumna(etiquetaCol);
+        return columna.count();
+    }
+    
+    public Map<Celda, Integer> count(int etiquetaCol) {
+        Columna columna = obtenerColumna(etiquetaCol);
+        return columna.count();
+    }
+
     //Unique
     public List<Celda> unique(String etiquetaCol) {
         Columna columna = obtenerColumna(etiquetaCol);
@@ -1217,7 +1229,8 @@ public class Tabla {
         System.out.println("Count de tipo 1 = Water :" + pokemon.count("Water", "Type 1"));
         System.out.println("Unique de tipo 1");
         System.out.println(pokemon.unique("Type 1"));
-        
+        System.out.println("Count de Name: " + pokemon.count("Type 1"));
+
         //TODO: WTF
         // System.out.println(pokemonOrdenado.obtenerEtiquetasFilas());
         // pokemonOrdenado.eliminarFila(163);

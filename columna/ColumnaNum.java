@@ -2,7 +2,9 @@ package columna;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import Exceptions.ConversionDeTiposException;
 import Exceptions.ValorInvalidoException;
@@ -91,6 +93,15 @@ public class ColumnaNum extends Columna<CeldaNum> {
             }
         }
         return contador;
+    }
+
+    @Override
+    public Map<CeldaNum, Integer> count() {
+        Map<CeldaNum, Integer> contador = new HashMap<>();
+        for (CeldaNum celda : celdas) {
+            contador.put(celda, contador.getOrDefault(celda, 0) + 1);
+        }
+        return ordenarPorValor(contador);
     }
 
     @Override

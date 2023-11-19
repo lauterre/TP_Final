@@ -1,7 +1,10 @@
 package columna;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import celda.Celda;
 import celda.CeldaBoolean;
@@ -33,6 +36,8 @@ public abstract class Columna<T extends Celda> {
 
     public abstract int count(Object valor);
 
+    public abstract Map<T, Integer> count();
+
     public abstract List<T> unique();
 
     // public abstract <T extends Celda> List<T> getCeldas();
@@ -59,6 +64,21 @@ public abstract class Columna<T extends Celda> {
             celdas.add(new CeldaBoolean(valor));
         }
         return new ColumnaBoolean(celdas);
+    }
+
+    protected static <K, V extends Comparable<? super V>> Map<K, V> ordenarPorValor(Map<K, V> mapa) {
+        List<Map.Entry<K, V>> lista = new ArrayList<>(mapa.entrySet());
+
+        // Ordenar la lista usando un Comparator que compara los valores
+        Collections.sort(lista, (o1, o2) -> o2.getValue().compareTo(o1.getValue()));
+
+        // Reconstruir un nuevo Map ordenado por valores
+        Map<K, V> mapaOrdenado = new LinkedHashMap<>();
+        for (Map.Entry<K, V> entry : lista) {
+            mapaOrdenado.put(entry.getKey(), entry.getValue());
+        }
+
+        return mapaOrdenado;
     }
 
 }
