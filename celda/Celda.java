@@ -11,15 +11,16 @@ public abstract class Celda implements Comparable<Celda> {
 
     public abstract Celda copia();
 
-    public static CeldaNum crear(int e) {
-        return new CeldaNum(e);
+    public static Celda crear(Object valor) {
+        if (valor instanceof Boolean) {
+            return new CeldaBoolean((Boolean) valor);
+        } else if (valor instanceof Number) {
+            return new CeldaNum((Number) valor);
+        } else if (valor instanceof String) {
+            return new CeldaString((String) valor);
+        } else {
+            throw new IllegalArgumentException("Tipo de valor no compatible para crear celda");
+        }
     }
 
-    public static CeldaString crear(String e) {
-        return new CeldaString(e);
-    }
-
-    public static CeldaBoolean crear(boolean e) {
-        return new CeldaBoolean(e);
-    }
 }

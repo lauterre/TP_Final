@@ -65,4 +65,5 @@ public class CeldaBoolean extends Celda {
             return "NA"; // return "NA".toString()
         }
     }
+
 }

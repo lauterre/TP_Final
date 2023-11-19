@@ -42,6 +42,37 @@ public abstract class Columna<T extends Celda> {
 
     // public abstract <T extends Celda> List<T> getCeldas();
 
+    public static Columna<? extends Celda> crear(List<Object> e) {
+        if (e.get(0) instanceof Boolean) {
+            List<CeldaBoolean> celdas = new ArrayList<>();
+            for (Object valor : e) {
+                CeldaBoolean celda = new CeldaBoolean((Boolean) valor);
+                celdas.add(celda);
+            }
+            ColumnaBoolean columna = new ColumnaBoolean(celdas);
+            return columna;
+        } else if (e.get(0) instanceof Number) {
+            List<CeldaNum> celdas = new ArrayList<>();
+            for (Object valor : e) {
+                CeldaNum celda = new CeldaNum((Number) valor);
+                celdas.add(celda);
+            }
+            ColumnaNum columna = new ColumnaNum(celdas);
+            return columna;
+        } else if (e.get(0) instanceof String) {
+            List<CeldaString> celdas = new ArrayList<>();
+            for (Object valor : e) {
+                CeldaString celda = new CeldaString((String) valor);
+                celdas.add(celda);
+            }
+            ColumnaString columna = new ColumnaString(celdas);
+            return columna;
+        } else {
+            throw new IllegalArgumentException("Tipo de valor no compatible para crear celda");
+        }
+
+    }
+
     public static ColumnaNum crear(Number[] e) {
         List<CeldaNum> celdas = new ArrayList<>();
         for (Number valor : e) {
