@@ -823,12 +823,45 @@ public class Tabla {
         for (Etiqueta etiqueta : auxiliar) {
             nueva.rowLabels.remove(etiqueta);
         }
+
         return nueva;
 
     }
-
     public void mostrarTabla() {
         System.out.println(this);
+    }
+
+    private void eliminarFila(Etiqueta etiqueta) {
+        int indice = rowLabels.get(etiqueta);
+        for (Columna columna : columnas) {
+            columna.getCeldas().remove(indice);
+        }
+        rowLabels.remove(etiqueta);
+        Map<Etiqueta, Integer> auxiliar = new LinkedHashMap<>();
+        for (Etiqueta eti : rowLabels.keySet()) {
+            auxiliar.put(eti, auxiliar.size());
+        }
+        rowLabels = auxiliar;
+    }
+
+    public void eliminarFila(String etiqueta) {
+        try {
+            Etiqueta eti = getEtiquetaFila(etiqueta);
+            eliminarFila(eti);
+        } catch (EtiquetaInvalidaException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public void eliminarFila(int etiqueta) {
+        try {
+            Etiqueta eti = getEtiquetaFila(etiqueta);
+            eliminarFila(eti);
+        } catch (EtiquetaInvalidaException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -1000,6 +1033,9 @@ public class Tabla {
         Tabla pokemonFiltrado = pokemon.filtrar("Attack", '>', 120);
         String[] columnas = {"Attack", "HP"};
         Tabla pokemonOrdenado = pokemonFiltrado.ordenarPorColumnas(columnas, "descendente");
+        System.out.println(pokemonOrdenado);
+        System.out.println(pokemonOrdenado.obtenerEtiquetasFilas());
+        pokemonOrdenado.eliminarFila(163);
         System.out.println(pokemonOrdenado);
         //Tabla pokemon2 = new Tabla("E:/java_workspace/TP_Final/Pokemon.csv", true, false);
         //Tabla tabla4 = tabla.concatenar(pokemon, true);
