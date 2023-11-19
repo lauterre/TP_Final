@@ -38,7 +38,7 @@ public class CeldaString extends Celda {
 
     @Override
     public boolean isNA() {
-        if (this.valor == null || this.valor.equalsIgnoreCase("NA")) {
+        if (this.valor == null || this.valor.equalsIgnoreCase("NA") || this.valor == "") {
             return true;
         } else
             return false;
