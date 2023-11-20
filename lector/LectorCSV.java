@@ -87,7 +87,7 @@ public class LectorCSV {
 
         List<Columna<? extends Celda>> cols = new ArrayList<>();
         for (List<String> columna : columnas) {
-            if (esNum(columna.get(1))) {
+            if (esNum(columna.get(0))) {
                 List<CeldaNum> colNum = new ArrayList<>();
                 for (String celda : columna) {
                     Double numero;
@@ -101,7 +101,7 @@ public class LectorCSV {
                 }
                 ColumnaNum col = new ColumnaNum(colNum);
                 cols.add(col);
-            } else if (esBool(columna.get(1))) {
+            } else if (esBool(columna.get(0))) {
                 List<CeldaBoolean> colBool = new ArrayList<>();
                 for (String celda : columna) {
                     Boolean booleano;

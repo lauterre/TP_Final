@@ -1419,7 +1419,7 @@ public class Tabla {
 
         // System.out.println(tablaFiltrada);
 
-        Tabla pokemon = new Tabla("C:\\Users\\nazar\\OneDrive\\Escritorio\\TP_Final\\Pokemon.csv", true, true);
+        Tabla pokemon = new Tabla("C:\\Users\\nazar\\OneDrive\\Escritorio\\TP_Final\\Pokemon.csv", false, true);
         // pokemon.eliminarColumnaPorIndice(1);
         System.out.println(pokemon.obtenerEtiquetasColumnas());
         System.out.println(pokemon.obtenerEtiquetasFilas());
