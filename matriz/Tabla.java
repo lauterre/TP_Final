@@ -112,11 +112,11 @@ public class Tabla {
         this.rowLabels = new LinkedHashMap<>();
         try {
             List<String> lineas = lector.leer(rutaArchivo);
-            List<Columna<? extends Celda>> cols = lector.parserColumnas(lineas, tieneEncabezadosColumnas);
+            List<Columna<? extends Celda>> cols = lector.parserColumnas(lineas, tieneEncabezadosColumnas, tieneEncabezadosFilas);
             this.columnas = cols;
             if (tieneEncabezadosFilas)
-                lector.getEncabezados().remove(0);
-            System.out.println(lector.getEncabezados());
+                // lector.getEncabezados().remove(0);
+                setEtiquetasFilas(lector.getEncabezadosFilas());
             if (tieneEncabezadosColumnas) {
                 setEtiquetasColumnas(lector.getEncabezados());
             } else {
@@ -259,7 +259,7 @@ public class Tabla {
         for (int i = 0; i < columnas.get(0).size(); i++) {
             rowLabels.put(etiquetas.get(i), i);
         }
-        this.tieneEtiquetaFila = true;
+        //this.tieneEtiquetaFila = true;
     }
 
     public void setEtiquetasFilas(String[] etiquetas) {
@@ -280,7 +280,7 @@ public class Tabla {
         for (int j = 0; j < columnas.size(); j++) {
             colLabels.put(etiquetas.get(j), j);
         }
-        this.tieneEtiquetaCol = true;
+        //this.tieneEtiquetaCol = true;
     }
 
     public void setEtiquetasColumnas(String[] etiquetas) {
@@ -1191,15 +1191,16 @@ public class Tabla {
         // matriz[2][1] = 7;
         // matriz[2][2] = 8;
 
-        Tabla tabla = new Tabla(matriz, true, false);
-        System.out.println(tabla);
-        Tabla tabla2 = copiarTabla(tabla);
-        List<Object> nuevaCol = new ArrayList<>();
-        nuevaCol.add(10);
-        nuevaCol.add(2);
-        tabla.agregarColumna(nuevaCol, "Nota");
-        System.out.println(tabla);
-        System.out.println(tabla2);
+        // Tabla tabla = new Tabla(matriz, true, false);
+        // System.out.println(tabla);
+        // Tabla tabla2 = copiarTabla(tabla);
+        // List<Object> nuevaCol = new ArrayList<>();
+        // nuevaCol.add(10);
+        // nuevaCol.add(2);
+        // tabla.agregarColumna(nuevaCol, "Nota");
+        // System.out.println(tabla);
+        // System.out.println(tabla2);
+
         // // // String[] etiquetas = { "Hola", "Mundo", "JAVA" };
         // // // tabla.setEtiquetasColumnas(etiquetas);
         // // tabla.cambiarValor(0, "Nombre", "juean");
@@ -1267,10 +1268,12 @@ public class Tabla {
 
         // System.out.println(tablaFiltrada);
 
-        // Tabla pokemon = new Tabla("E:/java_workspace/TP_Final/Pokemon.csv", true,
-        // false);
+        Tabla pokemon = new Tabla("C:\\Users\\nazar\\OneDrive\\Escritorio\\TP_Final\\Pokemon.csv", true, true);
         // pokemon.eliminarColumnaPorIndice(1);
-        // System.out.println(pokemon);
+        System.out.println(pokemon.obtenerEtiquetasColumnas());
+        System.out.println(pokemon.obtenerEtiquetasFilas());
+        System.out.println(pokemon.obtenerCantidadColumnas());
+        System.out.println(pokemon.obtenerCantidadFilas());
 
         // pokemon.eliminarFila(2);
         // pokemon.eliminarColumna("Name");
