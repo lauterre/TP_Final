@@ -40,7 +40,6 @@ public class Presentacion {
     public static void verColumna() {
         System.out.println(tabla.obtenerColumna("Name"));
         tabla.convertirANum("Attack");
-        System.out.println(tabla.obtenerTipoDeDato("Attack"));
     }
 
     public static void verFila() {
@@ -63,6 +62,10 @@ public class Presentacion {
         tabla.cambiarValor(2, "Name", "Algoritmos");
         tabla.verFila(2);
         tabla2.verFila(2);
+    }
+
+    public static void vista() {
+
     }
 
     public static void main(String[] args) {

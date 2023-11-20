@@ -220,8 +220,6 @@ public class Tabla {
         return etiqueta;
     }
 
-    // TODO: validar etiqueta para armar las exceptions
-
     private List<Etiqueta> convertirAEtiqueta(int[] nombres) {
         List<Etiqueta> salida = new ArrayList<>();
         try {
@@ -269,12 +267,6 @@ public class Tabla {
     }
 
     private void setEtiquetasColumnas(List<Etiqueta> etiquetas) {
-        // if (!(etiquetas.size() == colLabels.size()))
-        // throw new IllegalArgumentException(
-        // "La cantidad de etiquetas debe coincidir con la cantidad de columnas en la
-        // tabla.");
-        colLabels.clear();
-        // TODO: validar tamaño de lista
         for (int j = 0; j < columnas.size(); j++) {
             colLabels.put(etiquetas.get(j), j);
         }
@@ -775,7 +767,7 @@ public class Tabla {
         if (coincideEtiquetaFila) {
             if (!mismoTipoEtiqueta(this.obtenerEtiquetasFilas(), otraTabla.obtenerEtiquetasFilas())) {
                 throw new IllegalArgumentException(
-                        "No coinciden las etiquetas, por favor indique falso en el argumento");// TODO: exception
+                        "No coinciden las etiquetas, por favor indique falso en el argumento");
             } else {
                 for (int i = 0; i < otraTabla.obtenerCantidadFilas(); i++) {
                     if (otraTabla.obtenerEtiquetasFilas().get(i) instanceof EtiquetaString) {
@@ -829,10 +821,10 @@ public class Tabla {
         }
     }
 
-    public Tabla filtrar(String col, char operador, int valor) {
+    public Tabla filtrar(String col, char operador, Object valor) {
         try {
             Etiqueta etiquetaCol = getEtiquetaColumna(col);
-            Celda celda = new CeldaNum(valor);
+            Celda celda = Celda.crear(valor);
             return filtrar(etiquetaCol, operador, celda);
         } catch (EtiquetaInvalidaException e) {
             System.out.println(e.getMessage());
@@ -841,57 +833,62 @@ public class Tabla {
         }
     }
 
-    public Tabla filtrar(String col, char operador, String valor) {
-        try {
-            Etiqueta etiquetaCol = getEtiquetaColumna(col);
-            Celda celda = new CeldaString(valor);
-            return filtrar(etiquetaCol, operador, celda);
-        } catch (EtiquetaInvalidaException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-            return null;
+    private void generarRowLabelsFiltrado(List<Etiqueta> filas) {
+        Map<Etiqueta, Integer> nuevas = new LinkedHashMap<>();
+        for (Etiqueta fila : filas) {
+            nuevas.put(fila, rowLabels.get(fila));
         }
+        rowLabels = nuevas;
     }
 
-    public Tabla filtrar(String col, char operador, boolean valor) {
-        try {
-            Etiqueta etiquetaCol = getEtiquetaColumna(col);
-            Celda celda = new CeldaBoolean(valor);
-            return filtrar(etiquetaCol, operador, celda);
-        } catch (EtiquetaInvalidaException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    // TODO: para el >= y <= podriamos usar concatenar de las tablas filtradas por =
-    // y por < o >
-    private Tabla filtrar(Etiqueta col, char operador, Celda valor) {
+    private Predicate<Celda> predicateFiltrado(Etiqueta col, char operador, Celda valor) {
         Map<Character, Predicate<Celda>> operadores = new HashMap<>();
         operadores.put('<', e -> e.compareTo(valor) < 0);
         operadores.put('>', e -> e.compareTo(valor) > 0);
         operadores.put('=', e -> e.compareTo(valor) == 0);
         operadores.put('!', e -> e.compareTo(valor) != 0);
-        // operadores.put('<=', e -> e.compareTo(valor) <= 0);
-        // operadores.put('>=', e -> e.compareTo(valor) >= 0);
-
         Predicate<Celda> condicion = operadores.get(operador);
-        List<Etiqueta> salida = new ArrayList<>();
+        return condicion;
+    }
 
+    private Tabla filtrarVariasCondiciones(List<Etiqueta> cols, char[] chars, List<Celda> valores) {
+        if (cols.size() != chars.length || cols.size() != valores.size())
+            throw new IllegalArgumentException();
+        Tabla tablaFiltrada = copiarTabla(this);
+        for (int i = 0; i < cols.size(); i++) {
+            tablaFiltrada = tablaFiltrada.filtrar(cols.get(i), chars[i], valores.get(i));
+        }
+        return tablaFiltrada;
+    }
+
+    public Tabla filtrarVariasCondiciones(String[] cols, char[] chars, List<Object> valores) {
+        List<Celda> celdas = new ArrayList<>();
+        for (Object valor : valores) {
+            Celda celda = Celda.crear(valor);
+            celdas.add(celda);
+        }
+        return filtrarVariasCondiciones(convertirAEtiqueta(cols), chars, celdas);
+    }
+
+    private Tabla filtrar(Etiqueta col, char operador, Celda valor) {
+        return filtrar(predicateFiltrado(col, operador, valor), col);
+    }
+
+    private Tabla filtrar(Predicate<Celda> condicion, Etiqueta col) {
+        List<Etiqueta> salida = new ArrayList<>();
         if (condicion != null) {
-            for (Etiqueta rowLabel : rowLabels.keySet()) {
-                try {
+            try {
+                for (Etiqueta rowLabel : rowLabels.keySet()) {
                     Celda valorAComparar = obtenerCelda(rowLabel, col);
                     if (condicion.test(valorAComparar)) {
                         salida.add(rowLabel);
                     }
-                } catch (EtiquetaInvalidaException e) {
-                    e.getMessage();
                 }
+            } catch (EtiquetaInvalidaException e) {
+                e.printStackTrace();
             }
         } else {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Indique un operador valido");
         }
         Tabla nueva = copiarTabla(this);
         List<Etiqueta> auxiliar = new ArrayList<>();
@@ -904,9 +901,8 @@ public class Tabla {
             nueva.eliminarFila(etiqueta);
             nueva.rowLabels.remove(etiqueta);
         }
-
+        nueva.generarRowLabelsFiltrado(salida);
         return nueva;
-
     }
 
     public void mostrarTabla() {
@@ -1467,12 +1463,14 @@ public class Tabla {
 
         Tabla pokemon = new Tabla("E:\\java_workspace\\TP_Final\\Pokemon.csv", true,
                 false);
-        pokemon.imputar(false, "Legendary");
-        int[] filas = { 0, 1, 2, 3 };
-        String[] clumnas = { "Name", "HP" };
-        Tabla vista = pokemon.vista(filas, clumnas);
-        System.out.println(vista);
 
+        String[] cols = { "Total", "HP" };
+        char[] chars = { '=', '=' };
+        List<Object> valores = new ArrayList<>();
+        valores.add(405);
+        valores.add(60);
+        Tabla pokemonFiltrado = pokemon.filtrarVariasCondiciones(cols, chars, valores);
+        System.out.println(pokemonFiltrado);
         // pokemon.eliminarColumnaPorIndice(1);
         // System.out.println(pokemon.obtenerEtiquetasColumnas());
         // System.out.println(pokemon.obtenerEtiquetasFilas());

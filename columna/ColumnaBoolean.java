@@ -11,7 +11,6 @@ import Exceptions.ValorInvalidoException;
 import celda.Celda;
 import celda.CeldaBoolean;
 import celda.CeldaNum;
-import celda.CeldaString;
 
 public class ColumnaBoolean extends Columna<CeldaBoolean> {
     private List<CeldaBoolean> celdas;

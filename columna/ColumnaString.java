@@ -10,7 +10,6 @@ import Exceptions.ConversionDeTiposException;
 import Exceptions.ValorInvalidoException;
 import celda.Celda;
 import celda.CeldaString;
-import celda.CeldaBoolean;
 import celda.CeldaNum;
 
 public class ColumnaString extends Columna<CeldaString> {
