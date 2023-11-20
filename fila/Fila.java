@@ -29,4 +29,14 @@ public class Fila implements Comparable<Fila> {
         return comparacion;
     }
 
+    @Override
+    public String toString() {
+        String fila = "[";
+        for (Celda celda : celdas) {
+            fila += celda.toString() + " ";
+        }
+        fila += "]";
+        return fila;
+    }
+
 }

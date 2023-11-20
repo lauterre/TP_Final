@@ -114,33 +114,8 @@ public class Tabla {
             List<String> lineas = lector.leer(rutaArchivo);
             List<Columna<? extends Celda>> cols = lector.parserColumnas(lineas, tieneEncabezadosColumnas, tieneEncabezadosFilas);
             this.columnas = cols;
-            if (tieneEncabezadosFilas)
-                // lector.getEncabezados().remove(0);
-                setEtiquetasFilas(lector.getEncabezadosFilas());
-            if (tieneEncabezadosColumnas) {
-                setEtiquetasColumnas(lector.getEncabezados());
-            } else {
-                List<Etiqueta> etiquetaCol = new ArrayList<>();
-                for (int i = 0; i < cols.size(); i++) {
-                    Etiqueta etiqueta = Etiqueta.crear(i);
-                    etiquetaCol.add(etiqueta);
-                }
-                setEtiquetasColumnas(etiquetaCol);
-            }
-            List<Etiqueta> etiquetasFilas = new ArrayList<>();
-            if (tieneEncabezadosFilas) {
-                for (int i = 0; i < this.columnas.get(0).size(); i++) {
-                    Etiqueta etiqueta = Etiqueta.crear(this.columnas.get(0).obtenerValor(i).getValor().toString());
-                    etiquetasFilas.add(etiqueta);
-                }
-                this.columnas.remove(0);
-            } else {
-                for (int i = 0; i < this.columnas.get(0).size(); i++) {
-                    Etiqueta etiqueta = Etiqueta.crear(i);
-                    etiquetasFilas.add(etiqueta);
-                }
-            }
-            setEtiquetasFilas(etiquetasFilas);
+            setEtiquetasColumnas(lector.getEncabezados());
+            setEtiquetasFilas(lector.getEncabezadosFilas());
         } catch (ArchivoNoEncontradoException | CSVParserException e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
@@ -179,6 +154,11 @@ public class Tabla {
         } catch (EtiquetaInvalidaException e) {
             e.printStackTrace();
         }
+    }
+
+    private void agregarColumna(Columna<? extends Celda> columna, Etiqueta etiqueta) {
+        columnas.add(columna);
+        colLabels.put(etiqueta, this.columnas.size());
     }
 
     private void agregarColumna(List<Object> columna, Etiqueta etiqueta)
@@ -333,40 +313,69 @@ public class Tabla {
         return columnas.get(colLabels.get(etiquetaColumna)).obtenerValor(rowLabels.get(etiquetaFila));
     }
 
-    public Celda obtenerCelda(String etiquetaFila, String etiquetaColumna) {
+    // public Celda obtenerCelda(String etiquetaFila, String etiquetaColumna) {
+    // try {
+    // return obtenerCelda(convertirAEtiqueta(etiquetaFila),
+    // convertirAEtiqueta(etiquetaColumna));
+    // } catch (EtiquetaInvalidaException e) {
+    // e.printStackTrace();
+    // return null;
+    // }
+    // }
+
+    // public Celda obtenerCelda(int etiquetaFila, int etiquetaColumna) {
+    // try {
+    // return obtenerCelda(convertirAEtiqueta(etiquetaFila),
+    // convertirAEtiqueta(etiquetaColumna));
+    // } catch (EtiquetaInvalidaException e) {
+    // e.printStackTrace();
+    // return null;
+    // }
+    // }
+
+    // public Celda obtenerCelda(String etiquetaFila, int etiquetaColumna) {
+    // try {
+    // return obtenerCelda(convertirAEtiqueta(etiquetaFila),
+    // convertirAEtiqueta(etiquetaColumna));
+    // } catch (EtiquetaInvalidaException e) {
+    // e.printStackTrace();
+    // return null;
+    // }
+    // }
+
+    // public Celda obtenerCelda(int etiquetaFila, String etiquetaColumna) {
+    // try {
+    // return obtenerCelda(convertirAEtiqueta(etiquetaFila),
+    // convertirAEtiqueta(etiquetaColumna));
+    // } catch (EtiquetaInvalidaException e) {
+    // e.printStackTrace();
+    // return null;
+    // }
+    // }
+
+    private Object obtenerValor(Etiqueta etiquetaFila, Etiqueta etiquetaColumna) {
         try {
-            return obtenerCelda(convertirAEtiqueta(etiquetaFila), convertirAEtiqueta(etiquetaColumna));
+            return obtenerCelda(etiquetaFila, etiquetaColumna).getValor();
         } catch (EtiquetaInvalidaException e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    public Celda obtenerCelda(int etiquetaFila, int etiquetaColumna) {
-        try {
-            return obtenerCelda(convertirAEtiqueta(etiquetaFila), convertirAEtiqueta(etiquetaColumna));
-        } catch (EtiquetaInvalidaException e) {
-            e.printStackTrace();
-            return null;
-        }
+    public Object obtenerValor(String etiquetaFila, String etiquetaColumna) {
+        return obtenerValor(convertirAEtiqueta(etiquetaFila), convertirAEtiqueta(etiquetaColumna));
     }
 
-    public Celda obtenerCelda(String etiquetaFila, int etiquetaColumna) {
-        try {
-            return obtenerCelda(convertirAEtiqueta(etiquetaFila), convertirAEtiqueta(etiquetaColumna));
-        } catch (EtiquetaInvalidaException e) {
-            e.printStackTrace();
-            return null;
-        }
+    public Object obtenerValor(int etiquetaFila, int etiquetaColumna) {
+        return obtenerValor(convertirAEtiqueta(etiquetaFila), convertirAEtiqueta(etiquetaColumna));
     }
 
-    public Celda obtenerCelda(int etiquetaFila, String etiquetaColumna) {
-        try {
-            return obtenerCelda(convertirAEtiqueta(etiquetaFila), convertirAEtiqueta(etiquetaColumna));
-        } catch (EtiquetaInvalidaException e) {
-            e.printStackTrace();
-            return null;
-        }
+    public Object obtenerValor(String etiquetaFila, int etiquetaColumna) {
+        return obtenerValor(convertirAEtiqueta(etiquetaFila), convertirAEtiqueta(etiquetaColumna));
+    }
+
+    public Object obtenerValor(int etiquetaFila, String etiquetaColumna) {
+        return obtenerValor(convertirAEtiqueta(etiquetaFila), convertirAEtiqueta(etiquetaColumna));
     }
 
     private void cambiarValor(Etiqueta etiquetaFila, Etiqueta etiquetaColumna, Object valorNuevo) {
@@ -533,6 +542,47 @@ public class Tabla {
 
         }
         return new Fila(retorno);
+    }
+
+    public Fila getFila(Etiqueta etiquetaFila) {
+        Etiqueta[] etiquetasColumnas = new Etiqueta[colLabels.size()];
+        for (Etiqueta etiqueta : colLabels.keySet()) {
+            etiquetasColumnas[colLabels.get(etiqueta)] = etiqueta;
+        }
+        try {
+            return getFila(etiquetaFila, etiquetasColumnas);
+        } catch (EtiquetaInvalidaException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public Fila getFila(int etiquetaFila) {
+        try {
+            Etiqueta indice = getEtiquetaFila(etiquetaFila);
+            Etiqueta[] etiquetasColumnas = new Etiqueta[colLabels.size()];
+            for (Etiqueta etiqueta : colLabels.keySet()) {
+                etiquetasColumnas[colLabels.get(etiqueta)] = etiqueta;
+            }
+            return getFila(indice, etiquetasColumnas);
+        } catch (EtiquetaInvalidaException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public Fila getFila(String etiquetaFila) {
+        try {
+            Etiqueta indice = getEtiquetaFila(etiquetaFila);
+            Etiqueta[] etiquetasColumnas = new Etiqueta[colLabels.size()];
+            for (Etiqueta etiqueta : colLabels.keySet()) {
+                etiquetasColumnas[colLabels.get(etiqueta)] = etiqueta;
+            }
+            return getFila(indice, etiquetasColumnas);
+        } catch (EtiquetaInvalidaException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     private void generarRowLabelsOrdenado(List<Etiqueta> orden) {
@@ -1094,6 +1144,107 @@ public class Tabla {
         return muestra;
     }
 
+    private Tabla vista(List<Etiqueta> etiquetasFilas, List<Etiqueta> etiquetasColumnas)
+            throws EtiquetaInvalidaException {
+        Tabla vista = new Tabla();
+        vista.rowLabels = this.rowLabels;
+        for (Etiqueta etiqueta : etiquetasColumnas) {
+            if (!(colLabels.containsKey(etiqueta)))
+                throw new EtiquetaInvalidaException();
+            vista.agregarColumna(this.obtenerColumna(etiqueta), etiqueta);
+        }
+        vista.setEtiquetasColumnas(etiquetasColumnas);
+
+        List<Etiqueta> etiquetasABorrar = new ArrayList<>();
+        for (Etiqueta etiqueta : this.rowLabels.keySet()) {
+            if (!(etiquetasFilas.contains(etiqueta)))
+                etiquetasABorrar.add(etiqueta);
+        }
+        for (Etiqueta etiqueta : etiquetasABorrar) {
+            vista.eliminarFila(etiqueta);
+        }
+        return vista;
+    }
+
+    public Tabla vista(String[] etiquetasFilas, String[] etiquetasColumnas) {
+        try {
+            return vista(convertirAEtiqueta(etiquetasFilas), convertirAEtiqueta(etiquetasColumnas));
+        } catch (EtiquetaInvalidaException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public Tabla vista(int[] etiquetasFilas, int[] etiquetasColumnas) {
+        try {
+            return vista(convertirAEtiqueta(etiquetasFilas), convertirAEtiqueta(etiquetasColumnas));
+        } catch (EtiquetaInvalidaException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public Tabla vista(String[] etiquetasFilas, int[] etiquetasColumnas) {
+        try {
+            return vista(convertirAEtiqueta(etiquetasFilas), convertirAEtiqueta(etiquetasColumnas));
+        } catch (EtiquetaInvalidaException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public Tabla vista(int[] etiquetasFilas, String[] etiquetasColumnas) {
+        try {
+            return vista(convertirAEtiqueta(etiquetasFilas), convertirAEtiqueta(etiquetasColumnas));
+        } catch (EtiquetaInvalidaException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public Tabla head(int x) {
+        if (x < 0 || x > obtenerCantidadFilas())
+            throw new IllegalArgumentException(
+                    "La cantidad de filas indicada debe ser mayor a 0 y menor a la cantidad de filas en la tabla");
+        List<Etiqueta> etiquetas = new ArrayList<>();
+        int i = 0;
+        List<Etiqueta> etiquetasfila = new ArrayList<>(rowLabels.keySet());
+        do {
+            etiquetas.add(etiquetasfila.get(i));
+            i++;
+        } while (i < x);
+        System.out.println(i);
+        List<Etiqueta> etiquetasColumna = new ArrayList<>(colLabels.keySet());
+        try {
+            return vista(etiquetas, etiquetasColumna);
+        } catch (EtiquetaInvalidaException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public Tabla tail(int x) {
+        if (x < 0 || x > obtenerCantidadFilas())
+            throw new IllegalArgumentException(
+                    "La cantidad de filas indicada debe ser mayor a 0 y menor a la cantidad de filas en la tabla");
+        List<Etiqueta> etiquetas = new ArrayList<>();
+        int i = 0;
+        List<Etiqueta> etiquetasfila = new ArrayList<>(rowLabels.keySet());
+        do {
+            etiquetas.add(etiquetasfila.get(obtenerCantidadFilas() - 1 - i));
+            i++;
+        } while (i < x);
+        System.out.println(i);
+        List<Etiqueta> etiquetasColumna = new ArrayList<>(colLabels.keySet());
+        try {
+            return vista(etiquetas, etiquetasColumna);
+        } catch (EtiquetaInvalidaException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+
     @Override
     public String toString() {
         StringBuilder out = new StringBuilder();
@@ -1274,6 +1425,7 @@ public class Tabla {
         System.out.println(pokemon.obtenerEtiquetasFilas());
         System.out.println(pokemon.obtenerCantidadColumnas());
         System.out.println(pokemon.obtenerCantidadFilas());
+        System.out.println(pokemon);
 
         // pokemon.eliminarFila(2);
         // pokemon.eliminarColumna("Name");

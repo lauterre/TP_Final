@@ -47,8 +47,9 @@ public class CeldaBoolean extends Celda {
         return valor;
     }
 
-    public void setValor(Boolean valor) {
-        this.valor = valor;
+    @Override
+    public void setValor(Object valor) {
+        this.valor = (Boolean) valor;
     }
 
     @Override

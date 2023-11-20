@@ -37,13 +37,14 @@ public class CeldaNum extends Celda {
     }
 
     @Override
+    public void setValor(Object valor) {
+        this.valor = (Number) valor;
+    }
+
+    @Override
     public CeldaNum copia() {
         valor = this.getValor();
         return new CeldaNum(valor);
-    }
-
-    public void setValor(Number valor) {
-        this.valor = valor;
     }
 
     @Override
