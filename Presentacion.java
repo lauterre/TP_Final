@@ -39,10 +39,12 @@ public class Presentacion {
 
     public static void verColumna() {
         System.out.println(tabla.obtenerColumna("Name"));
+        tabla.convertirANum("Attack");
+        System.out.println(tabla.obtenerTipoDeDato("Attack"));
     }
 
     public static void verFila() {
-        tabla.verFila(-3);
+        tabla.verFila(3);
     }
 
     public static void imputarPorPromedio() {

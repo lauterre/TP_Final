@@ -55,7 +55,7 @@ public class ColumnaString extends Columna<CeldaString> {
         List<CeldaNum> numeros = new ArrayList<>();
         for (CeldaString celdaString : celdas) {
             Number numero;
-            if (celdaString.getValor() == null) {
+            if (celdaString.getValor() == null || celdaString.getValor() == "") {
                 numero = null;
             } else {
                 numero = Double.parseDouble(celdaString.getValor());
