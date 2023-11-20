@@ -18,7 +18,7 @@ import etiqueta.Etiqueta;
 import lector.exceptions.ArchivoNoEncontradoException;
 import lector.exceptions.CSVParserException;
 
-public class LectorCSV {
+public class LectorCSV extends Lector {
 
     private List<Etiqueta> encabezados;
     private List<Etiqueta> encabezadosFilas;
@@ -36,8 +36,8 @@ public class LectorCSV {
         }
     }
 
-    // TODO: ver que pasa si el cvs tiene null en la ultima columna
-    public List<Columna<? extends Celda>> parserColumnas(List<String> lineas, boolean tieneEncabezados, boolean tieneEncabezadosFila)
+    public List<Columna<? extends Celda>> parserColumnas(List<String> lineas, boolean tieneEncabezados,
+            boolean tieneEncabezadosFila)
             throws CSVParserException {
         int cantidadColumnas = lineas.get(0).split(",").length;
         List<List<String>> columnas = new ArrayList<>();
@@ -49,12 +49,12 @@ public class LectorCSV {
         }
 
         for (int l = 0; l < lineas.size(); l++) {
-            String[] campos = lineas.get(l).split(",");
+            String[] campos = lineas.get(l).split(",", -1);
             for (int i = 0; i < campos.length; i++) {
                 columnas.get(i).add(campos[i]);
             }
             if (campos.length != cantidadColumnas) {
-                throw new CSVParserException();
+                throw new CSVParserException(l);
             }
         }
 
@@ -127,18 +127,18 @@ public class LectorCSV {
         }
 
         // if (tieneEncabezadosFila) {
-        //     for (Celda celda : cols.get(0)) {
-        //         Etiqueta etiqueta = Etiqueta.crear(celda.getValor());
-        //         encabezadosFilas.add(etiqueta);
-        //     }
-        //     cols.remove(0);
+        // for (Celda celda : cols.get(0)) {
+        // Etiqueta etiqueta = Etiqueta.crear(celda.getValor());
+        // encabezadosFilas.add(etiqueta);
+        // }
+        // cols.remove(0);
         // }
 
         // if (tieneEncabezados) {
-        //     for (Columna col : cols) {
-        //         Celda celda = col.getCeldas().get(0);
-        //         Etiqueta etiqueta = Etiqueta.crear(col.getCeldas().get(0).getValor());
-        //     }
+        // for (Columna col : cols) {
+        // Celda celda = col.getCeldas().get(0);
+        // Etiqueta etiqueta = Etiqueta.crear(col.getCeldas().get(0).getValor());
+        // }
         // }
         return cols;
     }
@@ -148,7 +148,6 @@ public class LectorCSV {
     }
 
     private static boolean esBool(String cadena) {
-        // TODO: tambien con 0 y 1
         return cadena.equalsIgnoreCase("true") || cadena.equalsIgnoreCase("false");
     }
 

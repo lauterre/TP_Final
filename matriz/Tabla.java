@@ -24,6 +24,7 @@ import columna.Columna;
 import columna.ColumnaBoolean;
 import columna.ColumnaNum;
 import columna.ColumnaString;
+import escritor.EscritorCSV;
 import etiqueta.Etiqueta;
 import etiqueta.EtiquetaNum;
 import etiqueta.EtiquetaString;
@@ -112,7 +113,8 @@ public class Tabla {
         this.rowLabels = new LinkedHashMap<>();
         try {
             List<String> lineas = lector.leer(rutaArchivo);
-            List<Columna<? extends Celda>> cols = lector.parserColumnas(lineas, tieneEncabezadosColumnas, tieneEncabezadosFilas);
+            List<Columna<? extends Celda>> cols = lector.parserColumnas(lineas, tieneEncabezadosColumnas,
+                    tieneEncabezadosFilas);
             this.columnas = cols;
             setEtiquetasColumnas(lector.getEncabezados());
             setEtiquetasFilas(lector.getEncabezadosFilas());
@@ -239,14 +241,15 @@ public class Tabla {
         for (int i = 0; i < columnas.get(0).size(); i++) {
             rowLabels.put(etiquetas.get(i), i);
         }
-        //this.tieneEtiquetaFila = true;
     }
 
     public void setEtiquetasFilas(String[] etiquetas) {
+        this.tieneEtiquetaFila = true;
         setEtiquetasFilas(convertirAEtiqueta(etiquetas));
     }
 
     public void setEtiquetasFilas(int[] etiquetas) {
+        this.tieneEtiquetaFila = false;
         setEtiquetasFilas(convertirAEtiqueta(etiquetas));
     }
 
@@ -260,14 +263,15 @@ public class Tabla {
         for (int j = 0; j < columnas.size(); j++) {
             colLabels.put(etiquetas.get(j), j);
         }
-        //this.tieneEtiquetaCol = true;
     }
 
     public void setEtiquetasColumnas(String[] etiquetas) {
         setEtiquetasColumnas(convertirAEtiqueta(etiquetas));
+        this.tieneEtiquetaCol = true;
     }
 
     public void setEtiquetasColumnas(int[] etiquetas) {
+        this.tieneEtiquetaCol = false;
         setEtiquetasColumnas(convertirAEtiqueta(etiquetas));
     }
 
@@ -378,33 +382,35 @@ public class Tabla {
         return obtenerValor(convertirAEtiqueta(etiquetaFila), convertirAEtiqueta(etiquetaColumna));
     }
 
-    private void cambiarValor(Etiqueta etiquetaFila, Etiqueta etiquetaColumna, Object valorNuevo) {
+    private void cambiarValor(Etiqueta etiquetaFila, Etiqueta etiquetaColumna, Object valorNuevo, Boolean imprimir) {
         try {
             Celda celdaBorrada = obtenerCelda(etiquetaFila, etiquetaColumna);
             Object valorAnterior = celdaBorrada.getValor();
             columnas.get(colLabels.get(etiquetaColumna)).fijarValor(rowLabels.get(etiquetaFila), valorNuevo);
-            System.out.println(
-                    "Se cambio el valor de la celda[" + etiquetaFila + ", " + etiquetaColumna + "]\n- Valor anterior: "
-                            + valorAnterior + "\n- Valor nuevo: " + valorNuevo);
+            if (imprimir)
+                System.out.println(
+                        "Se cambio el valor de la celda[" + etiquetaFila + ", " + etiquetaColumna
+                                + "]\n- Valor anterior: "
+                                + valorAnterior + "\n- Valor nuevo: " + valorNuevo);
         } catch (EtiquetaInvalidaException e) {
             e.printStackTrace();
         }
     }
 
     public void cambiarValor(String etiquetaFila, String etiquetaColumna, Object valor) {
-        cambiarValor(convertirAEtiqueta(etiquetaFila), convertirAEtiqueta(etiquetaColumna), valor);
+        cambiarValor(convertirAEtiqueta(etiquetaFila), convertirAEtiqueta(etiquetaColumna), valor, true);
     }
 
     public void cambiarValor(int etiquetaFila, int etiquetaColumna, Object valor) {
-        cambiarValor(convertirAEtiqueta(etiquetaFila), convertirAEtiqueta(etiquetaColumna), valor);
+        cambiarValor(convertirAEtiqueta(etiquetaFila), convertirAEtiqueta(etiquetaColumna), valor, true);
     }
 
     public void cambiarValor(String etiquetaFila, int etiquetaColumna, Object valor) {
-        cambiarValor(convertirAEtiqueta(etiquetaFila), convertirAEtiqueta(etiquetaColumna), valor);
+        cambiarValor(convertirAEtiqueta(etiquetaFila), convertirAEtiqueta(etiquetaColumna), valor, true);
     }
 
     public void cambiarValor(int etiquetaFila, String etiquetaColumna, Object valor) {
-        cambiarValor(convertirAEtiqueta(etiquetaFila), convertirAEtiqueta(etiquetaColumna), valor);
+        cambiarValor(convertirAEtiqueta(etiquetaFila), convertirAEtiqueta(etiquetaColumna), valor, true);
     }
 
     public int obtenerCantidadFilas() {
@@ -929,79 +935,31 @@ public class Tabla {
         }
     }
 
-    public Tabla imputar(Number valor, String col) {
-        try {
-            Etiqueta etiqueta = getEtiquetaColumna(col);
-            return imputar(valor, etiqueta);
-        } catch (EtiquetaInvalidaException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public Tabla imputar(String valor, String col) {
-        try {
-            Etiqueta etiqueta = getEtiquetaColumna(col);
-            return imputar(valor, etiqueta);
-        } catch (EtiquetaInvalidaException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public Tabla imputar(boolean valor, String col) {
-        try {
-            Etiqueta etiqueta = getEtiquetaColumna(col);
-            return imputar(valor, etiqueta);
-        } catch (EtiquetaInvalidaException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public Tabla imputar(Number valor, int col) {
-        try {
-            Etiqueta etiqueta = getEtiquetaColumna(col);
-            return imputar(valor, etiqueta);
-        } catch (EtiquetaInvalidaException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public Tabla imputar(String valor, int col) {
-        try {
-            Etiqueta etiqueta = getEtiquetaColumna(col);
-            return imputar(valor, etiqueta);
-        } catch (EtiquetaInvalidaException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public Tabla imputar(boolean valor, int col) {
-        try {
-            Etiqueta etiqueta = getEtiquetaColumna(col);
-            return imputar(valor, etiqueta);
-        } catch (EtiquetaInvalidaException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    private <T extends Celda> Tabla imputar(Object valor, Etiqueta etiCol) {
-        Tabla tablaImputada = copiarTabla(this);
-        List<Etiqueta> etiquetasFila = tablaImputada.getEtiquetasNa(etiCol);
+    private <T extends Celda> void imputar(Object valor, Etiqueta etiCol) {
+        List<Etiqueta> etiquetasFila = getEtiquetasNa(etiCol);
         for (Etiqueta etiqueta : etiquetasFila) {
-            tablaImputada.cambiarValor(etiqueta, etiCol, valor);
+            cambiarValor(etiqueta, etiCol, valor, false);
         }
-        return tablaImputada;
+    }
+
+    public void imputar(Object valor, String col) {
+        try {
+            Etiqueta etiqueta = getEtiquetaColumna(col);
+            imputar(valor, etiqueta);
+        } catch (EtiquetaInvalidaException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public void imputar(Object valor, int col) {
+        try {
+            Etiqueta etiqueta = getEtiquetaColumna(col);
+            imputar(valor, etiqueta);
+        } catch (EtiquetaInvalidaException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     private List<Etiqueta> getEtiquetasNa(Etiqueta etiCol) {
@@ -1024,6 +982,10 @@ public class Tabla {
         return null; // Valor no encontrado en el mapa
     }
 
+    private double promedio(Columna<? extends Celda> columna) {
+        return columna.promedio();
+    }
+
     public double promedio(String etiquetaCol) {
         Columna<? extends Celda> columna = obtenerColumna(etiquetaCol);
         return promedio(columna);
@@ -1032,10 +994,6 @@ public class Tabla {
     public double promedio(int etiquetaCol) {
         Columna<? extends Celda> columna = obtenerColumna(etiquetaCol);
         return promedio(columna);
-    }
-
-    private double promedio(Columna<? extends Celda> columna) {
-        return columna.promedio();
     }
 
     public double mediana(String etiquetaCol) {
@@ -1052,6 +1010,10 @@ public class Tabla {
         return columna.mediana();
     }
 
+    private double suma(Columna<? extends Celda> columna) {
+        return columna.suma();
+    }
+
     public double suma(String etiquetaCol) {
         Columna<? extends Celda> columna = obtenerColumna(etiquetaCol);
         return suma(columna);
@@ -1060,11 +1022,6 @@ public class Tabla {
     public double suma(int etiquetaCol) {
         Columna<? extends Celda> columna = obtenerColumna(etiquetaCol);
         return suma(columna);
-    }
-
-    // TODO al pedo
-    private double suma(Columna<? extends Celda> columna) {
-        return columna.suma();
     }
 
     // Count
@@ -1097,8 +1054,6 @@ public class Tabla {
         Columna<? extends Celda> columna = obtenerColumna(etiquetaCol);
         return columna.count(valor);
     }
-
-    // Count bien
 
     public Map<? extends Celda, Integer> count(String etiquetaCol) {
         Columna<? extends Celda> columna = obtenerColumna(etiquetaCol);
@@ -1245,6 +1200,30 @@ public class Tabla {
 
     }
 
+    public String obtenerTipoDeDato(String etiquetaColumna) {
+        Columna<? extends Celda> columna = obtenerColumna(etiquetaColumna);
+        return columna.tipoDato();
+    }
+
+    public String obtenerTipoDeDato(int etiquetaColumna) {
+        Columna<? extends Celda> columna = obtenerColumna(etiquetaColumna);
+
+        return columna.tipoDato();
+    }
+
+    public List<String> obtenerTipoDeDato() {
+        List<String> tiposDeDato = new ArrayList<>();
+        for (Columna<? extends Celda> columna : columnas) {
+            tiposDeDato.add(columna.tipoDato());
+        }
+        return tiposDeDato;
+    }
+
+    public void guardarCSV(String direccion) {
+        EscritorCSV escritorCSV = new EscritorCSV(this, direccion);
+        escritorCSV.escribirDatos();
+    }
+
     @Override
     public String toString() {
         StringBuilder out = new StringBuilder();
@@ -1342,7 +1321,7 @@ public class Tabla {
         // matriz[2][1] = 7;
         // matriz[2][2] = 8;
 
-        // Tabla tabla = new Tabla(matriz, true, false);
+        Tabla tabla = new Tabla(matriz, true, false);
         // System.out.println(tabla);
         // Tabla tabla2 = copiarTabla(tabla);
         // List<Object> nuevaCol = new ArrayList<>();
@@ -1352,8 +1331,11 @@ public class Tabla {
         // System.out.println(tabla);
         // System.out.println(tabla2);
 
-        // // // String[] etiquetas = { "Hola", "Mundo", "JAVA" };
-        // // // tabla.setEtiquetasColumnas(etiquetas);
+        // String[] etiquetas = { "Hola", "Mundo", "JAVA" };
+        // tabla.setEtiquetasColumnas(etiquetas);
+        String[] etifilas = { "0", "1", "2" };
+        tabla.setEtiquetasFilas(etifilas);
+        tabla.guardarCSV("E:/java_workspace/TP_Final/nombres.csv");
         // // tabla.cambiarValor(0, "Nombre", "juean");
         // tabla.agregarColumna(nuevaCol, "Nota");
         // // System.out.println(tabla);
@@ -1419,13 +1401,16 @@ public class Tabla {
 
         // System.out.println(tablaFiltrada);
 
-        Tabla pokemon = new Tabla("C:\\Users\\nazar\\OneDrive\\Escritorio\\TP_Final\\Pokemon.csv", false, true);
-        // pokemon.eliminarColumnaPorIndice(1);
-        System.out.println(pokemon.obtenerEtiquetasColumnas());
-        System.out.println(pokemon.obtenerEtiquetasFilas());
-        System.out.println(pokemon.obtenerCantidadColumnas());
-        System.out.println(pokemon.obtenerCantidadFilas());
+        Tabla pokemon = new Tabla("E:\\java_workspace\\TP_Final\\Pokemon.csv", true, false);
+        pokemon.imputar(false, "Legendary");
         System.out.println(pokemon);
+        // pokemon.eliminarColumnaPorIndice(1);
+        // System.out.println(pokemon.obtenerEtiquetasColumnas());
+        // System.out.println(pokemon.obtenerEtiquetasFilas());
+        // System.out.println(pokemon.obtenerCantidadColumnas());
+        // System.out.println(pokemon.obtenerCantidadFilas());
+        // pokemon.imputar("hola", "Type 2");
+        // System.out.println(pokemon.obtenerTipoDeDato());
 
         // pokemon.eliminarFila(2);
         // pokemon.eliminarColumna("Name");

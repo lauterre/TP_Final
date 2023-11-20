@@ -12,12 +12,15 @@ import fila.Fila;
 import matriz.Tabla;
 
 public class EscritorCSV extends Escritor {
+    Tabla tabla;
+    String direccion;
 
     public EscritorCSV(Tabla tabla, String direccion) {
-        super(tabla, direccion);
+        this.tabla = tabla;
+        this.direccion = direccion;
     }
 
-    public void escribirDatos(Tabla tabla, String direccion) {
+    public void escribirDatos() {
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(direccion))) {
 
             if (tabla.tieneEncabezadosColumnas()) {
