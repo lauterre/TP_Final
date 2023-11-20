@@ -63,7 +63,7 @@ public class ColumnaString extends Columna<CeldaString> {
         throw new UnsupportedOperationException("No puede calcularse el promedio sobre valores de tipo cadena");
     }
 
-        @Override
+    @Override
     public double mediana() {
         throw new UnsupportedOperationException("No puede calcularse la mediana sobre valores de tipo cadena");
     }
@@ -135,8 +135,9 @@ public class ColumnaString extends Columna<CeldaString> {
     public String toString() {
         String out = "[";
         for (int i = 0; i < celdas.size(); i++) {
-            out += celdas.get(i).getValor();
-            if (!(i == celdas.size() - 1)) out += ", ";
+            out += celdas.get(i).toString();
+            if (!(i == celdas.size() - 1))
+                out += ", ";
         }
         out += "]";
         return out;

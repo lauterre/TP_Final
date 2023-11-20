@@ -162,8 +162,9 @@ public class ColumnaBoolean extends Columna<CeldaBoolean> {
     public String toString() {
         String out = "[";
         for (int i = 0; i < celdas.size(); i++) {
-            out += celdas.get(i).getValor();
-            if (!(i == celdas.size() - 1)) out += ", ";
+            out += celdas.get(i).toString();
+            if (!(i == celdas.size() - 1))
+                out += ", ";
         }
         out += "]";
         return out;

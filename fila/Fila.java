@@ -31,12 +31,14 @@ public class Fila implements Comparable<Fila> {
 
     @Override
     public String toString() {
-        String fila = "[";
-        for (Celda celda : celdas) {
-            fila += celda.toString() + " ";
+        String out = "[";
+        for (int i = 0; i < celdas.size(); i++) {
+            out += celdas.get(i).toString();
+            if (!(i == celdas.size() - 1))
+                out += ", ";
         }
-        fila += "]";
-        return fila;
+        out += "]";
+        return out;
     }
 
 }

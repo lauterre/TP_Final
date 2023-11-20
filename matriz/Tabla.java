@@ -1103,6 +1103,7 @@ public class Tabla {
             throws EtiquetaInvalidaException {
         Tabla vista = new Tabla();
         vista.rowLabels = this.rowLabels;
+        vista.tieneEtiquetaCol = this.tieneEtiquetaCol;
         for (Etiqueta etiqueta : etiquetasColumnas) {
             if (!(colLabels.containsKey(etiqueta)))
                 throw new EtiquetaInvalidaException();
@@ -1157,6 +1158,16 @@ public class Tabla {
         }
     }
 
+    public void verFila(int etiquetasFilas) {
+        try {
+            Tabla auxiliar = copiarTabla(this);
+            int[] etiqueta = { etiquetasFilas };
+            System.out.println(auxiliar.vista(convertirAEtiqueta(etiqueta), obtenerEtiquetasColumnas()));
+        } catch (EtiquetaInvalidaException e) {
+            e.printStackTrace();
+        }
+    }
+
     public Tabla head(int x) {
         if (x < 0 || x > obtenerCantidadFilas())
             throw new IllegalArgumentException(
@@ -1168,7 +1179,6 @@ public class Tabla {
             etiquetas.add(etiquetasfila.get(i));
             i++;
         } while (i < x);
-        System.out.println(i);
         List<Etiqueta> etiquetasColumna = new ArrayList<>(colLabels.keySet());
         try {
             return vista(etiquetas, etiquetasColumna);
@@ -1254,7 +1264,11 @@ public class Tabla {
                 try {
                     Celda valorCelda = obtenerCelda(fila, columna);
                     int anchoColumna = obtenerAnchoColumna(columna);
-                    out.append(String.format("%-" + anchoColumna + "s", valorCelda)).append(sep);
+                    if (valorCelda == null) {
+                        out.append(String.format("%-" + anchoColumna + "s", "NA")).append(sep);
+                    } else {
+                        out.append(String.format("%-" + anchoColumna + "s", valorCelda)).append(sep);
+                    }
                 } catch (EtiquetaInvalidaException e) {
                     e.getMessage();
                 }
@@ -1271,9 +1285,11 @@ public class Tabla {
         for (Etiqueta etiquetaFila : rowLabels.keySet()) {
             try {
                 Celda valorCelda = obtenerCelda(etiquetaFila, etiquetaColumna);
-                int longitudValor = valorCelda.toString().length();
-                if (longitudValor > anchoMaximo) {
-                    anchoMaximo = longitudValor;
+                if (valorCelda != null) {
+                    int longitudValor = valorCelda.toString().length();
+                    if (longitudValor > anchoMaximo) {
+                        anchoMaximo = longitudValor;
+                    }
                 }
             } catch (EtiquetaInvalidaException e) {
                 e.printStackTrace();
@@ -1299,29 +1315,28 @@ public class Tabla {
     }
 
     public static void main(String[] args) {
-        String[][] matriz = new String[3][3];
+        // Object[][] matriz = new Object[3][3];
 
-        matriz[0][0] = "Nombre";
-        matriz[0][1] = "Apellido";
-        matriz[0][2] = "Edad";
-        matriz[1][0] = "Martín";
-        matriz[1][1] = "Gutierrez";
-        matriz[1][2] = "23";
-        matriz[2][0] = "Javier";
-        matriz[2][1] = "Moreno";
-        matriz[2][2] = "34";
+        // matriz[0][0] = "Nombre";
+        // matriz[0][1] = "Apellido";
+        // matriz[0][2] = "Edad";
+        // matriz[1][0] = "Martín";
+        // matriz[1][1] = "Gutierrez";
+        // matriz[1][2] = "23";
+        // matriz[2][0] = "Javier";
+        // matriz[2][1] = "Moreno";
+        // matriz[2][2] = "34";
 
         // matriz[0][0] = 0;
         // matriz[0][1] = 1;
         // matriz[0][2] = 2;
-        // matriz[1][0] = 3;
         // matriz[1][1] = 4;
         // matriz[1][2] = 5;
         // matriz[2][0] = 6;
         // matriz[2][1] = 7;
         // matriz[2][2] = 8;
 
-        Tabla tabla = new Tabla(matriz, true, false);
+        // Tabla tabla = new Tabla(matriz, false, false);
         // System.out.println(tabla);
         // Tabla tabla2 = copiarTabla(tabla);
         // List<Object> nuevaCol = new ArrayList<>();
@@ -1333,9 +1348,9 @@ public class Tabla {
 
         // String[] etiquetas = { "Hola", "Mundo", "JAVA" };
         // tabla.setEtiquetasColumnas(etiquetas);
-        String[] etifilas = { "0", "1", "2" };
-        tabla.setEtiquetasFilas(etifilas);
-        tabla.guardarCSV("E:/java_workspace/TP_Final/nombres.csv");
+        // String[] etifilas = { "0", "1", "2" };
+        // tabla.setEtiquetasFilas(etifilas);
+        // tabla.guardarCSV("E:/java_workspace/TP_Final/nombres.csv");
         // // tabla.cambiarValor(0, "Nombre", "juean");
         // tabla.agregarColumna(nuevaCol, "Nota");
         // // System.out.println(tabla);
@@ -1401,9 +1416,14 @@ public class Tabla {
 
         // System.out.println(tablaFiltrada);
 
-        Tabla pokemon = new Tabla("E:\\java_workspace\\TP_Final\\Pokemon.csv", true, false);
+        Tabla pokemon = new Tabla("E:\\java_workspace\\TP_Final\\Pokemon.csv", true,
+                false);
         pokemon.imputar(false, "Legendary");
-        System.out.println(pokemon);
+        int[] filas = { 0, 1, 2, 3 };
+        String[] clumnas = { "Name", "HP" };
+        Tabla vista = pokemon.vista(filas, clumnas);
+        System.out.println(vista);
+
         // pokemon.eliminarColumnaPorIndice(1);
         // System.out.println(pokemon.obtenerEtiquetasColumnas());
         // System.out.println(pokemon.obtenerEtiquetasFilas());

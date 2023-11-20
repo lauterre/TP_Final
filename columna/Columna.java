@@ -44,30 +44,46 @@ public abstract class Columna<T extends Celda> {
     // public abstract <T extends Celda> List<T> getCeldas();
 
     public static Columna<? extends Celda> crear(List<Object> e) {
+        if (e.isEmpty()) {
+            throw new IllegalArgumentException("La lista de valores no puede estar vacía");
+        }
+
         if (e.get(0) instanceof Boolean) {
             List<CeldaBoolean> celdas = new ArrayList<>();
             for (Object valor : e) {
-                CeldaBoolean celda = new CeldaBoolean((Boolean) valor);
-                celdas.add(celda);
+                if (valor instanceof Boolean) {
+                    celdas.add(new CeldaBoolean((Boolean) valor));
+                } else if (valor == null) {
+                    celdas.add(null);
+                } else {
+                    throw new IllegalArgumentException("Tipo de valor no compatible para crear celda booleana");
+                }
             }
-            ColumnaBoolean columna = new ColumnaBoolean(celdas);
-            return columna;
+            return new ColumnaBoolean(celdas);
         } else if (e.get(0) instanceof Number) {
             List<CeldaNum> celdas = new ArrayList<>();
             for (Object valor : e) {
-                CeldaNum celda = new CeldaNum((Number) valor);
-                celdas.add(celda);
+                if (valor instanceof Number) {
+                    celdas.add(new CeldaNum((Number) valor));
+                } else if (valor == null) {
+                    celdas.add(null);
+                } else {
+                    throw new IllegalArgumentException("Tipo de valor no compatible para crear celda numérica");
+                }
             }
-            ColumnaNum columna = new ColumnaNum(celdas);
-            return columna;
+            return new ColumnaNum(celdas);
         } else if (e.get(0) instanceof String) {
             List<CeldaString> celdas = new ArrayList<>();
             for (Object valor : e) {
-                CeldaString celda = new CeldaString((String) valor);
-                celdas.add(celda);
+                if (valor instanceof String) {
+                    celdas.add(new CeldaString((String) valor));
+                } else if (valor == null) {
+                    celdas.add(null);
+                } else {
+                    throw new IllegalArgumentException("Tipo de valor no compatible para crear celda de cadena");
+                }
             }
-            ColumnaString columna = new ColumnaString(celdas);
-            return columna;
+            return new ColumnaString(celdas);
         } else {
             throw new IllegalArgumentException("Tipo de valor no compatible para crear celda");
         }
