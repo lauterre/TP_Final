@@ -14,8 +14,9 @@ public class CeldaString extends Celda {
         return valor;
     }
 
-    public void setValor(String valor) {
-        this.valor = valor;
+    @Override
+    public void setValor(Object valor) {
+        this.valor = (String) valor;
     }
 
     @Override

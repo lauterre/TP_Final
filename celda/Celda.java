@@ -6,6 +6,8 @@ public abstract class Celda implements Comparable<Celda> {
 
     public abstract Object getValor();
 
+    public abstract void setValor(Object valor);
+
     @Override
     public abstract int compareTo(Celda o);
 

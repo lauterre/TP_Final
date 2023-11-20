@@ -12,8 +12,6 @@ import celda.CeldaNum;
 import celda.CeldaString;
 
 public abstract class Columna<T extends Celda> {
-    List<Celda> celdas;
-
     public abstract void ordenar(String orden);
 
     public abstract void fijarValor(Integer indiceFila, Object valor);
