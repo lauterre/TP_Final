@@ -1177,7 +1177,9 @@ public class Tabla {
         try {
             Tabla auxiliar = copiarTabla(this);
             int[] etiqueta = { etiquetasFilas };
-            System.out.println(auxiliar.vista(convertirAEtiqueta(etiqueta), obtenerEtiquetasColumnas()));
+            List<Etiqueta> x = convertirAEtiqueta(etiqueta);
+            if (!(x == null))
+                System.out.println(auxiliar.vista(x, obtenerEtiquetasColumnas()));
         } catch (EtiquetaInvalidaException e) {
             e.printStackTrace();
         }
@@ -1327,6 +1329,38 @@ public class Tabla {
         }
 
         return anchoMaximo;
+    }
+
+    public void convertirABool(String etiquetaCol) {
+        Columna<? extends Celda> columna = obtenerColumna(etiquetaCol);
+        ColumnaBoolean colBoolean = columna.convertirABoolean();
+        int indice = columnas.indexOf(columna);
+        columnas.remove(indice);
+        columnas.add(indice, colBoolean);
+    }
+
+    public void convertirABool(int etiquetaCol) {
+        Columna<? extends Celda> columna = obtenerColumna(etiquetaCol);
+        ColumnaBoolean colBoolean = columna.convertirABoolean();
+        int indice = columnas.indexOf(columna);
+        columnas.remove(indice);
+        columnas.add(indice, colBoolean);
+    }
+
+    public void convertirANum(String etiquetaCol) {
+        Columna<? extends Celda> columna = obtenerColumna(etiquetaCol);
+        ColumnaNum colBoolean = columna.convertirANum();
+        int indice = columnas.indexOf(columna);
+        columnas.remove(indice);
+        columnas.add(indice, colBoolean);
+    }
+
+    public void convertirANum(int etiquetaCol) {
+        Columna<? extends Celda> columna = obtenerColumna(etiquetaCol);
+        ColumnaNum colBoolean = columna.convertirANum();
+        int indice = columnas.indexOf(columna);
+        columnas.remove(indice);
+        columnas.add(indice, colBoolean);
     }
 
     public static void main(String[] args) {

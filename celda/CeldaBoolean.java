@@ -8,10 +8,10 @@ public class CeldaBoolean extends Celda {
     }
 
     // no se esto:
-    public CeldaBoolean(Integer valor) {
+    public CeldaBoolean(Number valor) {
         if (valor == null) {
             this.valor = null;
-        } else if (valor == 0) {
+        } else if (valor.doubleValue() == 0) {
             this.valor = false;
         } else {
             this.valor = true;

@@ -9,6 +9,7 @@ import java.util.Map;
 import Exceptions.ConversionDeTiposException;
 import Exceptions.ValorInvalidoException;
 import celda.Celda;
+import celda.CeldaBoolean;
 import celda.CeldaNum;
 
 public class ColumnaNum extends Columna<CeldaNum> {
@@ -156,6 +157,21 @@ public class ColumnaNum extends Columna<CeldaNum> {
         } catch (ConversionDeTiposException e) {
             System.out.println("Error de conversión de tipos: " + e.getMessage());
         }
+    }
+
+    @Override
+    public ColumnaBoolean convertirABoolean() {
+        List<CeldaBoolean> booleanas = new ArrayList<>();
+        for (CeldaNum celdaNum : celdas) {
+            CeldaBoolean bool = celdaNum.transformarABoolean();
+            booleanas.add(bool);
+        }
+        return new ColumnaBoolean(booleanas);
+    }
+
+    @Override
+    public ColumnaNum convertirANum() {
+        return this;
     }
 
     @Override

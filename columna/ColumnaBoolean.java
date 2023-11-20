@@ -10,12 +10,19 @@ import Exceptions.ConversionDeTiposException;
 import Exceptions.ValorInvalidoException;
 import celda.Celda;
 import celda.CeldaBoolean;
+import celda.CeldaNum;
+import celda.CeldaString;
 
 public class ColumnaBoolean extends Columna<CeldaBoolean> {
     private List<CeldaBoolean> celdas;
 
     public ColumnaBoolean(List<CeldaBoolean> celdas) {
         this.celdas = celdas;
+    }
+
+    @Override
+    public ColumnaBoolean convertirABoolean() {
+        return this;
     }
 
     @Override
@@ -156,6 +163,22 @@ public class ColumnaBoolean extends Columna<CeldaBoolean> {
         } catch (ConversionDeTiposException e) {
             System.out.println("Error de conversión de tipos: " + e.getMessage());
         }
+    }
+
+    @Override
+    public ColumnaNum convertirANum() {
+        List<CeldaNum> numeros = new ArrayList<>();
+        for (CeldaBoolean celdaBoolean : celdas) {
+            Number numero;
+            if (celdaBoolean.getValor() == false) {
+                numero = 0;
+            } else {
+                numero = 1;
+            }
+            CeldaNum celdaNum = new CeldaNum(numero);
+            numeros.add(celdaNum);
+        }
+        return new ColumnaNum(numeros);
     }
 
     @Override

@@ -12,6 +12,11 @@ public class CeldaNum extends Celda {
         this.valor = valor;
     }
 
+    public CeldaBoolean transformarABoolean() {
+        CeldaBoolean celdaBoolean = new CeldaBoolean(valor);
+        return celdaBoolean;
+    }
+
     @Override
     public int compareTo(Celda otraCelda) {
         CeldaNum otraCeldaNum = (CeldaNum) otraCelda;

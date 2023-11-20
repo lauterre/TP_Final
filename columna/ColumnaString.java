@@ -10,6 +10,8 @@ import Exceptions.ConversionDeTiposException;
 import Exceptions.ValorInvalidoException;
 import celda.Celda;
 import celda.CeldaString;
+import celda.CeldaBoolean;
+import celda.CeldaNum;
 
 public class ColumnaString extends Columna<CeldaString> {
     private List<CeldaString> celdas;
@@ -46,6 +48,22 @@ public class ColumnaString extends Columna<CeldaString> {
         } else {
             throw new ValorInvalidoException("Índice de fila fuera de rango");
         }
+    }
+
+    @Override
+    public ColumnaNum convertirANum() {
+        List<CeldaNum> numeros = new ArrayList<>();
+        for (CeldaString celdaString : celdas) {
+            Number numero;
+            if (celdaString.getValor() == null) {
+                numero = null;
+            } else {
+                numero = Double.parseDouble(celdaString.getValor());
+            }
+            CeldaNum celdaNum = new CeldaNum(numero);
+            numeros.add(celdaNum);
+        }
+        return new ColumnaNum(numeros);
     }
 
     public List<Integer> indicesNA() {
@@ -141,6 +159,11 @@ public class ColumnaString extends Columna<CeldaString> {
         }
         out += "]";
         return out;
+    }
+
+    @Override
+    public ColumnaBoolean convertirABoolean() {
+        throw new UnsupportedOperationException("No es posible convertir una columna de cadenas a una de booleanos");
     }
 
     public static void main(String[] args) {
