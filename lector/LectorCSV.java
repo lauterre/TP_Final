@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import Exceptions.EtiquetaInvalidaException;
 import celda.Celda;
 import celda.CeldaBoolean;
 import celda.CeldaNum;
@@ -44,45 +45,49 @@ public class LectorCSV extends Lector {
         this.encabezados = new ArrayList<>();
         this.encabezadosFilas = new ArrayList<>();
 
-        for (int i = 0; i < cantidadColumnas; i++) {
-            columnas.add(new ArrayList<>());
-        }
+        try {
+            for (int i = 0; i < cantidadColumnas; i++) {
+                columnas.add(new ArrayList<>());
+            }
 
-        for (int l = 0; l < lineas.size(); l++) {
-            String[] campos = lineas.get(l).split(",", -1);
-            for (int i = 0; i < campos.length; i++) {
-                columnas.get(i).add(campos[i]);
+            for (int l = 0; l < lineas.size(); l++) {
+                String[] campos = lineas.get(l).split(",", -1);
+                for (int i = 0; i < campos.length; i++) {
+                    columnas.get(i).add(campos[i]);
+                }
+                if (campos.length != cantidadColumnas) {
+                    throw new CSVParserException(l);
+                }
             }
-            if (campos.length != cantidadColumnas) {
-                throw new CSVParserException(l);
-            }
-        }
 
-        if (tieneEncabezados) {
-            for (List<String> columna : columnas) {
-                Etiqueta etiqueta = Etiqueta.crear(columna.get(0));
-                encabezados.add(etiqueta);
-                columna.remove(0);
+            if (tieneEncabezados) {
+                for (List<String> columna : columnas) {
+                    Etiqueta etiqueta = Etiqueta.crear(columna.get(0));
+                    encabezados.add(etiqueta);
+                    columna.remove(0);
+                }
+            } else {
+                for (int i = 0; i < columnas.size(); i++) {
+                    Etiqueta etiqueta = Etiqueta.crear(i);
+                    encabezados.add(etiqueta);
+                }
             }
-        } else {
-            for (int i = 0; i < columnas.size(); i++) {
-                Etiqueta etiqueta = Etiqueta.crear(i);
-                encabezados.add(etiqueta);
-            }
-        }
 
-        if (tieneEncabezadosFila) {
-            encabezados.remove(0);
-            for (String celda : columnas.get(0)) {
-                Etiqueta etiqueta = Etiqueta.crear(celda);
-                encabezadosFilas.add(etiqueta);
+            if (tieneEncabezadosFila) {
+                encabezados.remove(0);
+                for (String celda : columnas.get(0)) {
+                    Etiqueta etiqueta = Etiqueta.crear(celda);
+                    encabezadosFilas.add(etiqueta);
+                }
+                columnas.remove(0);
+            } else {
+                for (int i = 0; i < columnas.get(0).size(); i++) {
+                    Etiqueta etiqueta = Etiqueta.crear(i);
+                    encabezadosFilas.add(etiqueta);
+                }
             }
-            columnas.remove(0);
-        } else {
-            for (int i = 0; i < columnas.get(0).size(); i++) {
-                Etiqueta etiqueta = Etiqueta.crear(i);
-                encabezadosFilas.add(etiqueta);
-            }
+        } catch (EtiquetaInvalidaException e) {
+            e.printStackTrace();
         }
 
         List<Columna<? extends Celda>> cols = new ArrayList<>();

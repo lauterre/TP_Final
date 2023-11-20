@@ -66,30 +66,34 @@ public class Tabla {
         int inicioFila = tieneEncabezadosFilas ? 1 : 0;
         int inicioColumna = tieneEncabezadosColumnas ? 1 : 0;
 
-        for (int i = inicioFila; i < cantidadColumnas; i++) {
-            List<Object> celdas = new ArrayList<>();
-            for (int j = inicioColumna; j < matriz.length; j++) {
-                celdas.add(matriz[j][i]);
+        try {
+            for (int i = inicioFila; i < cantidadColumnas; i++) {
+                List<Object> celdas = new ArrayList<>();
+                for (int j = inicioColumna; j < matriz.length; j++) {
+                    celdas.add(matriz[j][i]);
+                }
+                Columna<? extends Celda> columna = crearColumna(celdas);
+                this.columnas.add(columna);
+                if (tieneEncabezadosColumnas) {
+                    Etiqueta etiqueta = Etiqueta.crear(matriz[0][i].toString());
+                    this.colLabels.put(etiqueta, i - inicioFila);
+                } else {
+                    Etiqueta etiqueta = Etiqueta.crear(i - inicioFila);
+                    this.colLabels.put(etiqueta, i - inicioFila);
+                }
             }
-            Columna<? extends Celda> columna = crearColumna(celdas);
-            this.columnas.add(columna);
-            if (tieneEncabezadosColumnas) {
-                Etiqueta etiqueta = Etiqueta.crear(matriz[0][i].toString());
-                this.colLabels.put(etiqueta, i - inicioFila);
-            } else {
-                Etiqueta etiqueta = Etiqueta.crear(i - inicioFila);
-                this.colLabels.put(etiqueta, i - inicioFila);
-            }
-        }
 
-        for (int i = inicioColumna; i < matriz.length; i++) {
-            Etiqueta etiqueta;
-            if (tieneEncabezadosFilas) {
-                etiqueta = Etiqueta.crear(matriz[i][0].toString());
-            } else {
-                etiqueta = Etiqueta.crear(i - inicioColumna);
+            for (int i = inicioColumna; i < matriz.length; i++) {
+                Etiqueta etiqueta;
+                if (tieneEncabezadosFilas) {
+                    etiqueta = Etiqueta.crear(matriz[i][0].toString());
+                } else {
+                    etiqueta = Etiqueta.crear(i - inicioColumna);
+                }
+                this.rowLabels.put(etiqueta, i - inicioColumna);
             }
-            this.rowLabels.put(etiqueta, i - inicioColumna);
+        } catch (EtiquetaInvalidaException e) {
+            e.printStackTrace();
         }
     }
 
@@ -220,16 +224,27 @@ public class Tabla {
 
     private List<Etiqueta> convertirAEtiqueta(int[] nombres) {
         List<Etiqueta> salida = new ArrayList<>();
-        for (int i = 0; i < nombres.length; i++) {
-            Etiqueta etiqueta = Etiqueta.crear(nombres[i]);
-            salida.add(etiqueta);
+        try {
+            for (int i = 0; i < nombres.length; i++) {
+                Etiqueta etiqueta = Etiqueta.crear(nombres[i]);
+                salida.add(etiqueta);
+            }
+            return salida;
+        } catch (EtiquetaInvalidaException e) {
+            e.printStackTrace();
+            return null;
         }
-        return salida;
     }
 
     private Etiqueta convertirAEtiqueta(int nombre) {
-        Etiqueta etiqueta = Etiqueta.crear(nombre);
-        return etiqueta;
+        Etiqueta etiqueta;
+        try {
+            etiqueta = Etiqueta.crear(nombre);
+            return etiqueta;
+        } catch (EtiquetaInvalidaException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     private void setEtiquetasFilas(List<Etiqueta> etiquetas) {

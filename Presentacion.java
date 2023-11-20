@@ -41,12 +41,8 @@ public class Presentacion {
         System.out.println(tabla.obtenerColumna("Name"));
     }
 
-    public static void verColumna(Tabla tabla, Integer etiquetaColumna) {
-        System.out.println(tabla.obtenerColumna(etiquetaColumna));
-    }
-
     public static void verFila() {
-        tabla.verFila(3);
+        tabla.verFila(-3);
     }
 
     public static void imputarPorPromedio() {
@@ -61,7 +57,10 @@ public class Presentacion {
     }
 
     public static void copia() {
-
+        Tabla tabla2 = Tabla.copiarTabla(tabla);
+        tabla.cambiarValor(2, "Name", "Algoritmos");
+        tabla.verFila(2);
+        tabla2.verFila(2);
     }
 
     public static void main(String[] args) {
@@ -93,8 +92,10 @@ public class Presentacion {
         verColumna();
         verFila();
 
-        imputarPorPromedio();
+        // imputarPorPromedio();
 
-        verCelda();
+        // verCelda();
+
+        // copia();
     }
 }
