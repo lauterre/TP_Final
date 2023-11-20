@@ -158,14 +158,15 @@ public class ColumnaNum extends Columna<CeldaNum> {
         }
     }
 
-    // para probar cosas:
+    @Override
     public String toString() {
-        String inicial = "";
-        for (CeldaNum celda : celdas) {
-            inicial += celda;
-            inicial += ", ";
+        String out = "[";
+        for (int i = 0; i < celdas.size(); i++) {
+            out += celdas.get(i).getValor();
+            if (!(i == celdas.size() - 1)) out += ", ";
         }
-        return inicial;
+        out += "]";
+        return out;
     }
 
     public static void main(String[] args) {

@@ -158,15 +158,15 @@ public class ColumnaBoolean extends Columna<CeldaBoolean> {
         }
     }
 
-    // para probar cosas:
     @Override
     public String toString() {
-        String inicial = "";
-        for (CeldaBoolean celda : celdas) {
-            inicial += celda.getValor();
-            inicial += ", ";
+        String out = "[";
+        for (int i = 0; i < celdas.size(); i++) {
+            out += celdas.get(i).getValor();
+            if (!(i == celdas.size() - 1)) out += ", ";
         }
-        return inicial;
+        out += "]";
+        return out;
     }
 
     public static void main(String[] args) {
@@ -186,7 +186,6 @@ public class ColumnaBoolean extends Columna<CeldaBoolean> {
         listaCeldas.add(celda6);
 
         ColumnaBoolean col = new ColumnaBoolean(listaCeldas);
-        col.agregarCelda(celda1);
 
         System.out.println("original: " + col);
 
