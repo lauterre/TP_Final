@@ -66,10 +66,9 @@ public class Tabla {
         int inicioColumna = tieneEncabezadosColumnas ? 1 : 0;
 
         for (int i = inicioFila; i < cantidadColumnas; i++) {
-            List<Celda> celdas = new ArrayList<>();
+            List<Object> celdas = new ArrayList<>();
             for (int j = inicioColumna; j < matriz.length; j++) {
-                Celda celda = crearCelda(matriz[j][i]);
-                celdas.add(celda);
+                celdas.add(matriz[j][i]);
             }
             Columna<? extends Celda> columna = crearColumna(celdas);
             this.columnas.add(columna);
@@ -115,6 +114,9 @@ public class Tabla {
             List<String> lineas = lector.leer(rutaArchivo);
             List<Columna<? extends Celda>> cols = lector.parserColumnas(lineas, tieneEncabezadosColumnas);
             this.columnas = cols;
+            if (tieneEncabezadosFilas)
+                lector.getEncabezados().remove(0);
+            System.out.println(lector.getEncabezados());
             if (tieneEncabezadosColumnas) {
                 setEtiquetasColumnas(lector.getEncabezados());
             } else {
@@ -249,6 +251,10 @@ public class Tabla {
     }
 
     private void setEtiquetasFilas(List<Etiqueta> etiquetas) {
+        // if (!(etiquetas.size() == rowLabels.size()))
+        // throw new IllegalArgumentException(
+        // "La cantidad de etiquetas debe coincidir con la cantidad de filas en la
+        // tabla.");
         rowLabels.clear();
         for (int i = 0; i < columnas.get(0).size(); i++) {
             rowLabels.put(etiquetas.get(i), i);
@@ -265,6 +271,10 @@ public class Tabla {
     }
 
     private void setEtiquetasColumnas(List<Etiqueta> etiquetas) {
+        // if (!(etiquetas.size() == colLabels.size()))
+        // throw new IllegalArgumentException(
+        // "La cantidad de etiquetas debe coincidir con la cantidad de columnas en la
+        // tabla.");
         colLabels.clear();
         // TODO: validar tamaño de lista
         for (int j = 0; j < columnas.size(); j++) {
@@ -368,7 +378,7 @@ public class Tabla {
                     "Se cambio el valor de la celda[" + etiquetaFila + ", " + etiquetaColumna + "]\n- Valor anterior: "
                             + valorAnterior + "\n- Valor nuevo: " + valorNuevo);
         } catch (EtiquetaInvalidaException e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -389,11 +399,19 @@ public class Tabla {
     }
 
     public int obtenerCantidadFilas() {
+        if (columnas.isEmpty()) {
+            System.out.println("La tabla esta vacia");
+            return 0;
+        }
         int cantidadFilas = columnas.get(0).size();
         return cantidadFilas;
     }
 
     public int obtenerCantidadColumnas() {
+        if (columnas.isEmpty()) {
+            System.out.println("La tabla esta vacia");
+            return 0;
+        }
         int cantidadColumnas = columnas.size();
         return cantidadColumnas;
     }
@@ -423,20 +441,19 @@ public class Tabla {
         }
     }
 
-    public Tabla ordenarPorColumnas(String[] columnasOrden, String queOrden) {
+    private Tabla ordenarPorColumnas(List<Etiqueta> columnasOrden, String queOrden) throws EtiquetaInvalidaException {
+        for (Etiqueta etiqueta : columnasOrden) {
+            if (!(colLabels.keySet().contains(etiqueta)))
+                throw new EtiquetaInvalidaException();
+        }
         List<Etiqueta> orden = new ArrayList<>(rowLabels.keySet());
         int n = orden.size();
         boolean huboCambio;
-        Etiqueta[] etiquetasColumnas = new Etiqueta[columnasOrden.length];
-        try {
-            for (int i = 0; i < columnasOrden.length; i++) {
-                Etiqueta etiqueta = getEtiquetaColumna(columnasOrden[i]);
-                etiquetasColumnas[i] = etiqueta;
-            }
-        } catch (EtiquetaInvalidaException e) {
-            System.out.println(e.getMessage() + " La etiqueta debe estar en: " + colLabels.keySet().toString());
+        Etiqueta[] etiquetasColumnas = new Etiqueta[columnasOrden.size()];
+        for (int i = 0; i < columnasOrden.size(); i++) {
+            Etiqueta etiqueta = columnasOrden.get(i);
+            etiquetasColumnas[i] = etiqueta;
         }
-
         do {
             huboCambio = false;
             for (int i = 1; i < n; i++) {
@@ -479,6 +496,26 @@ public class Tabla {
         return nuevaTabla;
     }
 
+    public Tabla ordenarPorColumnas(String[] columnasOrden, String queOrden) {
+        try {
+            List<Etiqueta> cols = convertirAEtiqueta(columnasOrden);
+            return ordenarPorColumnas(cols, queOrden);
+        } catch (EtiquetaInvalidaException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public Tabla ordenarPorColumnas(int[] columnasOrden, String queOrden) {
+        try {
+            List<Etiqueta> cols = convertirAEtiqueta(columnasOrden);
+            return ordenarPorColumnas(cols, queOrden);
+        } catch (EtiquetaInvalidaException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public Fila getFila(Etiqueta etiquetaFila, Etiqueta[] etiquetasColumnas) throws EtiquetaInvalidaException {
         List<Celda> retorno = new ArrayList<>();
         if (!rowLabels.containsKey(etiquetaFila)) {
@@ -498,17 +535,12 @@ public class Tabla {
         return new Fila(retorno);
     }
 
-    private void generarRowLabelsOrdenado(List<Etiqueta> orden) {// TODO validar que este en tabla
+    private void generarRowLabelsOrdenado(List<Etiqueta> orden) {
         for (Etiqueta etiqueta : orden) {
             Integer indice = rowLabels.get(etiqueta);
             rowLabels.remove(etiqueta);
             rowLabels.put(etiqueta, indice);
         }
-    }
-
-    public void ordenar(Etiqueta etiquetaColumna, String orden) {
-        Columna<? extends Celda> columna = columnas.get(colLabels.get(etiquetaColumna));
-        columna.ordenar(orden);
     }
 
     private void eliminarColumna(Etiqueta etiquetaNombre) throws EtiquetaInvalidaException {
@@ -517,7 +549,7 @@ public class Tabla {
         }
         Columna<? extends Celda> columna = obtenerColumna(etiquetaNombre);
         this.columnas.remove(columna);
-        borrarEtiquetaColumna(etiquetaNombre);
+        ;
     }
 
     public void eliminarColumna(String etiquetaNombre) {
@@ -536,8 +568,12 @@ public class Tabla {
         }
     }
 
-    // TODO: metodos que usen el indice de la etiqueta, eliminarColumnaPorIndice(int
-    // indice), etc.
+    public void eliminarColumnaPorIndice(int indice) {
+        if (indice < 0 || indice > columnas.size())
+            throw new IllegalArgumentException("Indique un indice positivo y ");
+        columnas.remove(indice);
+        borrarEtiquetaColumna(obtenerEtiquetasColumnas().get(indice));
+    }
 
     private Etiqueta getEtiquetaColumna(String valor) throws EtiquetaInvalidaException {
         for (Etiqueta etiqueta : this.colLabels.keySet()) {
@@ -575,34 +611,8 @@ public class Tabla {
         throw new EtiquetaInvalidaException();
     }
 
-    // TODO
-    private Celda crearCelda(Object valor) {
-        return Celda.crear(valor);
-    }
-
-    private Columna<? extends Celda> crearColumna(List<? extends Celda> celdas) {
-        // Identificar el tipo de columna
-        if (celdas.get(0) instanceof CeldaBoolean) {
-            List<CeldaBoolean> booleanCeldas = new ArrayList<>();
-            for (Celda celda : celdas) {
-                booleanCeldas.add((CeldaBoolean) celda);
-            }
-            return new ColumnaBoolean(booleanCeldas);
-        } else if (celdas.get(0) instanceof CeldaNum) {
-            List<CeldaNum> numCeldas = new ArrayList<>();
-            for (Celda celda : celdas) {
-                numCeldas.add((CeldaNum) celda);
-            }
-            return new ColumnaNum(numCeldas);
-        } else if (celdas.get(0) instanceof CeldaString) {
-            List<CeldaString> stringCeldas = new ArrayList<>();
-            for (Celda celda : celdas) {
-                stringCeldas.add((CeldaString) celda);
-            }
-            return new ColumnaString(stringCeldas);
-        } else {
-            throw new IllegalArgumentException("Tipo de celda desconocido");
-        }
+    private Columna<? extends Celda> crearColumna(List<Object> valores) {
+        return Columna.crear(valores);
     }
 
     public boolean tieneEncabezadosColumnas() {
@@ -978,7 +988,7 @@ public class Tabla {
         return columna.promedio();
     }
 
-        public double mediana(String etiquetaCol) {
+    public double mediana(String etiquetaCol) {
         Columna<? extends Celda> columna = obtenerColumna(etiquetaCol);
         return mediana(columna);
     }
@@ -1181,12 +1191,15 @@ public class Tabla {
         // matriz[2][1] = 7;
         // matriz[2][2] = 8;
 
-        // Tabla tabla = new Tabla(matriz, true, false);
-        // // Tabla tabla2 = copiarTabla(tabla);
-        // List<Object> nuevaCol = new ArrayList<>();
-        // nuevaCol.add(10);
-        // nuevaCol.add(2);
-        // // tabla.agregarColumnaNum(nuevaCol, "Nota");
+        Tabla tabla = new Tabla(matriz, true, false);
+        System.out.println(tabla);
+        Tabla tabla2 = copiarTabla(tabla);
+        List<Object> nuevaCol = new ArrayList<>();
+        nuevaCol.add(10);
+        nuevaCol.add(2);
+        tabla.agregarColumna(nuevaCol, "Nota");
+        System.out.println(tabla);
+        System.out.println(tabla2);
         // // // String[] etiquetas = { "Hola", "Mundo", "JAVA" };
         // // // tabla.setEtiquetasColumnas(etiquetas);
         // // tabla.cambiarValor(0, "Nombre", "juean");
@@ -1254,7 +1267,11 @@ public class Tabla {
 
         // System.out.println(tablaFiltrada);
 
-        Tabla pokemon = new Tabla("C:\\Users\\Fd\\Documents\\TP_Final\\Pokemon.csv", true, false);
+        // Tabla pokemon = new Tabla("E:/java_workspace/TP_Final/Pokemon.csv", true,
+        // false);
+        // pokemon.eliminarColumnaPorIndice(1);
+        // System.out.println(pokemon);
+
         // pokemon.eliminarFila(2);
         // pokemon.eliminarColumna("Name");
 
@@ -1265,12 +1282,13 @@ public class Tabla {
         // System.out.println(pokemonFiltrado);
 
         // String[] columnas = { "Attack", "HP" };
-        // Tabla pokemonOrdenado = pokemonFiltrado.ordenarPorColumnas(columnas, "descendente");
+        // Tabla pokemonOrdenado = pokemonFiltrado.ordenarPorColumnas(columnas,
+        // "descendente");
         // System.out.println(pokemonOrdenado);
         // pokemonOrdenado.eliminarFila(19);
         // System.out.println(pokemonOrdenado);
 
-        System.out.println(pokemon.mediana("Legendary"));
+        // System.out.println(pokemon.mediana("Legendary"));
         // System.out.println(pokemon);
         // Tabla pokemonImputado = pokemon.imputar("Pokemon", "Type 2");
         // System.out.println(pokemonImputado);

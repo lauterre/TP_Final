@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import Exceptions.EtiquetaInvalidaException;
 import etiqueta.Etiqueta;
 import fila.Fila;
 import matriz.Tabla;
@@ -51,7 +52,7 @@ public class EscritorCSV extends Escritor {
                 bufferedWriter.newLine();
             }
 
-        } catch (IOException e) {
+        } catch (IOException | EtiquetaInvalidaException e) {
             e.printStackTrace();
         }
     }

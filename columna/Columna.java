@@ -32,7 +32,7 @@ public abstract class Columna<T extends Celda> {
 
     public abstract double promedio();
 
-     public abstract double mediana();
+    public abstract double mediana();
 
     public abstract double suma();
 
