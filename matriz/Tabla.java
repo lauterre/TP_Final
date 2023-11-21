@@ -2,7 +2,6 @@ package matriz;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -38,7 +37,7 @@ import lector.exceptions.CSVParserException;
 public class Tabla {
     List<Columna<? extends Celda>> columnas;
     Map<Etiqueta, Integer> colLabels;
-    Map<Etiqueta, Integer> rowLabels;
+    public Map<Etiqueta, Integer> rowLabels;
     boolean tieneEtiquetaCol = false;
     boolean tieneEtiquetaFila = false;
 
@@ -248,10 +247,7 @@ public class Tabla {
     }
 
     private void setEtiquetasFilas(List<Etiqueta> etiquetas) {
-        // if (!(etiquetas.size() == rowLabels.size()))
-        // throw new IllegalArgumentException(
-        // "La cantidad de etiquetas debe coincidir con la cantidad de filas en la
-        // tabla.");
+
         rowLabels.clear();
         for (int i = 0; i < columnas.get(0).size(); i++) {
             rowLabels.put(etiquetas.get(i), i);
@@ -325,46 +321,6 @@ public class Tabla {
         }
         return columnas.get(colLabels.get(etiquetaColumna)).obtenerValor(rowLabels.get(etiquetaFila));
     }
-
-    // public Celda obtenerCelda(String etiquetaFila, String etiquetaColumna) {
-    // try {
-    // return obtenerCelda(convertirAEtiqueta(etiquetaFila),
-    // convertirAEtiqueta(etiquetaColumna));
-    // } catch (EtiquetaInvalidaException e) {
-    // e.printStackTrace();
-    // return null;
-    // }
-    // }
-
-    // public Celda obtenerCelda(int etiquetaFila, int etiquetaColumna) {
-    // try {
-    // return obtenerCelda(convertirAEtiqueta(etiquetaFila),
-    // convertirAEtiqueta(etiquetaColumna));
-    // } catch (EtiquetaInvalidaException e) {
-    // e.printStackTrace();
-    // return null;
-    // }
-    // }
-
-    // public Celda obtenerCelda(String etiquetaFila, int etiquetaColumna) {
-    // try {
-    // return obtenerCelda(convertirAEtiqueta(etiquetaFila),
-    // convertirAEtiqueta(etiquetaColumna));
-    // } catch (EtiquetaInvalidaException e) {
-    // e.printStackTrace();
-    // return null;
-    // }
-    // }
-
-    // public Celda obtenerCelda(int etiquetaFila, String etiquetaColumna) {
-    // try {
-    // return obtenerCelda(convertirAEtiqueta(etiquetaFila),
-    // convertirAEtiqueta(etiquetaColumna));
-    // } catch (EtiquetaInvalidaException e) {
-    // e.printStackTrace();
-    // return null;
-    // }
-    // }
 
     private Object obtenerValor(Etiqueta etiquetaFila, Etiqueta etiquetaColumna) {
         try {
@@ -515,8 +471,6 @@ public class Tabla {
 
         Tabla nuevaTabla = copiarTabla(this);
         nuevaTabla.generarRowLabelsOrdenado(orden);
-        System.out.println(this.rowLabels);
-        System.out.println(nuevaTabla.rowLabels);
         return nuevaTabla;
     }
 
@@ -799,7 +753,6 @@ public class Tabla {
                 columna.agregarCelda(celda);
             }
         }
-        System.out.println(nuevaTabla.obtenerColumna("Edad"));
         return nuevaTabla;
     }
 
@@ -921,8 +874,7 @@ public class Tabla {
         return copiaTabla;
     }
 
-    private void eliminarFila(Etiqueta etiqueta) { // TODO: exception
-
+    private void eliminarFila(Etiqueta etiqueta) {
         int indice = rowLabels.get(etiqueta);
         for (Columna<? extends Celda> columna : columnas) {
             columna.getCeldas().remove(indice);
@@ -1002,7 +954,7 @@ public class Tabla {
                 return entry.getKey();
             }
         }
-        return null; // Valor no encontrado en el mapa
+        return null;
     }
 
     private double promedio(Columna<? extends Celda> columna) {
@@ -1047,7 +999,6 @@ public class Tabla {
         return suma(columna);
     }
 
-    // Count
     public int count(String valor, String etiquetaCol) {
         Columna<? extends Celda> columna = obtenerColumna(etiquetaCol);
         return columna.count(valor);
@@ -1088,7 +1039,6 @@ public class Tabla {
         return columna.count();
     }
 
-    // Unique
     public List<? extends Celda> unique(String etiquetaCol) {
         Columna<? extends Celda> columna = obtenerColumna(etiquetaCol);
         return columna.unique();
@@ -1127,6 +1077,7 @@ public class Tabla {
         Tabla vista = new Tabla();
         vista.rowLabels = this.rowLabels;
         vista.tieneEtiquetaCol = this.tieneEtiquetaCol;
+        vista.tieneEtiquetaFila = this.tieneEtiquetaFila;
         for (Etiqueta etiqueta : etiquetasColumnas) {
             if (!(colLabels.containsKey(etiqueta)))
                 throw new EtiquetaInvalidaException();
@@ -1224,7 +1175,7 @@ public class Tabla {
             etiquetas.add(etiquetasfila.get(obtenerCantidadFilas() - 1 - i));
             i++;
         } while (i < x);
-        System.out.println(i);
+        generarRowLabelsOrdenado(etiquetasfila);
         List<Etiqueta> etiquetasColumna = new ArrayList<>(colLabels.keySet());
         try {
             return vista(etiquetas, etiquetasColumna);
@@ -1232,7 +1183,6 @@ public class Tabla {
             e.printStackTrace();
             return null;
         }
-
     }
 
     public String obtenerTipoDeDato(String etiquetaColumna) {
@@ -1374,208 +1324,5 @@ public class Tabla {
     public GroupBy groupBy(List<String> etiquetasParaAgrupar) {
         GroupBy agrupador = new GroupBy(this, etiquetasParaAgrupar);
         return agrupador;
-    }
-
-    public static void main(String[] args) {
-        // Object[][] matriz = new Object[3][3];
-
-        Tabla pokemon = new Tabla("./Pokemon.csv", true,
-                false);
-
-        String[][] matriz = new String[5][5];
-
-        matriz[0][0] = "Nombre";
-        matriz[0][1] = "Apellido";
-        matriz[0][2] = "Edad";
-        matriz[0][3] = "Nivel";
-        matriz[0][4] = "Nacionalidad";
-        matriz[1][0] = "Martín";
-        matriz[1][1] = "Gutierrez";
-        matriz[1][2] = "23";
-        matriz[1][3] = "Terciario";
-        matriz[1][4] = "Argentina";
-        matriz[2][0] = "Hernán";
-        matriz[2][1] = "Casciari";
-        matriz[2][2] = "23";
-        matriz[2][3] = "Universitario";
-        matriz[2][4] = "Uruguaya";
-        matriz[3][0] = "Néstor";
-        matriz[3][1] = "Hernández";
-        matriz[3][2] = "34";
-        matriz[3][3] = "Terciario";
-        matriz[3][4] = "Argentina";
-        matriz[4][0] = "Susana";
-        matriz[4][1] = "Luego";
-        matriz[4][2] = "34";
-        matriz[4][3] = "Universitario";
-        matriz[4][4] = "Argentina";
-
-        Tabla tabla = new Tabla(matriz, true, false);
-        System.out.println(tabla);
-        List<String> etiquetasParaAgrupar = Arrays.asList("Type 1");
-        GroupBy agrupador = pokemon.groupBy(etiquetasParaAgrupar);
-        agrupador.summarize();
-        // System.out.println(agrupador);
-        // Tabla tabla = new Tabla(matriz, false, false);
-        // System.out.println(tabla);
-        // Tabla tabla2 = copiarTabla(tabla);
-        // List<Object> nuevaCol = new ArrayList<>();
-        // nuevaCol.add(10);
-        // nuevaCol.add(2);
-        // tabla.agregarColumna(nuevaCol, "Nota");
-        // System.out.println(tabla);
-        // System.out.println(tabla2);
-
-        // String[] etiquetas = { "Hola", "Mundo", "JAVA" };
-        // tabla.setEtiquetasColumnas(etiquetas);
-        // String[] etifilas = { "0", "1", "2" };
-        // tabla.setEtiquetasFilas(etifilas);
-        // tabla.guardarCSV("E:/java_workspace/TP_Final/nombres.csv");
-        // // tabla.cambiarValor(0, "Nombre", "juean");
-        // tabla.agregarColumna(nuevaCol, "Nota");
-        // // System.out.println(tabla);
-        // tabla.eliminarColumna("Edad");
-        // tabla.eliminarFila(1);
-        // System.out.println(tabla);
-
-        // System.out.println(tabla);
-        // System.out.println(tabla2);
-        // Tabla tabla3;
-
-        // tabla3 = tabla.concatenar(tabla2, false);
-        // System.out.println(tabla3);
-
-        // tabla3 = tabla.concatenar(tabla2, true);
-
-        // System.out.println(tabla3);
-        // System.out.println(tabla3.obtenerEtiquetasFilas());
-
-        // System.out.println(tabla.obtenerEtiquetasColumnas());
-        // tabla.mostrarTabla();
-        // System.out.println(tabla.toString());
-        // System.out.println(tabla.obtenerEtiquetasColumnas());
-        // System.out.println(tabla.obtenerEtiquetasFilas());
-
-        // System.out.println(tabla2.toString());
-
-        // System.out.println("etiquetas de columna");
-        // System.out.println(tabla.colLabels.keySet());
-        // System.out.println(tabla.colLabels.values());
-
-        // System.out.println("etiquetas de fila");
-        // System.out.println(tabla.rowLabels.keySet());
-        // System.out.println(tabla.rowLabels.values());
-
-        // System.out.println("Borro la columna edad");
-        // tabla.eliminarColumna("Edad");
-        // System.out.println(tabla.toString());
-
-        // System.out.println("etiquetas de columna");
-        // System.out.println(tabla.colLabels.keySet());
-        // System.out.println(tabla.colLabels.values());
-
-        // System.out.println("etiquetas de fila");
-        // System.out.println(tabla.rowLabels.keySet());
-        // System.out.println(tabla.rowLabels.values());
-
-        // System.out.println("columna Apellido: " + tabla.obtenerColumna("Apellido"));
-
-        // String[] etiquetas = { "Hola", "Mundo", "JAVA" };
-        // String[] etiquetasFila = { "Alumno1", "Alumno2" };
-
-        // tabla.setEtiquetasColumnas(etiquetas);
-        // System.out.println(tabla);
-        // tabla.setEtiquetasFilas(etiquetasFila);
-        // System.out.println(tabla);
-
-        // Etiqueta etiqueta = new EtiquetaString("Apellido");
-
-        // CeldaString celda = new CeldaString("25");
-
-        // Tabla tablaFiltrada = tabla.filtrar(etiqueta, '>', celda);
-
-        // System.out.println(tablaFiltrada);
-
-        // Tabla pokemon = new Tabla("E:\\java_workspace\\TP_Final\\Pokemon.csv", true,
-        // false);
-
-        // String[] cols = { "Total", "HP" };
-        // char[] chars = { '=', '=' };
-        // List<Object> valores = new ArrayList<>();
-        // valores.add(405);
-        // valores.add(60);
-        // Tabla pokemonFiltrado = pokemon.filtrarVariasCondiciones(cols, chars,
-        // valores);
-        // System.out.println(pokemonFiltrado);
-        // pokemon.eliminarColumnaPorIndice(1);
-        // System.out.println(pokemon.obtenerEtiquetasColumnas());
-        // System.out.println(pokemon.obtenerEtiquetasFilas());
-        // System.out.println(pokemon.obtenerCantidadColumnas());
-        // System.out.println(pokemon.obtenerCantidadFilas());
-        // pokemon.imputar("hola", "Type 2");
-        // System.out.println(pokemon.obtenerTipoDeDato());
-
-        // pokemon.eliminarFila(2);
-        // pokemon.eliminarColumna("Name");
-
-        // Tabla pokemonFiltrado = pokemon.filtrar("Attack", '>', 120);
-        // System.out.println(pokemonFiltrado);
-        // // System.out.println(pokemon);
-        // pokemonFiltrado.eliminarFila(7);
-        // System.out.println(pokemonFiltrado);
-
-        // String[] columnas = { "Attack", "HP" };
-        // Tabla pokemonOrdenado = pokemonFiltrado.ordenarPorColumnas(columnas,
-        // "descendente");
-        // System.out.println(pokemonOrdenado);
-        // pokemonOrdenado.eliminarFila(19);
-        // System.out.println(pokemonOrdenado);
-
-        // System.out.println(pokemon.mediana("Legendary"));
-        // System.out.println(pokemon);
-        // Tabla pokemonImputado = pokemon.imputar("Pokemon", "Type 2");
-        // System.out.println(pokemonImputado);
-
-        // double promedioAtaque = pokemon.promedio("Attack");
-        // System.out.println("Promedio de ataque: " + promedioAtaque);
-
-        // Tabla pokemonImp2 = pokemon.imputar(promedioAtaque, "Attack");
-        // System.out.println(pokemonImp2);
-
-        // double proporcionLegendarios = pokemon.promedio("Legendary");
-        // System.out.println("Proporcion de legendarios: " + proporcionLegendarios);
-
-        // System.out.println("Suma ataque: " + pokemon.suma("Attack"));
-        // System.out.println("Count de tipo 1 = Water :" + pokemon.count("Water", "Type
-        // 1"));
-        // System.out.println("Unique de tipo 1");
-        // System.out.println(pokemon.unique("Type 1"));
-        // System.out.println("Count de Name: " + pokemon.count("Type 1"));
-
-        // System.out.println(pokemonOrdenado.obtenerEtiquetasFilas());
-        // pokemonOrdenado.eliminarFila(163);
-        // System.out.println(pokemonOrdenado);
-
-        // Tabla pokemon2 = new Tabla("E:/java_workspace/TP_Final/Pokemon.csv", true,
-        // false);
-        // Tabla tabla4 = tabla.concatenar(pokemon, true);
-
-        // System.out.println(pokemon.obtenerEtiquetasColumnas());
-        // System.out.println(pokemon.obtenerEtiquetasFilas());
-        // String[] etiqeutas = { "Attack", "HP" };
-        // System.out.println(pokemon.ordernarPorColumnas(etiqeutas, "descendente"));
-
-        // pokemon.cambiarValor(0, "Type 1", "pokemon");
-        // System.out.println(pokemon);
-        // pokemon.mostrarTabla();
-
-        // try {
-        // Tabla pokemon3 = pokemon.concatenar(pokemon2);
-        // System.out.println(pokemon3);
-        // } catch (TablasNoConcatenablesException e) {
-        // // TODO Auto-generated catch block
-        // e.printStackTrace();
-        // }
-
     }
 }

@@ -30,9 +30,8 @@ public class ColumnaString extends Columna<CeldaString> {
 
     @Override
     public Celda obtenerValor(Integer indiceFila) {
-        // Asegúrate de que el índice de fila sea válido
         if (indiceFila >= 0 && indiceFila < celdas.size()) {
-            return celdas.get(indiceFila); // celdas.get(indiceFila).getValor()?
+            return celdas.get(indiceFila);
         } else {
             throw new ValorInvalidoException("Índice de fila fuera de rango");
         }
@@ -165,33 +164,4 @@ public class ColumnaString extends Columna<CeldaString> {
         throw new UnsupportedOperationException("No es posible convertir una columna de cadenas a una de booleanos");
     }
 
-    public static void main(String[] args) {
-        CeldaString celda1 = new CeldaString("c");
-        CeldaString celda2 = new CeldaString("a");
-        CeldaString celda3 = new CeldaString("d");
-        CeldaString celda4 = new CeldaString("NA");
-        CeldaString celda5 = new CeldaString(null);
-        CeldaString celda6 = new CeldaString("na");
-
-        List<CeldaString> listaCeldas = new ArrayList<>();
-        listaCeldas.add(celda1);
-        listaCeldas.add(celda2);
-        listaCeldas.add(celda3);
-        listaCeldas.add(celda4);
-        listaCeldas.add(celda5);
-        listaCeldas.add(celda6);
-
-        ColumnaString col = new ColumnaString(listaCeldas);
-
-        System.out.println("original: " + col);
-
-        col.ordenar("descendente");
-
-        System.out.println("desc: " + col);
-
-        col.ordenar(null);
-
-        System.out.println("asc: " + col);
-
-    }
 }

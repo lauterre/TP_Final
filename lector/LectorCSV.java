@@ -130,21 +130,6 @@ public class LectorCSV extends Lector {
                 cols.add(col);
             }
         }
-
-        // if (tieneEncabezadosFila) {
-        // for (Celda celda : cols.get(0)) {
-        // Etiqueta etiqueta = Etiqueta.crear(celda.getValor());
-        // encabezadosFilas.add(etiqueta);
-        // }
-        // cols.remove(0);
-        // }
-
-        // if (tieneEncabezados) {
-        // for (Columna col : cols) {
-        // Celda celda = col.getCeldas().get(0);
-        // Etiqueta etiqueta = Etiqueta.crear(col.getCeldas().get(0).getValor());
-        // }
-        // }
         return cols;
     }
 

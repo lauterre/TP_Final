@@ -19,4 +19,12 @@ public abstract class Lector {
         return cadena.equalsIgnoreCase("true") || cadena.equalsIgnoreCase("false");
     }
 
+    public List<Etiqueta> getEncabezados() {
+        return encabezados;
+    }
+
+    public List<Etiqueta> getEncabezadosFilas() {
+        return encabezadosFilas;
+    }
+
 }

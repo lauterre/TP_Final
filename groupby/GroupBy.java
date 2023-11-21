@@ -316,10 +316,11 @@ public class GroupBy {
                 Columna<? extends Celda> columna = tabla.obtenerColumna(etiqueta);
                 if (columna.tipoDato() == "Number") {
                     ColumnaNum columnaNum = (ColumnaNum) columna;
-                    out.append("El desvío estándar en la columna " + etiqueta + " es: " + columnaNum.desvioEstandar() + "\n");
+                    out.append("El desvío estándar en la columna " + etiqueta + " es: " + columnaNum.desvioEstandar()
+                            + "\n");
                     out.append("\n");
                 }
-             
+
             }
             System.out.println(out.toString());
         }
@@ -346,7 +347,8 @@ public class GroupBy {
                     out.append("El valor máximo en la columna " + etiqueta + " es: " + columnaNum.max() + "\n");
                     out.append("El valor minimo en la columna " + etiqueta + " es: " + columnaNum.min() + "\n");
                     out.append("La varianza en la columna " + etiqueta + " es: " + columnaNum.varianza() + "\n");
-                    out.append("El desvío estándar en la columna " + etiqueta + " es: " + columnaNum.desvioEstandar() + "\n");               
+                    out.append("El desvío estándar en la columna " + etiqueta + " es: " + columnaNum.desvioEstandar()
+                            + "\n");
                     out.append("\n");
                 }
 

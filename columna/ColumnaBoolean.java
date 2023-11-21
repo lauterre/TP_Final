@@ -192,33 +192,4 @@ public class ColumnaBoolean extends Columna<CeldaBoolean> {
         return out;
     }
 
-    public static void main(String[] args) {
-        CeldaBoolean celda1 = new CeldaBoolean(true);
-        CeldaBoolean celda2 = new CeldaBoolean(false);
-        CeldaBoolean celda3 = new CeldaBoolean(1);
-        CeldaBoolean celda4 = new CeldaBoolean(0);
-        CeldaBoolean celda5 = new CeldaBoolean((Integer) null);
-        CeldaBoolean celda6 = new CeldaBoolean((Boolean) null);
-
-        List<CeldaBoolean> listaCeldas = new ArrayList<>();
-        listaCeldas.add(celda1);
-        listaCeldas.add(celda2);
-        listaCeldas.add(celda3);
-        listaCeldas.add(celda4);
-        listaCeldas.add(celda5);
-        listaCeldas.add(celda6);
-
-        ColumnaBoolean col = new ColumnaBoolean(listaCeldas);
-
-        System.out.println("original: " + col);
-
-        // col.ordenar("descendente");
-
-        // System.out.println("desc: " + col);
-
-        // col.ordenar(null);
-
-        // System.out.println("asc: " + col);
-
-    }
 }

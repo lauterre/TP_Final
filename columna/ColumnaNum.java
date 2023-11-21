@@ -177,28 +177,28 @@ public class ColumnaNum extends Columna<CeldaNum> {
 
     public double max() {
         double maximo = celdas.stream()
-            .filter(celda -> !celda.isNA())
-            .map(celda -> Double.valueOf((double) celda.getValor()))
-            .max(Comparator.comparing(Double::doubleValue)).get();
+                .filter(celda -> !celda.isNA())
+                .map(celda -> Double.valueOf((double) celda.getValor()))
+                .max(Comparator.comparing(Double::doubleValue)).get();
         return maximo;
     }
 
     public double min() {
         double minimo = celdas.stream()
-            .filter(celda -> !celda.isNA())
-            .map(celda -> Double.valueOf((double) celda.getValor()))
-            .filter(valor -> !(valor == null))
-            .max(Comparator.comparing(Double::doubleValue)).get();
+                .filter(celda -> !celda.isNA())
+                .map(celda -> Double.valueOf((double) celda.getValor()))
+                .filter(valor -> !(valor == null))
+                .max(Comparator.comparing(Double::doubleValue)).get();
         return minimo;
     }
 
     public double varianza() {
         double promedio = promedio();
         double sumaDiferenciasCuadradas = celdas.stream()
-            .filter(celda -> !celda.isNA())
-            .map(celda -> Double.valueOf((double) celda.getValor()))
-            .mapToDouble(valor -> Math.pow(valor - promedio, 2))
-            .sum();
+                .filter(celda -> !celda.isNA())
+                .map(celda -> Double.valueOf((double) celda.getValor()))
+                .mapToDouble(valor -> Math.pow(valor - promedio, 2))
+                .sum();
 
         return sumaDiferenciasCuadradas / celdas.size();
     }
@@ -218,31 +218,5 @@ public class ColumnaNum extends Columna<CeldaNum> {
         }
         out += "]";
         return out;
-    }
-
-    public static void main(String[] args) {
-        CeldaNum celda1 = new CeldaNum(3);
-        CeldaNum celda2 = new CeldaNum(1);
-        CeldaNum celda3 = new CeldaNum(null);
-        CeldaNum celda4 = new CeldaNum(2);
-
-        List<CeldaNum> listaCeldas = new ArrayList<>();
-        listaCeldas.add(celda1);
-        listaCeldas.add(celda2);
-        listaCeldas.add(celda3);
-        listaCeldas.add(celda4);
-
-        ColumnaNum col = new ColumnaNum(listaCeldas);
-
-        System.out.println("original: " + col);
-
-        col.ordenar("descendente");
-
-        System.out.println("desc: " + col);
-
-        col.ordenar(null);
-
-        System.out.println("asc: " + col);
-
     }
 }
