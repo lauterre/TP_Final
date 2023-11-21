@@ -2,6 +2,7 @@ package matriz;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -30,6 +31,7 @@ import etiqueta.EtiquetaNum;
 import etiqueta.EtiquetaString;
 import fila.Fila;
 import lector.LectorCSV;
+import groupby.GroupBy;
 import lector.exceptions.ArchivoNoEncontradoException;
 import lector.exceptions.CSVParserException;
 
@@ -206,7 +208,7 @@ public class Tabla {
         }
     }
 
-    private List<Etiqueta> convertirAEtiqueta(String[] nombres) {
+    public List<Etiqueta> convertirAEtiqueta(String[] nombres) {
         List<Etiqueta> salida = new ArrayList<>();
         for (int i = 0; i < nombres.length; i++) {
             Etiqueta etiqueta = Etiqueta.crear(nombres[i]);
@@ -215,12 +217,12 @@ public class Tabla {
         return salida;
     }
 
-    private Etiqueta convertirAEtiqueta(String nombre) {
+    public Etiqueta convertirAEtiqueta(String nombre) {
         Etiqueta etiqueta = Etiqueta.crear(nombre);
         return etiqueta;
     }
 
-    private List<Etiqueta> convertirAEtiqueta(int[] nombres) {
+    public List<Etiqueta> convertirAEtiqueta(int[] nombres) {
         List<Etiqueta> salida = new ArrayList<>();
         try {
             for (int i = 0; i < nombres.length; i++) {
@@ -234,7 +236,7 @@ public class Tabla {
         }
     }
 
-    private Etiqueta convertirAEtiqueta(int nombre) {
+    public Etiqueta convertirAEtiqueta(int nombre) {
         Etiqueta etiqueta;
         try {
             etiqueta = Etiqueta.crear(nombre);
@@ -438,7 +440,7 @@ public class Tabla {
         return cantidadColumnas;
     }
 
-    private Columna<? extends Celda> obtenerColumna(Etiqueta etiquetaColumna) {
+    public Columna<? extends Celda> obtenerColumna(Etiqueta etiquetaColumna) {
         Columna<? extends Celda> columnaPedida = columnas.get(colLabels.get(etiquetaColumna));
         return columnaPedida;
     }
@@ -909,6 +911,16 @@ public class Tabla {
         System.out.println(this);
     }
 
+    public Tabla filtrarFilas(List<Etiqueta> etiquetas) {
+        Tabla copiaTabla = copiarTabla(this);
+        for (Etiqueta etiqueta : copiaTabla.obtenerEtiquetasFilas()) {
+            if (!(etiquetas.contains(etiqueta))) {
+                copiaTabla.eliminarFila(etiqueta);
+            }
+        }
+        return copiaTabla;
+    }
+
     private void eliminarFila(Etiqueta etiqueta) { // TODO: exception
 
         int indice = rowLabels.get(etiqueta);
@@ -1359,28 +1371,51 @@ public class Tabla {
         columnas.add(indice, colBoolean);
     }
 
+    public GroupBy groupBy(List<String> etiquetasParaAgrupar) {
+        GroupBy agrupador = new GroupBy(this, etiquetasParaAgrupar);
+        return agrupador;
+    }
+
     public static void main(String[] args) {
         // Object[][] matriz = new Object[3][3];
 
-        // matriz[0][0] = "Nombre";
-        // matriz[0][1] = "Apellido";
-        // matriz[0][2] = "Edad";
-        // matriz[1][0] = "Martín";
-        // matriz[1][1] = "Gutierrez";
-        // matriz[1][2] = "23";
-        // matriz[2][0] = "Javier";
-        // matriz[2][1] = "Moreno";
-        // matriz[2][2] = "34";
+        Tabla pokemon = new Tabla("./Pokemon.csv", true,
+                false);
 
-        // matriz[0][0] = 0;
-        // matriz[0][1] = 1;
-        // matriz[0][2] = 2;
-        // matriz[1][1] = 4;
-        // matriz[1][2] = 5;
-        // matriz[2][0] = 6;
-        // matriz[2][1] = 7;
-        // matriz[2][2] = 8;
+        String[][] matriz = new String[5][5];
 
+        matriz[0][0] = "Nombre";
+        matriz[0][1] = "Apellido";
+        matriz[0][2] = "Edad";
+        matriz[0][3] = "Nivel";
+        matriz[0][4] = "Nacionalidad";
+        matriz[1][0] = "Martín";
+        matriz[1][1] = "Gutierrez";
+        matriz[1][2] = "23";
+        matriz[1][3] = "Terciario";
+        matriz[1][4] = "Argentina";
+        matriz[2][0] = "Hernán";
+        matriz[2][1] = "Casciari";
+        matriz[2][2] = "23";
+        matriz[2][3] = "Universitario";
+        matriz[2][4] = "Uruguaya";
+        matriz[3][0] = "Néstor";
+        matriz[3][1] = "Hernández";
+        matriz[3][2] = "34";
+        matriz[3][3] = "Terciario";
+        matriz[3][4] = "Argentina";
+        matriz[4][0] = "Susana";
+        matriz[4][1] = "Luego";
+        matriz[4][2] = "34";
+        matriz[4][3] = "Universitario";
+        matriz[4][4] = "Argentina";
+
+        Tabla tabla = new Tabla(matriz, true, false);
+        System.out.println(tabla);
+        List<String> etiquetasParaAgrupar = Arrays.asList("Type 1");
+        GroupBy agrupador = pokemon.groupBy(etiquetasParaAgrupar);
+        agrupador.suma();
+        // System.out.println(agrupador);
         // Tabla tabla = new Tabla(matriz, false, false);
         // System.out.println(tabla);
         // Tabla tabla2 = copiarTabla(tabla);
@@ -1461,16 +1496,17 @@ public class Tabla {
 
         // System.out.println(tablaFiltrada);
 
-        Tabla pokemon = new Tabla("E:\\java_workspace\\TP_Final\\Pokemon.csv", true,
-                false);
+        // Tabla pokemon = new Tabla("E:\\java_workspace\\TP_Final\\Pokemon.csv", true,
+        // false);
 
-        String[] cols = { "Total", "HP" };
-        char[] chars = { '=', '=' };
-        List<Object> valores = new ArrayList<>();
-        valores.add(405);
-        valores.add(60);
-        Tabla pokemonFiltrado = pokemon.filtrarVariasCondiciones(cols, chars, valores);
-        System.out.println(pokemonFiltrado);
+        // String[] cols = { "Total", "HP" };
+        // char[] chars = { '=', '=' };
+        // List<Object> valores = new ArrayList<>();
+        // valores.add(405);
+        // valores.add(60);
+        // Tabla pokemonFiltrado = pokemon.filtrarVariasCondiciones(cols, chars,
+        // valores);
+        // System.out.println(pokemonFiltrado);
         // pokemon.eliminarColumnaPorIndice(1);
         // System.out.println(pokemon.obtenerEtiquetasColumnas());
         // System.out.println(pokemon.obtenerEtiquetasFilas());

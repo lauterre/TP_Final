@@ -148,14 +148,6 @@ public class LectorCSV extends Lector {
         return cols;
     }
 
-    private static boolean esNum(String cadena) {
-        return cadena.matches("-?\\d+(\\.\\d+)?");
-    }
-
-    private static boolean esBool(String cadena) {
-        return cadena.equalsIgnoreCase("true") || cadena.equalsIgnoreCase("false");
-    }
-
     public List<Etiqueta> getEncabezados() {
         return this.encabezados;
     }
