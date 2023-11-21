@@ -2,6 +2,7 @@ package columna;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -172,6 +173,39 @@ public class ColumnaNum extends Columna<CeldaNum> {
     @Override
     public ColumnaNum convertirANum() {
         return this;
+    }
+
+    public double max() {
+        double maximo = celdas.stream()
+            .filter(celda -> !celda.isNA())
+            .map(celda -> Double.valueOf((double) celda.getValor()))
+            .max(Comparator.comparing(Double::doubleValue)).get();
+        return maximo;
+    }
+
+    public double min() {
+        double minimo = celdas.stream()
+            .filter(celda -> !celda.isNA())
+            .map(celda -> Double.valueOf((double) celda.getValor()))
+            .filter(valor -> !(valor == null))
+            .max(Comparator.comparing(Double::doubleValue)).get();
+        return minimo;
+    }
+
+    public double varianza() {
+        double promedio = promedio();
+        double sumaDiferenciasCuadradas = celdas.stream()
+            .filter(celda -> !celda.isNA())
+            .map(celda -> Double.valueOf((double) celda.getValor()))
+            .mapToDouble(valor -> Math.pow(valor - promedio, 2))
+            .sum();
+
+        return sumaDiferenciasCuadradas / celdas.size();
+    }
+
+    public double desvioEstandar() {
+        double varianza = varianza();
+        return Math.sqrt(varianza);
     }
 
     @Override
