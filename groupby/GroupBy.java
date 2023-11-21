@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import celda.Celda;
 import celda.CeldaString;
 import columna.Columna;
+import columna.ColumnaNum;
 import etiqueta.Etiqueta;
 import matriz.Tabla;
 import groupby.exceptions.EtiquetasDistintasException;
@@ -168,20 +169,11 @@ public class GroupBy {
     public void count() {
         StringBuilder out;
         for (Map.Entry<Map<Etiqueta, String>, Tabla> grupo : agrupado.entrySet()) {
-
             Map<Etiqueta, String> mapaTablaAgrupada = (Map<Etiqueta, String>) grupo.getKey();
             out = imprimirEtiquetas(mapaTablaAgrupada);
 
             Tabla tabla = (Tabla) grupo.getValue();
             out.append("Cantidad de filas: " + tabla.obtenerCantidadFilas() + "\n");
-            // for (Etiqueta etiqueta : tabla.obtenerEtiquetasColumnas()) {
-            // Columna<? extends Celda> columna = tabla.obtenerColumna(etiqueta);
-
-            // // if (columna.tipoDato() == "Number") {
-            // // out.append("Cantidad de filas: " + columna.count() + "\n");
-            // // }
-            // }
-
             System.out.println(out.toString());
         }
 
@@ -198,8 +190,9 @@ public class GroupBy {
             for (Etiqueta etiqueta : tabla.obtenerEtiquetasColumnas()) {
                 Columna<? extends Celda> columna = tabla.obtenerColumna(etiqueta);
                 if (columna.tipoDato() == "Number") {
-
-                    out.append("Suma en la columna " + etiqueta + ": " + columna.suma() + "\n");
+                    ColumnaNum columnaNum = (ColumnaNum) columna;
+                    out.append("Suma en la columna " + etiqueta + ": " + columnaNum.suma() + "\n");
+                    out.append("\n");
                 }
             }
             System.out.println(out.toString());
@@ -218,7 +211,9 @@ public class GroupBy {
             for (Etiqueta etiqueta : tabla.obtenerEtiquetasColumnas()) {
                 Columna<? extends Celda> columna = tabla.obtenerColumna(etiqueta);
                 if (columna.tipoDato() == "Number") {
-                    out.append("La mediana en la columna " + etiqueta + " es: " + columna.mediana() + "\n");
+                    ColumnaNum columnaNum = (ColumnaNum) columna;
+                    out.append("La mediana en la columna " + etiqueta + " es: " + columnaNum.mediana() + "\n");
+                    out.append("\n");
                 }
             }
             System.out.println(out.toString());
@@ -237,7 +232,9 @@ public class GroupBy {
             for (Etiqueta etiqueta : tabla.obtenerEtiquetasColumnas()) {
                 Columna<? extends Celda> columna = tabla.obtenerColumna(etiqueta);
                 if (columna.tipoDato() == "Number") {
-                    out.append("El promedio en la columna " + etiqueta + " es: " + columna.promedio() + "\n");
+                    ColumnaNum columnaNum = (ColumnaNum) columna;
+                    out.append("El promedio en la columna " + etiqueta + " es: " + columnaNum.promedio() + "\n");
+                    out.append("\n");
                 }
             }
             System.out.println(out.toString());
@@ -255,7 +252,9 @@ public class GroupBy {
             for (Etiqueta etiqueta : tabla.obtenerEtiquetasColumnas()) {
                 Columna<? extends Celda> columna = tabla.obtenerColumna(etiqueta);
                 if (columna.tipoDato() == "Number") {
-                    out.append("El valor maximo en la columna " + etiqueta + " es: " + columna.max() + "\n");
+                    ColumnaNum columnaNum = (ColumnaNum) columna;
+                    out.append("El valor máximo en la columna " + etiqueta + " es: " + columnaNum.max() + "\n");
+                    out.append("\n");
                 }
             }
             System.out.println(out.toString());
@@ -274,8 +273,53 @@ public class GroupBy {
             for (Etiqueta etiqueta : tabla.obtenerEtiquetasColumnas()) {
                 Columna<? extends Celda> columna = tabla.obtenerColumna(etiqueta);
                 if (columna.tipoDato() == "Number") {
-                    out.append("El valor minimo en la columna " + etiqueta + " es: " + columna.min() + "\n");
+                    ColumnaNum columnaNum = (ColumnaNum) columna;
+                    out.append("El valor minimo en la columna " + etiqueta + " es: " + columnaNum.min() + "\n");
+                    out.append("\n");
                 }
+            }
+            System.out.println(out.toString());
+        }
+
+    }
+
+    public void varianza() {
+        StringBuilder out;
+        for (Map.Entry<Map<Etiqueta, String>, Tabla> grupo : agrupado.entrySet()) {
+
+            Map<Etiqueta, String> mapaTablaAgrupada = (Map<Etiqueta, String>) grupo.getKey();
+            out = imprimirEtiquetas(mapaTablaAgrupada);
+
+            Tabla tabla = (Tabla) grupo.getValue();
+            for (Etiqueta etiqueta : tabla.obtenerEtiquetasColumnas()) {
+                Columna<? extends Celda> columna = tabla.obtenerColumna(etiqueta);
+                if (columna.tipoDato() == "Number") {
+                    ColumnaNum columnaNum = (ColumnaNum) columna;
+                    out.append("La varianza en la columna " + etiqueta + " es: " + columnaNum.varianza() + "\n");
+                    out.append("\n");
+                }
+            }
+            System.out.println(out.toString());
+        }
+
+    }
+
+    public void desvioEstandar() {
+        StringBuilder out;
+        for (Map.Entry<Map<Etiqueta, String>, Tabla> grupo : agrupado.entrySet()) {
+
+            Map<Etiqueta, String> mapaTablaAgrupada = (Map<Etiqueta, String>) grupo.getKey();
+            out = imprimirEtiquetas(mapaTablaAgrupada);
+
+            Tabla tabla = (Tabla) grupo.getValue();
+            for (Etiqueta etiqueta : tabla.obtenerEtiquetasColumnas()) {
+                Columna<? extends Celda> columna = tabla.obtenerColumna(etiqueta);
+                if (columna.tipoDato() == "Number") {
+                    ColumnaNum columnaNum = (ColumnaNum) columna;
+                    out.append("El desvío estándar en la columna " + etiqueta + " es: " + columnaNum.desvioEstandar() + "\n");
+                    out.append("\n");
+                }
+             
             }
             System.out.println(out.toString());
         }
@@ -290,11 +334,22 @@ public class GroupBy {
             out = imprimirEtiquetas(mapaTablaAgrupada);
 
             Tabla tabla = (Tabla) grupo.getValue();
+            out.append("Cantidad de filas: " + tabla.obtenerCantidadFilas() + "\n\n");
+
             for (Etiqueta etiqueta : tabla.obtenerEtiquetasColumnas()) {
                 Columna<? extends Celda> columna = tabla.obtenerColumna(etiqueta);
                 if (columna.tipoDato() == "Number") {
-                    out.append("El valor minimo en la columna " + etiqueta + " es: " + columna.min() + "\n");
+                    ColumnaNum columnaNum = (ColumnaNum) columna;
+                    out.append("Suma en la columna " + etiqueta + ": " + columnaNum.suma() + "\n");
+                    out.append("La mediana en la columna " + etiqueta + " es: " + columnaNum.mediana() + "\n");
+                    out.append("El promedio en la columna " + etiqueta + " es: " + columnaNum.promedio() + "\n");
+                    out.append("El valor máximo en la columna " + etiqueta + " es: " + columnaNum.max() + "\n");
+                    out.append("El valor minimo en la columna " + etiqueta + " es: " + columnaNum.min() + "\n");
+                    out.append("La varianza en la columna " + etiqueta + " es: " + columnaNum.varianza() + "\n");
+                    out.append("El desvío estándar en la columna " + etiqueta + " es: " + columnaNum.desvioEstandar() + "\n");               
+                    out.append("\n");
                 }
+
             }
             System.out.println(out.toString());
         }

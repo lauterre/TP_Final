@@ -1414,7 +1414,7 @@ public class Tabla {
         System.out.println(tabla);
         List<String> etiquetasParaAgrupar = Arrays.asList("Type 1");
         GroupBy agrupador = pokemon.groupBy(etiquetasParaAgrupar);
-        agrupador.suma();
+        agrupador.summarize();
         // System.out.println(agrupador);
         // Tabla tabla = new Tabla(matriz, false, false);
         // System.out.println(tabla);
